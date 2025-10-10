@@ -1,0 +1,231 @@
+{
+  "site": {
+    "title": "ShopEasy",
+    "welcome": "Bienvenue à {{brand}}",
+    "startShopping": "Commencer les achats",
+    "signUpNow": "Inscrivez-vous maintenant"
+  },
+  "header": {
+    "products": "Produits",
+    "cart": "Panier",
+    "login": "Connexion",
+    "searchPlaceholder": "Rechercher des produits..."
+  },
+  "home": {
+    "heroSubtitle": "Votre guichet unique pour les meilleures offres, les dernières tendances et tous vos produits préférés. De la mode à l'électronique, nous vous couvrons avec plus de 50 000 articles de qualité !",
+    "support24": "Support 24/7",
+    "freeShipping": "Livraison gratuite au-dessus de $50",
+    "secureCheckout": "Paiement sécurisé",
+    "whyChoose": "Pourquoi choisir {{brand}} ?",
+    "whyChooseSubtitle": "Nous nous engageons à offrir une expérience d'achat exceptionnelle avec des avantages qui nous distinguent",
+    "features": [
+      { "title": "Large gamme de produits", "description": "Explorez des milliers de produits de haute qualité dans plusieurs catégories à des prix compétitifs" },
+      { "title": "Paiements sécurisés", "description": "Achetez en toute confiance en utilisant nos options de paiement sécurisées. Votre sécurité est notre priorité" },
+      { "title": "Livraison rapide", "description": "Recevez vos commandes rapidement avec un suivi en temps réel et des retours sans tracas" }
+    ],
+    "shopByCategory": "Acheter par catégorie",
+    "shopByCategorySubtitle": "Parcourez notre vaste collection de produits dans des catégories populaires",
+    "categories": [
+      { "name": "Électronique" },
+      { "name": "Mode" },
+      { "name": "Maison & Vie" }
+    ],
+    "productsCount": "{count} produits",
+    "shopNow": "Acheter maintenant",
+    "featuredProducts": "Produits en vedette",
+    "featuredSubtitle": "Articles sélectionnés de notre collection",
+    "viewAllProducts": "Voir tous les produits",
+    "limitedOffer": "Offre à durée limitée",
+    "saleTitle": "Soldes d'été - Jusqu'à 50% de réduction",
+    "saleSubtitle": "Ne manquez pas notre plus grande vente de la saison ! Achetez maintenant et économisez sur des milliers d'articles dans toutes les catégories.",
+    "days": "Jours",
+    "hours": "Heures",
+    "minutes": "Minutes",
+    "shopTheSale": "Profiter de la vente",
+    "saleImageAlt": "Soldes d'été",
+    "saleBadge": "50% DE RÉDUCTION",
+    "testimonialsTitle": "Ce que disent nos clients",
+    "testimonialsSubtitle": "Approuvé par des milliers d'acheteurs satisfaits dans le monde",
+    "testimonials": [
+      { "quote": "ShopEasy a complètement transformé mon expérience d'achat. La livraison est toujours à l'heure et la qualité est exceptionnelle !", "author": "Sarah Johnson", "role": "Cliente fidèle" },
+      { "quote": "En tant que professionnel occupé, j'apprécie la facilité à trouver ce dont j'ai besoin. Leur service client est exceptionnel.", "author": "Michael Chen", "role": "Acheteur vérifié" },
+      { "quote": "Les prix sont imbattables et la sélection est vaste. J'ai recommandé ShopEasy à tous mes amis et ma famille.", "author": "Emily Rodriguez", "role": "Membre premium" }
+    ],
+    "howItWorksTitle": "Comment ShopEasy fonctionne",
+    "howItWorksSubtitle": "Étapes simples pour obtenir ce dont vous avez besoin, quand vous en avez besoin",
+    "steps": [
+      { "title": "Parcourir les produits", "description": "Explorez notre large sélection de produits" },
+      { "title": "Ajouter au panier", "description": "Sélectionnez les articles et ajoutez-les à votre panier" },
+      { "title": "Paiement sécurisé", "description": "Terminez votre achat en toute sécurité" },
+      { "title": "Livraison rapide", "description": "Recevez votre commande rapidement" }
+    ],
+    "newsletter": {
+      "badge": "Restez connecté",
+      "title": "Inscrivez-vous à notre newsletter",
+      "subtitle": "Abonnez-vous pour recevoir des offres exclusives, des nouveautés et des offres spéciales dans votre boîte de réception",
+      "placeholder": "Votre adresse e-mail",
+      "subscribeButton": "S'abonner",
+      "privacyText": "Nous respectons votre vie privée. Désabonnez-vous à tout moment."
+    },
+    "supportBlocks": [
+      { "title": "Support client 24/7", "description": "Nous sommes toujours là pour vous aider pour toute question ou préoccupation", "cta": "Contactez-nous", "link": "/contact" },
+      { "title": "Suivez votre commande", "description": "Suivez votre achat de l'entrepôt à votre porte", "cta": "Suivre maintenant", "link": "/track-order" },
+      { "title": "Politique de retour", "description": "Retours sans tracas de 30 jours sur la plupart des articles", "cta": "En savoir plus", "link": "/returns" }
+    ]
+    ,
+    "footer": {
+      "shop": "Boutique",
+      "shopLinks": {
+        "allProducts": "Tous les produits",
+        "electronics": "Électronique",
+        "clothing": "Vêtements",
+        "accessories": "Accessoires",
+        "homeLiving": "Maison & Vie"
+      },
+      "findYourProduct": "Trouvez le produit souhaité",
+      "customerService": "Service client",
+      "customerLinks": {
+        "contact": "Contactez-nous",
+        "shipping": "Expédition & Retours",
+        "faqs": "FAQ",
+        "privacy": "Confidentialité",
+        "terms": "Conditions"
+      },
+      "stayConnected": "Restez connecté",
+      "subscribeDescription": "Abonnez-vous pour des mises à jour et des offres exclusives.",
+      "newsletterPlaceholder": "Votre adresse e-mail",
+      "subscribe": "S'abonner",
+      "copyright": "© 2025 ShopEasy. Tous droits réservés.",
+      "bottom": {
+        "privacy": "Confidentialité",
+        "terms": "Conditions",
+        "sitemap": "Plan du site"
+      }
+    }
+  },
+  "footer": {
+    "shop": "Boutique",
+    "shopLinks": {
+      "allProducts": "Tous les produits",
+      "electronics": "Électronique",
+      "clothing": "Vêtements",
+      "accessories": "Accessoires",
+      "homeLiving": "Maison & Vie"
+    },
+    "findYourProduct": "Trouvez le produit souhaité",
+    "customerService": "Service client",
+    "customerLinks": {
+      "contact": "Contactez-nous",
+      "shipping": "Livraison et retours",
+      "faqs": "FAQ",
+      "privacy": "Confidentialité",
+      "terms": "Conditions générales"
+    },
+    "stayConnected": "Restez connecté",
+    "subscribeDescription": "Abonnez-vous pour des nouveautés et offres exclusives.",
+    "newsletterPlaceholder": "Votre e-mail",
+    "subscribe": "S'abonner",
+    "copyright": "© 2025 ShopEasy. Tous droits réservés.",
+    "bottom": {
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "sitemap": "Plan du site"
+    }
+  },
+  "auth": {
+    "welcomeBack": "Bon retour!",
+    "loginToAccess": "Connectez-vous pour accéder à votre expérience d'achat personnalisée.",
+    "loginTo": "Connexion à {{brand}}",
+    "enterDetails": "Entrez vos informations pour accéder à votre compte",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié?",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion...",
+    "dontHaveAccount": "Vous n'avez pas de compte?",
+    "signUp": "S'inscrire",
+    "createAccount": "Créer un compte",
+    "join": "Rejoindre {{brand}}!",
+    "createAccountSubtitle": "Créez votre compte pour débloquer des avantages d'achat personnalisés.",
+    "almostThere": "Presque terminé! Ajoutez simplement vos informations d'adresse.",
+    "continue": "Continuer",
+    "signUpButton": "S'inscrire"
+  },
+  "product": {
+    "newArrival": "Nouvel arrivage",
+    "viewDetails": "Voir les détails",
+    "addToCart": "Ajouter au panier",
+    "viewDetailsShort": "Voir",
+    "noProductsFound": "Aucun produit trouvé",
+    "noProductsAvailable": "Aucun produit disponible",
+    "tryAgain": "Réessayer",
+    "clearSearch": "Effacer la recherche",
+    "inStock": "{count} en stock",
+    "outOfStock": "Rupture de stock"
+  },
+  "otp": {
+    "verifyEmail": "Vérifiez votre adresse e-mail",
+    "verify": "Vérifier",
+    "resend": "Renvoyer",
+    "resendVerification": "Renvoyer le code de vérification",
+    "otpNotReceived": "OTP non reçu?",
+    "resendOtp": "Renvoyer OTP",
+    "backToOtp": "Retour à OTP"
+  },
+  "signup": {
+    "step1": "Étape 1 sur 2 : Informations du compte",
+    "step2": "Étape 2 sur 2 : Informations de livraison",
+    "fullName": "Nom complet",
+    "email": "Adresse e-mail",
+    "phoneOptional": "Numéro de téléphone (optionnel)",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordHint": "Minimum 8 caractères avec majuscule, minuscule, chiffre et caractère spécial",
+    "addressLine1": "Adresse (ligne 1)",
+    "street": "Rue",
+    "city": "Ville",
+    "state": "État / Région",
+    "zipcode": "Code postal",
+    "country": "Pays",
+    "examples": {
+      "name": "Jean Dupont",
+      "email": "vous@exemple.com",
+      "phone": "+33 (___) ___-____",
+      "address1": "123 Rue Principale",
+      "street": "Appartement, suite, etc. (optionnel)",
+      "city": "Paris",
+      "state": "Île-de-France",
+      "zipcode": "75001",
+      "country": "France"
+    },
+    "agree": "J'accepte les",
+    "terms": "Conditions",
+    "privacy": "Politique de confidentialité",
+    "and": "et",
+    "back": "Retour",
+    "continue": "Continuer",
+    "signUp": "S'inscrire",
+    "errors": {
+      "nameRequired": "Le nom est requis",
+      "nameInvalid": "Le nom doit contenir entre 2 et 50 lettres",
+      "emailRequired": "L'e-mail est requis",
+      "emailInvalid": "Format d'e-mail invalide",
+      "phoneInvalid": "Format de téléphone invalide",
+      "passwordRequired": "Le mot de passe est requis",
+      "passwordLength": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordPattern": "Doit inclure une majuscule, une minuscule, un chiffre et un caractère spécial",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "line1Required": "L'adresse (ligne 1) est requise",
+      "streetRequired": "La rue est requise",
+      "cityRequired": "La ville est requise",
+      "stateRequired": "L'état/la région est requis(e)",
+      "zipcodeRequired": "Le code postal est requis",
+      "zipcodeInvalid": "Format du code postal invalide",
+      "countryRequired": "Le pays est requis"
+    },
+    "passwordPlaceholder": "••••••••",
+    "orSignUpWith": "Ou inscrivez-vous avec",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "backToAccountInfo": "Retour aux informations du compte",
+    "formErrorsFixMessage": "Veuillez corriger toutes les erreurs avant de continuer"
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "site": {
+    "title": "ShopEasy",
+    "welcome": "Murakaza neza kuri {{brand}}",
+    "startShopping": "Tangira gukorera ubucuruzi",
+    "signUpNow": "Iyandikishe ubu"
+  },
+  "header": {
+    "products": "Ibicuruzwa",
+    "cart": "Imifuka",
+    "login": "Injira",
+    "searchPlaceholder": "Shaka ibicuruzwa..."
+  },
+  "home": {
+    "heroSubtitle": "Duka ryawe rimwe ku byo ukeneye byose: ibiciro byiza, imideli mishya, n'ibicuruzwa byiza. Uhereye kuri mode kugeza kuri elegitoroniki, dufite ibintu birenga 50,000!",
+    "support24": "Inkunga 24/7",
+    "freeShipping": "Kohereza ku buntu hejuru ya $50",
+    "secureCheckout": "Uburyo bwo kwishyura butekanye",
+    "whyChoose": "Kuki wahitamo {{brand}}?",
+    "whyChooseSubtitle": "Duharanira gutanga serivisi nziza y'ubucuruzi hamwe n'inyungu zituma twihariye",
+    "features": [
+      { "title": "Urutonde runini rw'ibicuruzwa", "description": "Sura ibicuruzwa byinshi byujuje ubuziranenge mu byiciro bitandukanye ku biciro byiza" },
+      { "title": "Umutekano mu kwishyura", "description": "Gura wizeye ukoresheje uburyo bwacu bwo kwishyura butekanye. Umutekano wawe ni wo mwanya wa mbere" },
+      { "title": "Kwohereza vuba", "description": "Tuzana ibicuruzwa byawe vuba hamwe no gukurikirana mu gihe nyacyo n'uburyo bwo gutanga byoroshye" }
+    ],
+    "shopByCategory": "Shaka mu byiciro",
+    "shopByCategorySubtitle": "Reba kolekisi yacu nini y'ibicuruzwa mu byiciro bizwi",
+    "categories": [
+      { "name": "Elektroniki" },
+      { "name": "Imyambaro" },
+      { "name": "Inzu & Ubuzima" }
+    ],
+    "productsCount": "{count} ibicuruzwa",
+    "shopNow": "Gura ubu",
+    "featuredProducts": "Ibicuruzwa by'ingenzi",
+    "featuredSubtitle": "Ibicuruzwa byatoranijwe muri kolekisi yacu",
+    "viewAllProducts": "Reba ibicuruzwa byose",
+    "limitedOffer": "Icyo gihe gito cyo kugabanya",
+    "saleTitle": "Icyi gicuruzwa cy'itumba - Kugera kuri 50% ku giciro",
+    "saleSubtitle": "Ntucikwe n'igabanyirizo ryacu rinini! Gura ubu ugabanye ku bicuruzwa byinshi.",
+    "days": "Iminsi",
+    "hours": "Amasaha",
+    "minutes": "Aminetsi",
+    "shopTheSale": "Gura ku giciro",
+    "saleImageAlt": "Icyi gicuruzwa cy'itumba",
+    "saleBadge": "50% OFF",
+    "testimonialsTitle": "Ibyo abakiriya bacu bavuga",
+    "testimonialsSubtitle": "Bizwi n'abakiriya benshi bishimye ku isi yose",
+    "testimonials": [
+      { "quote": "ShopEasy yahinduye burundu uburyo bwo kugura. Kohereza ahora ku gihe kandi ubuziranenge ni bwiza!", "author": "Sarah Johnson", "role": "Umukiriya w'inyangamugayo" },
+      { "quote": "Nka muntu ukora cyane, nshimira uko byoroshye kubona ibyo nkeneye. Serivisi yabo y'abakiriya ni nziza.", "author": "Michael Chen", "role": "Umuguzi wemejwe" },
+      { "quote": "Ibiciro ni byiza cyane kandi amahitamo ni menshi. Namaze kubasaba inshuti n'umuryango wanjye bose.", "author": "Emily Rodriguez", "role": "Umunyamuryango w'ikirenga" }
+    ],
+    "howItWorksTitle": "Uko ShopEasy ikora",
+    "howItWorksSubtitle": "Intambwe zoroshye zo kubona ibyo ukeneye, igihe ubyifuza",
+    "steps": [
+      { "title": "Shaka ibicuruzwa", "description": "Sura amahitamo yacu menshi y'ibicuruzwa" },
+      { "title": "Ongeramo mu mufuka", "description": "Hitamo ibintu wongere mu mufuka wawe" },
+      { "title": "Kwishyura neza", "description": "SOuza kugura kwawe neza" },
+      { "title": "Kwohereza vuba", "description": "Yakire vuba ibyo waguze" }
+    ],
+    "newsletter": {
+      "badge": "Guma uhuze",
+      "title": "Iyandikishe kuri Newsletter yacu",
+      "subtitle": "Iyandikishe kugirango ubone amakuru yihariye, ibyinjiye bishya, n'ibicuruzwa byiza mu ikayi yawe",
+      "placeholder": "Aderesi ya Email yawe",
+      "subscribeButton": "Iyandikishe",
+      "privacyText": "Twirinda ibanga ryawe. Ushobora kwiyandikisha igihe cyose."
+    },
+    "supportBlocks": [
+      { "title": "Inkunga 24/7", "description": "Turi hano kubafasha igihe cyose ufite ikibazo", "cta": "Twandikire", "link": "/contact" },
+      { "title": "Kurikirana itegeko ryawe", "description": "Kurikirana ibyo waguze kuva mu bubiko kugeza ku rugo rwawe", "cta": "Kurikirana ubu", "link": "/track-order" },
+      { "title": "Politiki yo gusubiza", "description": "Kugarura nta nkomyi mu minsi 30 ku bicuruzwa byinshi", "cta": "Menya byinshi", "link": "/returns" }
+    ]
+    ,
+    "footer": {
+      "shop": "Duka",
+      "shopLinks": {
+        "allProducts": "Ibicuruzwa byose",
+        "electronics": "Elektroniki",
+        "clothing": "Imyenda",
+        "accessories": "Ibikoresho",
+        "homeLiving": "Inzu & Ubuzima"
+      },
+      "findYourProduct": "Shaka igicuruzwa wifuza",
+      "customerService": "Serivisi ku bakiriya",
+      "customerLinks": {
+        "contact": "Twandikire",
+        "shipping": "Koherezwa & Gusubizwa",
+        "faqs": "IBIBAZO BISANZWE",
+        "privacy": "Ibanga",
+        "terms": "Amabwiriza"
+      },
+      "stayConnected": "Guma uhuze",
+      "subscribeDescription": "Iyandikishe kugirango ubone amakuru n'ibyiza byihariye.",
+      "newsletterPlaceholder": "Imeri yawe",
+      "subscribe": "Iyandikishe",
+      "copyright": "© 2025 ShopEasy. Uburenganzira bwose burabitswe.",
+      "bottom": {
+        "privacy": "Ibanga",
+        "terms": "Amabwiriza",
+        "sitemap": "Ikarita y'urubuga"
+      }
+    }
+  },
+  "footer": {
+    "shop": "Duka",
+    "shopLinks": {
+      "allProducts": "Ibicuruzwa byose",
+      "electronics": "Ibikoresho by'amashanyarazi",
+      "clothing": "Imyenda",
+      "accessories": "Ibikoresho by'inyongera",
+      "homeLiving": "Ibikoresho byo mu rugo"
+    },
+    "findYourProduct": "Shakisha igicuruzwa wifuza",
+    "customerService": "Serivisi y'abakiriya",
+    "customerLinks": {
+      "contact": "Twandikire",
+      "shipping": "Koherezwa & Subiza",
+      "faqs": "Ibibazo bikunze kubazwa",
+      "privacy": "Ibanga",
+      "terms": "Amabwiriza n'amategeko"
+    },
+    "stayConnected": "Gumana uduhuza",
+    "subscribeDescription": "Iyandikishe kugirango ubone amakuru n'ibiciro byihariye.",
+    "newsletterPlaceholder": "Imeyili yawe",
+    "subscribe": "Iyandikishe",
+    "copyright": "© 2025 ShopEasy. Uburenganzira bwose burabitswe.",
+    "bottom": {
+      "privacy": "Ibanga",
+      "terms": "Amabwiriza",
+      "sitemap": "Ikarita y'urubuga"
+    }
+  },
+  "auth": {
+    "welcomeBack": "Murakaza neza!",
+    "loginToAccess": "Injira kugirango ubone serivisi zikwiriye.",
+    "loginTo": "Injira kuri {{brand}}",
+    "enterDetails": "Shyiramo amakuru yawe kugirango winjire",
+    "rememberMe": "Nzirikane",
+    "forgotPassword": "Wibagiwe ijambo ry'ibanga?",
+    "signIn": "Injira",
+    "signingIn": "Kwinjira...",
+    "dontHaveAccount": "Nta konti ufite?",
+    "signUp": "Iyandikishe",
+    "createAccount": "Kora konti",
+    "join": "Jya kuri {{brand}}!",
+    "createAccountSubtitle": "Hanga konti kugirango ubone ibyiza byihariye by'ubucuruzi.",
+    "almostThere": "Hafi aho! Ongera ushyiremo aderesi yawe.",
+    "continue": "Komeza",
+    "signUpButton": "Iyandikishe"
+  },
+  "product": {
+    "newArrival": "Guhari kwa mbere",
+    "viewDetails": "Reba ibisobanuro",
+    "addToCart": "Ongeramo mu mufuka",
+    "viewDetailsShort": "Reba",
+    "noProductsFound": "Nta bicuruzwa bibonetse",
+    "noProductsAvailable": "Nta bicuruzwa biboneka",
+    "tryAgain": "Gerageza kongera",
+    "clearSearch": "Siba ubushakashatsi",
+    "inStock": "{count} biri kububiko",
+    "outOfStock": "Nta byo kubika"
+  },
+  "otp": {
+    "verifyEmail": "Emeza aderesi y'imeri yawe",
+    "verify": "Emeza",
+    "resend": "Ohereza ukundi",
+    "resendVerification": "Ohereza kode yemeza ukundi",
+    "otpNotReceived": "OTP ntitwabonetse?",
+    "resendOtp": "Ohereza OTP ukundi",
+    "backToOtp": "Subira kuri OTP"
+  },
+  "signup": {
+    "step1": "Intambwe 1 muri 2: Amakuru y'umukoresha",
+    "step2": "Intambwe 2 muri 2: Amakuru yo koherezwa",
+    "fullName": "Amazina yuzuye",
+    "email": "Aderesi y'imeri",
+    "phoneOptional": "Número ya Telefoni (Ntabwo ari ngombwa)",
+    "password": "Ijambo ry'ibanga",
+    "confirmPassword": "Emeza ijambo ry'ibanga",
+    "passwordHint": "Byibuze inyuguti 8 harimo inyuguti nini, nto, nimero na karateri idasanzwe",
+    "addressLine1": "Aderesi (umurongo wa 1)",
+    "street": "Uruhare/Rue",
+    "city": "Umujyi",
+    "state": "Intara / Leta",
+    "zipcode": "Kode y'iposita",
+    "country": "Igihugu",
+    "examples": {
+      "name": "Jean Uwitonze",
+      "email": "wowe@urugero.rw",
+      "phone": "+250 (___) ___-____",
+      "address1": "Akabari 123",
+      "street": "Inzu, igorofa, nibindi (ntibibaye ngombwa)",
+      "city": "Kigali",
+      "state": "Kigali",
+      "zipcode": "00000",
+      "country": "Rwanda"
+    },
+    "agree": "Nemera",
+    "terms": "Amabwiriza",
+    "privacy": "Politiki y'ibanga",
+    "and": "na",
+    "back": "Garuka",
+    "continue": "Komeza",
+    "signUp": "Iyandikishe",
+    "errors": {
+      "nameRequired": "Izina rirakenewe",
+      "nameInvalid": "Izina rigomba kuba inyuguti hagati ya 2 na 50",
+      "emailRequired": "Imeri irakenewe",
+      "emailInvalid": "Format ya imeri ntabwo yujuje ibisabwa",
+      "phoneInvalid": "Format ya telefoni siyo",
+      "passwordRequired": "Ijambo ry'ibanga rirakenewe",
+      "passwordLength": "Ijambo ry'ibanga rigomba kuba nibura inyuguti 8",
+      "passwordPattern": "Rigomba kuba ryarimo inyuguti nini, nto, numero na karateri idasanzwe",
+      "passwordMismatch": "Amagambo y'ibanga ntabwo ahuye",
+      "line1Required": "Aderesi (umurongo wa 1) irakenewe",
+      "streetRequired": "Inzira/umuhanda urakenewe",
+      "cityRequired": "Umujyi urakenewe",
+      "stateRequired": "Intara / leta irakenewe",
+      "zipcodeRequired": "Kode y'iposita irakenewe",
+      "zipcodeInvalid": "Format ya kode y'iposita siyo",
+      "countryRequired": "Igihugu kirakenewe"
+    },
+    "passwordPlaceholder": "••••••••",
+    "orSignUpWith": "Cyangwa wiyandikishe ukoresheje",
+    "alreadyHaveAccount": "Ushobora kuba ufite konti?",
+    "backToAccountInfo": "Garuka ku makuru y'umukoresha",
+    "formErrorsFixMessage": "Nyamuneka mukosore amakosa yose mbere yo gukomeza"
+  }
+}

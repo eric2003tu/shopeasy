@@ -1,0 +1,236 @@
+{
+  "site": {
+    "title": "ShopEasy",
+    "welcome": "Welcome to {{brand}}",
+    "startShopping": "Start Shopping",
+    "signUpNow": "Sign Up Now"
+  },
+  "header": {
+    "products": "Products",
+    "cart": "Cart",
+    "login": "Login",
+    "searchPlaceholder": "Find products..."
+  },
+  "home": {
+    "heroSubtitle": "Your one-stop shop for the best deals, latest trends, and all your favorite products. From fashion to electronics, we've got you covered with over 50,000 quality items!",
+    "support24": "24/7 Support",
+    "freeShipping": "Free Shipping Over $50",
+    "secureCheckout": "Secure Checkout",
+    "whyChoose": "Why Choose {{brand}}?",
+    "whyChooseSubtitle": "We're committed to providing an exceptional shopping experience with benefits that set us apart",
+    "features": [
+      { "title": "Wide Product Range", "description": "Explore thousands of high-quality products across multiple categories at competitive prices" },
+      { "title": "Secure Payments", "description": "Shop with confidence using our safe payment options. Your security is our top priority" },
+      { "title": "Fast Delivery", "description": "Get orders delivered quickly with real-time tracking and hassle-free returns" }
+    ],
+    "shopByCategory": "Shop by Category",
+    "shopByCategorySubtitle": "Browse through our extensive collection of products in popular categories",
+    "categories": [
+      { "name": "Electronics" },
+      { "name": "Fashion" },
+      { "name": "Home & Living" }
+    ],
+    "productsCount": "{count} products",
+    "shopNow": "Shop Now",
+    "featuredProducts": "Featured Products",
+    "featuredSubtitle": "Handpicked items from our collection",
+    "viewAllProducts": "View All Products",
+    "limitedOffer": "Limited Time Offer",
+    "saleTitle": "Summer Sale - Up to 50% Off",
+    "saleSubtitle": "Don't miss our biggest sale of the season! Shop now and save on thousands of items across all categories.",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "shopTheSale": "Shop the Sale",
+    "saleImageAlt": "Summer Sale",
+    "saleBadge": "50% OFF",
+    "testimonialsTitle": "What Our Customers Say",
+    "testimonialsSubtitle": "Trusted by thousands of happy shoppers worldwide",
+    "testimonials": [
+      { "quote": "ShopEasy has completely transformed my shopping experience. The delivery is always on time and the quality is exceptional!", "author": "Sarah Johnson", "role": "Loyal Customer" },
+      { "quote": "As a busy professional, I appreciate how easy it is to find exactly what I need. Their customer service is outstanding.", "author": "Michael Chen", "role": "Verified Buyer" },
+      { "quote": "The prices are unbeatable and the selection is vast. I've recommended ShopEasy to all my friends and family.", "author": "Emily Rodriguez", "role": "Premium Member" }
+    ],
+    "howItWorksTitle": "How ShopEasy Works",
+    "howItWorksSubtitle": "Simple steps to get what you need, when you need it",
+    "steps": [
+      { "title": "Browse Products", "description": "Explore our wide selection of products" },
+      { "title": "Add to Cart", "description": "Select items and add them to your cart" },
+      { "title": "Secure Checkout", "description": "Complete your purchase safely" },
+      { "title": "Fast Delivery", "description": "Receive your order quickly" }
+    ],
+    "newsletter": {
+      "badge": "Stay Connected",
+      "title": "Join Our Newsletter",
+      "subtitle": "Subscribe to get exclusive deals, new arrivals, and special offers delivered straight to your inbox",
+      "placeholder": "Your email address",
+      "subscribeButton": "Subscribe Now",
+      "privacyText": "We respect your privacy. Unsubscribe at any time."
+    },
+    "supportBlocks": [
+      { "title": "24/7 Customer Support", "description": "We're always here to help you with any questions or concerns", "cta": "Contact Us", "link": "/contact" },
+      { "title": "Track Your Order", "description": "Follow your purchase from warehouse to your doorstep", "cta": "Track Now", "link": "/track-order" },
+      { "title": "Return Policy", "description": "30-day hassle-free returns on most items", "cta": "Learn More", "link": "/returns" }
+    ],
+    "sampleProducts": [
+      { "name": "Premium Running Shoes" },
+      { "name": "Designer Handbag" },
+      { "name": "Smart Watch Pro" }
+    ]
+    ,
+    "footer": {
+      "shop": "Shop",
+      "shopLinks": {
+        "allProducts": "All Products",
+        "electronics": "Electronics",
+        "clothing": "Clothing",
+        "accessories": "Accessories",
+        "homeLiving": "Home & Living"
+      },
+      "findYourProduct": "Find your desired product",
+      "customerService": "Customer Service",
+      "customerLinks": {
+        "contact": "Contact Us",
+        "shipping": "Shipping & Returns",
+        "faqs": "FAQs",
+        "privacy": "Privacy",
+        "terms": "Terms & Conditions"
+      },
+      "stayConnected": "Stay Connected",
+      "subscribeDescription": "Subscribe for updates and exclusive offers.",
+      "newsletterPlaceholder": "Your email",
+      "subscribe": "Subscribe",
+      "copyright": "© 2025 ShopEasy. All rights reserved.",
+      "bottom": {
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "sitemap": "Sitemap"
+      }
+    }
+  },
+  "footer": {
+    "shop": "Shop",
+    "shopLinks": {
+      "allProducts": "All Products",
+      "electronics": "Electronics",
+      "clothing": "Clothing",
+      "accessories": "Accessories",
+      "homeLiving": "Home & Living"
+    },
+    "findYourProduct": "Find your desired product",
+    "customerService": "Customer Service",
+    "customerLinks": {
+      "contact": "Contact Us",
+      "shipping": "Shipping & Returns",
+      "faqs": "FAQs",
+      "privacy": "Privacy",
+      "terms": "Terms & Conditions"
+    },
+    "stayConnected": "Stay Connected",
+    "subscribeDescription": "Subscribe for updates and exclusive offers.",
+    "newsletterPlaceholder": "Your email",
+    "subscribe": "Subscribe",
+    "copyright": "© 2025 ShopEasy. All rights reserved.",
+    "bottom": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "sitemap": "Sitemap"
+    }
+  },
+  "auth": {
+    "welcomeBack": "Welcome Back!",
+    "loginToAccess": "Login to access your personalized shopping experience.",
+    "loginTo": "Login to {{brand}}",
+    "enterDetails": "Enter your details to access your account",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "dontHaveAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "createAccount": "Create Account",
+    "join": "Join {{brand}}!",
+    "createAccountSubtitle": "Create your account to unlock personalized shopping benefits.",
+    "almostThere": "Almost there! Just add your address information.",
+    "continue": "Continue",
+    "signUpButton": "Sign Up"
+  },
+  "product": {
+    "newArrival": "New Arrival",
+    "viewDetails": "View Details",
+    "addToCart": "Add to Cart",
+    "viewDetailsShort": "View Details",
+    "noProductsFound": "No Products Found",
+    "noProductsAvailable": "No Products Available",
+    "tryAgain": "Try Again",
+    "clearSearch": "Clear Search",
+    "inStock": "{count} in stock",
+    "outOfStock": "Out of stock"
+  },
+  "otp": {
+    "verifyEmail": "Verify your Email Address",
+    "verify": "Verify",
+    "resend": "Resend",
+    "resendVerification": "Resend Verification Code",
+    "otpNotReceived": "OTP not received?",
+    "resendOtp": "Resend OTP",
+    "backToOtp": "Back to OTP"
+  },
+  "signup": {
+    "step1": "Step 1 of 2: Account information",
+    "step2": "Step 2 of 2: Delivery information",
+    "fullName": "Full name",
+    "email": "Email address",
+    "phoneOptional": "Phone number (Optional)",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordHint": "Minimum 8 characters with uppercase, lowercase, number, and special character",
+    "addressLine1": "Address line 1",
+    "street": "Street",
+    "city": "City",
+    "state": "State",
+    "zipcode": "Zip code",
+    "country": "Country",
+    "examples": {
+      "name": "John Doe",
+      "email": "your@email.com",
+      "phone": "+1 (___) ___-____",
+      "address1": "123 Main St",
+      "street": "Apt, suite, etc. (optional)",
+      "city": "New York",
+      "state": "NY",
+      "zipcode": "10001",
+      "country": "United States"
+    },
+    "agree": "I agree to the",
+    "terms": "Terms",
+    "privacy": "Privacy Policy",
+    "and": "and",
+    "back": "Back",
+    "continue": "Continue",
+    "signUp": "Sign Up",
+    "errors": {
+      "nameRequired": "Name is required",
+      "nameInvalid": "Name should be 2-50 letters",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email format",
+      "phoneInvalid": "Invalid phone format",
+      "passwordRequired": "Password is required",
+      "passwordLength": "Password must be at least 8 characters",
+      "passwordPattern": "Must include uppercase, lowercase, number, and special character",
+      "passwordMismatch": "Passwords do not match",
+      "line1Required": "Address line 1 is required",
+      "streetRequired": "Street is required",
+      "cityRequired": "City is required",
+      "stateRequired": "State is required",
+      "zipcodeRequired": "Zipcode is required",
+      "zipcodeInvalid": "Invalid zipcode format",
+      "countryRequired": "Country is required"
+    },
+    "passwordPlaceholder": "••••••••",
+    "orSignUpWith": "Or sign up with",
+    "alreadyHaveAccount": "Already have an account?",
+    "backToAccountInfo": "Back to account information",
+    "formErrorsFixMessage": "Please fix all errors before continuing"
+  }
+}
