@@ -17,15 +17,39 @@ interface Product {
   featured?: boolean;
 }
 
-const API_BASE = 
-  (window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api/v1' 
-    : 'https://e-commerce-back-xy6s.onrender.com/api/v1');
-
 const UploadedProducts: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // Use a local hard-coded product list that uses images from /public
+  const defaultProducts: Product[] = [
+    { _id: '1', name: 'Premium Running Shoes', description: 'Comfortable and durable running shoes', price: 89.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 24, featured: true },
+    { _id: '2', name: 'Designer Handbag', description: 'Stylish handbag for every occasion', price: 199.99, images: ['/bag.jpg'], category: 'Accessories', stock: 12 },
+    { _id: '3', name: 'Smart Watch Pro', description: 'Advanced smartwatch with health tracking', price: 249.99, images: ['/watch.jpg'], category: 'Electronics', stock: 6, featured: true },
+    { _id: '4', name: 'Trail Runner Shoes', description: 'Grip and comfort for outdoor runs', price: 99.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 18 },
+    { _id: '5', name: 'Everyday Tote Bag', description: 'Spacious tote for daily essentials', price: 59.99, images: ['/bag.jpg'], category: 'Accessories', stock: 30 },
+    { _id: '6', name: 'Fitness Smartband', description: 'Lightweight band for activity tracking', price: 69.99, images: ['/watch.jpg'], category: 'Electronics', stock: 40 },
+    { _id: '7', name: 'Classic Sneakers', description: 'Timeless style and comfort', price: 79.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 15 },
+    { _id: '8', name: 'Evening Clutch', description: 'Elegant clutch for nights out', price: 89.99, images: ['/bag.jpg'], category: 'Accessories', stock: 8 },
+    { _id: '9', name: 'Sportwatch X', description: 'Durable sports watch with GPS', price: 179.99, images: ['/watch.jpg'], category: 'Electronics', stock: 10 },
+    { _id: '10', name: 'Comfort Running Shoes', description: 'Cushioned soles for long runs', price: 95.0, images: ['/shoes.jpg'], category: 'Footwear', stock: 20 },
+    { _id: '11', name: 'Leather Shoulder Bag', description: 'Premium leather for everyday use', price: 229.99, images: ['/bag.jpg'], category: 'Accessories', stock: 5, featured: true },
+    { _id: '12', name: 'Hybrid Smartwatch', description: 'Smart features with classic look', price: 199.99, images: ['/watch.jpg'], category: 'Electronics', stock: 14 },
+    { _id: '13', name: 'Urban Runners', description: 'Lightweight runners for city use', price: 85.0, images: ['/shoes.jpg'], category: 'Footwear', stock: 22 },
+    { _id: '14', name: 'Canvas Carryall', description: 'Durable carryall for everyday', price: 49.99, images: ['/bag.jpg'], category: 'Accessories', stock: 27 },
+    { _id: '15', name: 'Pulse Tracker', description: 'Heart-rate monitoring smartwatch', price: 129.99, images: ['/watch.jpg'], category: 'Electronics', stock: 18 },
+    { _id: '16', name: 'Roadster Shoes', description: 'Performance-driven running shoes', price: 109.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 11 },
+    { _id: '17', name: 'Mini Satchel', description: 'Compact satchel for essentials', price: 69.99, images: ['/bag.jpg'], category: 'Accessories', stock: 9 },
+    { _id: '18', name: 'Watch Sport Lite', description: 'Affordable sports watch with features', price: 89.99, images: ['/watch.jpg'], category: 'Electronics', stock: 35 },
+    { _id: '19', name: 'Everyday Slip-ons', description: 'Comfortable slip-on shoes', price: 59.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 40 },
+    { _id: '20', name: 'Office Tote', description: 'Sleek tote for work and commute', price: 129.99, images: ['/bag.jpg'], category: 'Accessories', stock: 7 },
+    { _id: '21', name: 'Chrono Elite', description: 'Premium smartwatch with metal band', price: 299.99, images: ['/watch.jpg'], category: 'Electronics', stock: 4, featured: true },
+    { _id: '22', name: 'Gym Trainers', description: 'Supportive trainers for gym sessions', price: 74.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 28 },
+    { _id: '23', name: 'Weekender Bag', description: 'Large bag for short trips', price: 149.99, images: ['/bag.jpg'], category: 'Accessories', stock: 6 },
+    { _id: '24', name: 'Navigator Watch', description: 'Outdoor-ready GPS watch', price: 219.99, images: ['/watch.jpg'], category: 'Electronics', stock: 9 },
+    { _id: '25', name: 'Lightweight Runners', description: 'Breathable runners for daily wear', price: 69.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 33 }
+  ];
+
+  const [products, setProducts] = useState<Product[]>(defaultProducts);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(defaultProducts);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [hasSearched, setHasSearched] = useState<boolean>(false);
@@ -33,7 +57,7 @@ const UploadedProducts: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [viewed, setViewed] = useState<boolean>(false)
 
-  const handleProductSearch = async (e: React.FormEvent) => {
+  const handleProductSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm.trim()) {
       setFilteredProducts(products);
@@ -41,77 +65,20 @@ const UploadedProducts: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const isLocal = window.location.hostname === 'localhost';
-      const apiUrl = isLocal
-        ? `http://localhost:5000/api/v1/products/search?q=${searchTerm}`
-        : `https://e-commerce-back-xy6s.onrender.com/api/v1/products/search?q=${searchTerm}`;
-      
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        throw new Error('Error searching data');
-      }
-      
-      const { products: searchedProducts } = await response.json();
-      
-      // Transform image paths to full URLs
-      const searchedProductsWithImageUrls = searchedProducts.map((product: Product) => ({
-        ...product,
-        images: product.images.map(image => 
-          image.startsWith('http') ? image : `${API_BASE.replace('/api/v1', '')}${image}`
-        )
-      }));
-      
-      setFilteredProducts(searchedProductsWithImageUrls || []);
-      setHasSearched(true);
-    } catch (error) {
-      console.error('Failed to search products', error);
-      setError('Failed to search products');
-    } finally {
-      setIsLoading(false);
-    }
+    const q = searchTerm.trim().toLowerCase();
+    const results = products.filter(p => (
+      p.name.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    ));
+    setFilteredProducts(results);
+    setHasSearched(true);
   };
 
   useEffect(() => {
-    
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch(`${API_BASE}/products`);
-        
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || 
-            `Failed to fetch products (HTTP ${response.status})`
-          );
-        }
-        
-        const { products: fetchedProducts } = await response.json();
-        
-        // Transform image paths to full URLs
-        const productsWithImageUrls = fetchedProducts.map((product: Product) => ({
-          ...product,
-          images: product.images.map(image => 
-            image.startsWith('http') ? image : `${API_BASE.replace('/api/v1', '')}${image}`
-          )
-        }));
-        
-        setProducts(productsWithImageUrls || []);
-        setFilteredProducts(productsWithImageUrls || []);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch products');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProducts();
+    // initialize local products (no network)
+    setProducts(defaultProducts);
+    setFilteredProducts(defaultProducts);
   }, []);
 
   const formatPrice = (price: number) => {
