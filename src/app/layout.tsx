@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/small/Footer";
-import Header from "@/components/small/Header";
+import SiteChrome from '@/components/SiteChrome';
 import { I18nProvider } from '@/i18n/I18nProvider';
 
 const geistSans = Geist({
@@ -28,9 +27,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <I18nProvider>
-          <Header />
-          {children}
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </I18nProvider>
       </body>
     </html>

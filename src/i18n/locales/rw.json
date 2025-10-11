@@ -228,4 +228,27 @@
     "backToAccountInfo": "Garuka ku makuru y'umukoresha",
     "formErrorsFixMessage": "Nyamuneka mukosore amakosa yose mbere yo gukomeza"
   }
+  ,
+  "admin": {
+    "title": "Ahagana ya Admin",
+    "searchPlaceholder": "Shakisha mu miyoborere...",
+    "dashboard": "Dashboard",
+    "dashboardSub": "Iby'ingenzi n'imibare byihuse",
+    "products": "Ibicuruzwa",
+    "productsSub": "Gucunga urutonde rw'ibicuruzwa",
+    "users": "Abakoresha",
+    "usersSub": "Gucunga abakoresha, uruhare n'uburenganzira",
+    "analytics": "Isesengura",
+    "analyticsSub": "Raporo n'ibishushanyo",
+    "cart": "Utuntu mu mufuka",
+    "cartSub": "Amabwiriza ari mu mufuka n'ategereje",
+    "checkout": "Gusoza kugura",
+    "checkoutSub": "Amayobera yo gusoza kugura",
+    "payment": "Kwishyura",
+    "paymentSub": "Porogaramu zishyura n'uburyo bwo guhuza",
+    "profile": "Umwirondoro",
+    "profileSub": "Konti yawe n'ibyo ukunda",
+    "settings": "Ibyihariye",
+    "settingsSub": "Imiterere y'uburyo n'ibigaragara"
+  }
 }

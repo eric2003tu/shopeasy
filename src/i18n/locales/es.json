@@ -228,4 +228,27 @@
     "backToAccountInfo": "Volver a la información de la cuenta",
     "formErrorsFixMessage": "Por favor corrige todos los errores antes de continuar"
   }
+  ,
+  "admin": {
+    "title": "Panel de administración",
+    "searchPlaceholder": "Buscar en administración...",
+    "dashboard": "Panel",
+    "dashboardSub": "Resumen y estadísticas rápidas",
+    "products": "Productos",
+    "productsSub": "Gestiona tu catálogo de productos",
+    "users": "Usuarios",
+    "usersSub": "Gestiona usuarios, roles y permisos",
+    "analytics": "Analíticas",
+    "analyticsSub": "Informes y gráficos",
+    "cart": "Carrito",
+    "cartSub": "Pedidos en carrito y pendientes",
+    "checkout": "Pago",
+    "checkoutSub": "Flujos y ajustes de pago",
+    "payment": "Pagos",
+    "paymentSub": "Pasarelas de pago y conciliación",
+    "profile": "Perfil",
+    "profileSub": "Tu cuenta y preferencias",
+    "settings": "Ajustes",
+    "settingsSub": "Ajustes de la aplicación y apariencia"
+  }
 }

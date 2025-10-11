@@ -233,4 +233,27 @@
     "backToAccountInfo": "Back to account information",
     "formErrorsFixMessage": "Please fix all errors before continuing"
   }
+  ,
+  "admin": {
+    "title": "Admin Dashboard",
+    "searchPlaceholder": "Search admin...",
+    "dashboard": "Dashboard",
+    "dashboardSub": "Overview and quick stats",
+    "products": "Products",
+    "productsSub": "Manage your product catalog",
+    "users": "Users",
+    "usersSub": "Manage users, roles and permissions",
+    "analytics": "Analytics",
+    "analyticsSub": "Reports and charts",
+    "cart": "Cart",
+    "cartSub": "Orders in cart and pending checkout",
+    "checkout": "Checkout",
+    "checkoutSub": "Checkout flows and settings",
+    "payment": "Payments",
+    "paymentSub": "Payment gateways and reconciliation",
+    "profile": "Profile",
+    "profileSub": "Your account and preferences",
+    "settings": "Settings",
+    "settingsSub": "Application and appearance settings"
+  }
 }

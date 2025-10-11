@@ -79,6 +79,12 @@ const UploadedProducts: React.FC = () => {
     // initialize local products (no network)
     setProducts(defaultProducts);
     setFilteredProducts(defaultProducts);
+    try {
+      // expose for admin seeding in the browser dev environment
+      (window as any).__SHOPEASY_DEFAULT_PRODUCTS = defaultProducts;
+    } catch {
+      // ignore
+    }
   }, []);
 
   const formatPrice = (price: number) => {
