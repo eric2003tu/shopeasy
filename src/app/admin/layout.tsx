@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <ReusableSidebar config={sidebarConfig} currentPath="/admin/dashboard">
+    <ReusableSidebar config={sidebarConfig}>
       {children}
     </ReusableSidebar>
   );

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
@@ -50,8 +51,9 @@ export interface SidebarConfig {
   notifications?: SidebarNotification[];
 }
 
-export default function ReusableSidebar({ config, currentPath = '/', children }: { config: SidebarConfig; currentPath?: string; children: React.ReactNode; }) {
+export default function ReusableSidebar({ config, children }: { config: SidebarConfig; children: React.ReactNode; }) {
   const { t } = useI18n();
+  const pathname = usePathname() || '/';
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [openGroups, setOpenGroups] = useState<Record<number, boolean>>({});
 
@@ -213,48 +215,55 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {group.items.map((item, ii) => (
-                      <SidebarMenuItem key={ii}>
-                        {item.subItems && item.subItems.length > 0 ? (
-                          <div>
-                            <SidebarMenuButton 
-                              className="w-full text-gray-700 hover:bg-[#634bc1] hover:text-white transition-colors"
-                              onClick={() => toggleGroup(gi)} 
-                              isActive={item.isActive || currentPath === item.url}
+                    {group.items.map((item, ii) => {
+                      const activeTop = item.isActive || pathname === item.url;
+                      return (
+                        <SidebarMenuItem key={ii}>
+                          {item.subItems && item.subItems.length > 0 ? (
+                            <>
+                              <SidebarMenuButton
+                                className={`${activeTop ? 'bg-[#634bc1] text-white' : 'text-gray-700'} w-full hover:bg-[#634bc1] hover:text-white transition-colors`}
+                                onClick={() => toggleGroup(gi)}
+                                isActive={activeTop}
+                              >
+                                {item.icon && React.createElement(item.icon, { className: 'h-4 w-4' })}
+                                <span>{t ? t(item.title) : item.title}</span>
+                              </SidebarMenuButton>
+
+                              {openGroups[gi] && (
+                                <SidebarMenuSub>
+                                  {item.subItems!.map((s, si) => {
+                                    const subActive = s.isActive || pathname === s.url;
+                                    return (
+                                      <SidebarMenuSubItem key={si}>
+                                        <SidebarMenuSubButton
+                                          asChild
+                                          isActive={subActive}
+                                          className={`${subActive ? 'bg-[#634bc1] text-white' : 'text-gray-600'} hover:text-[#634bc1] hover:bg-gray-100 transition-colors`}
+                                        >
+                                          <Link href={s.url}>{t ? t(s.title) : s.title}</Link>
+                                        </SidebarMenuSubButton>
+                                      </SidebarMenuSubItem>
+                                    );
+                                  })}
+                                </SidebarMenuSub>
+                              )}
+                            </>
+                          ) : (
+                            <SidebarMenuButton
+                              asChild
+                              isActive={activeTop}
+                              className={`${activeTop ? 'bg-[#634bc1] text-white' : 'text-gray-700'} hover:bg-[#634bc1] hover:text-white transition-colors`}
                             >
-                              {item.icon && React.createElement(item.icon, { className: 'h-4 w-4' })}
-                              <span>{t ? t(item.title) : item.title}</span>
+                              <Link href={item.url} className="flex items-center gap-2">
+                                {item.icon && React.createElement(item.icon, { className: 'h-4 w-4' })}
+                                <span>{t ? t(item.title) : item.title}</span>
+                              </Link>
                             </SidebarMenuButton>
-                            {openGroups[gi] && (
-                              <SidebarMenuSub>
-                                {item.subItems!.map((s, si) => (
-                                  <SidebarMenuSubItem key={si}>
-                                    <SidebarMenuSubButton 
-                                      asChild 
-                                      isActive={s.isActive || currentPath === s.url}
-                                      className="text-gray-600 hover:text-[#634bc1] hover:bg-gray-100 transition-colors"
-                                    >
-                                      <Link href={s.url}>{t ? t(s.title) : s.title}</Link>
-                                    </SidebarMenuSubButton>
-                                  </SidebarMenuSubItem>
-                                ))}
-                              </SidebarMenuSub>
-                            )}
-                          </div>
-                        ) : (
-                          <SidebarMenuButton 
-                            asChild 
-                            isActive={item.isActive || currentPath === item.url}
-                            className="text-gray-700 hover:bg-[#634bc1] hover:text-white transition-colors"
-                          >
-                            <Link href={item.url} className="flex items-center gap-2">
-                              {item.icon && React.createElement(item.icon, { className: 'h-4 w-4' })}
-                              <span>{t ? t(item.title) : item.title}</span>
-                            </Link>
-                          </SidebarMenuButton>
-                        )}
-                      </SidebarMenuItem>
-                    ))}
+                          )}
+                        </SidebarMenuItem>
+                      );
+                    })}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
