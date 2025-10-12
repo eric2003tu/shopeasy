@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image'
 import { useI18n } from '@/i18n/I18nProvider';
 import { IoClose } from "react-icons/io5";
 
@@ -102,28 +103,21 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Image Gallery */}
           <div className="space-y-4">
-            <div className="bg-gray-100 rounded-lg overflow-hidden">
-              <img 
-                src={product.images[0] || '/placeholder-product.jpg'} 
+            <div className="bg-gray-100 rounded-lg overflow-hidden relative h-64">
+              <Image
+                src={product.images[0] || '/placeholder-product.jpg'}
                 alt={product.name}
-                className="w-full h-64 object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/placeholder-product.jpg';
-                }}
+                fill
+                className="object-contain"
+                sizes="(min-width: 768px) 50vw, 100vw"
               />
             </div>
             {product.images.length > 1 && (
               <div className="grid grid-cols-3 gap-2">
                 {product.images.slice(1).map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    alt={`${product.name} ${index + 1}`}
-                    className="h-20 object-cover rounded cursor-pointer hover:opacity-80"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/placeholder-product.jpg';
-                    }}
-                  />
+                  <div key={index} className="relative h-20 w-full rounded overflow-hidden">
+                    <Image src={image} alt={`${product.name} ${index + 1}`} fill className="object-cover" sizes="60px" />
+                  </div>
                 ))}
               </div>
             )}

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image'
 import { FiAlertCircle, FiInfo } from 'react-icons/fi';
 import { IoMdSearch } from 'react-icons/io';
 import { OneProduct } from './OneProduct';
@@ -191,15 +192,8 @@ const UploadedProducts: React.FC = () => {
                   product.featured ? 'ring-2 ring-blue-500' : ''
                 }`}
               >
-                <div className="relative w-full">
-                  <img
-                    src={imageUrl}
-                    alt={product.name}
-                    className="min-w-full h-48 object-contain"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/placeholder-product.jpg';
-                    }}
-                  />
+                <div className="relative w-full h-48">
+                  <Image src={imageUrl} alt={product.name} fill className="object-contain" sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" />
                     {product.featured && (
                     <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
                       Featured

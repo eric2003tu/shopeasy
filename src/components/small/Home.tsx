@@ -1,5 +1,6 @@
 "use client";
 import React from 'react'
+import Image from 'next/image'
 import { FiTruck, FiShield, FiShoppingBag, FiClock, FiTag, FiHeadphones } from 'react-icons/fi'
 import { FaStar, FaRegHeart, FaRegUser, FaRegCreditCard } from 'react-icons/fa'
 import { BsBoxSeam } from 'react-icons/bs'
@@ -190,11 +191,13 @@ const Home: React.FC = () => {
                 key={index}
                 className="group relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all"
               >
-                <div className="h-64 overflow-hidden">
-                  <img 
-                    src={category.image} 
-                    alt={category.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                <div className="h-64 overflow-hidden relative">
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
@@ -325,12 +328,10 @@ const Home: React.FC = () => {
           </div>
           <div className="relative">
             <div className="relative rounded-xl overflow-hidden shadow-2xl">
-              <img 
-                src="fashion.png" 
-                alt="Summer Sale" 
-                className="w-full h-auto"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+              <div className="relative w-full h-64">
+                <Image src="/fashion.png" alt="Summer Sale" fill className="w-full h-full object-cover" sizes="(min-width: 1024px) 50vw, 100vw" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+              </div>
             </div>
             <div className="absolute -bottom-4 -right-4 bg-white text-[#634bc1] px-6 py-3 rounded-lg shadow-lg font-bold text-xl">
               50% OFF

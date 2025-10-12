@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { CiMenuBurger} from "react-icons/ci";
 import { BsCart2, BsBoxSeam } from "react-icons/bs";
 import { MdLogin } from "react-icons/md";
@@ -50,11 +51,9 @@ const Header: React.FC = () => {
           {/* Logo and Brand */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-3 group">
-              <img 
-                src= "logo.jpg"
-                alt="ShopEasy Logo" 
-                className="h-10 w-10 md:h-12 md:w-12 rounded-full border-2 border-white/30 group-hover:border-[#ffdc89] transition-all"
-              />
+              <div className="relative h-12 w-12 md:h-12 md:w-12">
+                <Image src="/logo.jpg" alt="ShopEasy Logo" fill className="rounded-full border-2 border-white/30 group-hover:border-[#ffdc89] transition-all object-cover" sizes="48px" />
+              </div>
               <span className="text-white font-bold text-xl md:text-2xl ml-2">
                 Shop<span className="text-[#ffdc89]">Easy</span>
               </span>

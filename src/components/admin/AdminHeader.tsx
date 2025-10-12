@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,9 +7,8 @@ import { Globe, Search, Settings, Moon } from 'lucide-react';
 import Image from 'next/image';
 
 export default function AdminHeader() {
-  const { t, locale, setLocale } = useI18n();
+  const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   const user = {
     name: 'Admin User',
@@ -17,26 +16,7 @@ export default function AdminHeader() {
     image: '/avatar.png',
   };
 
-  const locales = ['en', 'es', 'fr', 'rw'] as const;
-
-  const toggleMenu = () => setMenuOpen((prev) => !prev);
-
-  const selectLocale = (selectedLocale: typeof locales[number]) => {
-    setLocale(selectedLocale);
-    setMenuOpen(false);
-  };
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  // language selector moved to the reusable sidebar header
 
   return (
     <header className="sticky top-0 z-50 w-full border-b shadow-sm bg-gradient-to-r from-[#332e47] to-[#1d163c] relative">
@@ -80,48 +60,7 @@ export default function AdminHeader() {
             </Button>
           </div>
 
-          {/* Language selector */}
-              <div className="relative" ref={menuRef}>
-              <Button 
-              size="icon" 
-              variant="ghost" 
-              onClick={toggleMenu} 
-              aria-label="Change language" 
-              aria-expanded={menuOpen}
-              className="relative"
-            >
-              <Globe className="h-4 w-4" />
-              <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-              </span>
-            </Button>
-
-            {menuOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-[#1f1730] border border-white/10 rounded-lg shadow-lg z-50 backdrop-blur-sm">
-                <div className="py-1">
-                  {locales.map((loc) => (
-                    <button
-                      key={loc}
-                      className={`w-full text-left px-4 py-2 text-sm transition-colors hover:bg-accent/10 ${
-                        locale === loc 
-                          ? 'font-semibold text-primary bg-accent/10' 
-                          : 'text-white/80'
-                      }`}
-                      onClick={() => selectLocale(loc)}
-                    >
-                      <span className="flex items-center justify-between">
-                        {loc.toUpperCase()}
-                          {locale === loc && (
-                          <span className="w-2 h-2 bg-primary rounded-full"></span>
-                        )}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Language selector moved to ReusableSidebar header */}
 
           {/* User profile */}
             <div className="flex items-center gap-3 pl-2 border-l border-muted">

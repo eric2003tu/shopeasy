@@ -6,8 +6,7 @@ import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, Bell } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Moon, Sun, Bell, Globe } from 'lucide-react';
 
 export interface SidebarSubItem {
   title: string;
@@ -89,6 +88,61 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
     { code: 'rw', label: 'Kinyarwanda' },
   ];
 
+  // Local inline component to render a globe language selector with dropdown
+  function LanguageSelector() {
+    const { locale, setLocale } = useI18n();
+    const [open, setOpen] = useState(false);
+    const ref = React.useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+      function onDoc(e: MouseEvent) {
+        if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      }
+      document.addEventListener('mousedown', onDoc);
+      return () => document.removeEventListener('mousedown', onDoc);
+    }, []);
+
+    return (
+      <div className="relative" ref={ref}>
+        <Button 
+          size="icon" 
+          variant="ghost" 
+          onClick={() => setOpen((s) => !s)} 
+          aria-label="Change language" 
+          aria-expanded={open}
+          className="relative text-gray-600 hover:bg-[#634bc1] hover:text-white transition-colors"
+        >
+          <Globe className="h-4 w-4" />
+          <span className="absolute -top-1 -right-1 flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+          </span>
+        </Button>
+
+        {open && (
+          <div className="absolute right-0 mt-2 w-40 bg-[#1f1730] border border-white/10 rounded-lg shadow-lg z-50 backdrop-blur-sm">
+            <div className="py-1">
+              {languages.map((l) => (
+                <button
+                  key={l.code}
+                  className={`w-full text-left px-4 py-2 text-sm transition-colors hover:bg-accent/10 ${
+                    locale === l.code ? 'font-semibold text-primary bg-accent/10' : 'text-white/80'
+                  }`}
+                  onClick={() => { setLocale(l.code as 'en' | 'fr' | 'es' | 'rw'); setOpen(false); }}
+                >
+                  <span className="flex items-center justify-between">
+                    {l.label}
+                    {locale === l.code && <span className="w-2 h-2 bg-primary rounded-full"></span>}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   const toggleGroup = (idx: number) => {
     setOpenGroups((s) => ({ ...s, [idx]: !s[idx] }));
   };
@@ -116,6 +170,10 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
             >
               <Bell className="h-4 w-4" />
             </Button>
+
+            {/* Language globe button copied from admin header style */}
+            <LanguageSelector />
+
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full overflow-hidden bg-[#634bc1] border border-[#ffdc89]">
                 {config.user.avatar ? (
@@ -214,21 +272,7 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
                 {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
               </Button>
 
-              <div className="relative">
-                <select
-                  className={cn('bg-white text-sm p-1 rounded text-gray-700 border border-gray-300 focus:border-[#634bc1] focus:outline-none transition-colors')}
-                  onChange={(e) => {
-                    document.cookie = `locale=${e.target.value}; path=/`;
-                    window.location.reload();
-                  }}
-                >
-                  {languages.map((l) => (
-                    <option key={l.code} value={l.code} className="bg-white text-gray-700">
-                      {l.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <div />
             </div>
           </SidebarFooter>
 
