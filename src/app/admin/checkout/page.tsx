@@ -1,14 +1,12 @@
 "use client";
-
 import React from 'react';
-import { useI18n } from '@/i18n/I18nProvider';
+import CheckoutsTable from '@/components/admin/CheckoutsTable';
 
-export default function CheckoutPage() {
-  const { t } = useI18n();
+export default function AdminCheckoutsPage() {
   return (
-    <div>
-      <h2 className="text-xl font-semibold">{t('admin.checkout')}</h2>
-      <p className="text-sm text-gray-600 mt-2">{t('admin.checkoutSub') || 'Checkout flows and settings'}</p>
+    <div className="p-6">
+      <h1 className="text-2xl font-semibold mb-4">Checkouts</h1>
+      <CheckoutsTable />
     </div>
   );
 }

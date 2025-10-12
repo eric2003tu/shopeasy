@@ -1,0 +1,192 @@
+"use client";
+import React, { useEffect, useMemo, useState } from 'react';
+import { sampleCheckouts, SampleCheckout, sampleProducts } from '@/lib/sampleData';
+
+const STORAGE_KEY = 'shopeasy_admin_checkouts_v1';
+
+export default function CheckoutsTable() {
+  const [checkouts, setCheckouts] = useState<SampleCheckout[]>(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+      if (raw) return JSON.parse(raw) as SampleCheckout[];
+    } catch {}
+    return sampleCheckouts;
+  });
+
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+  const [view, setView] = useState<SampleCheckout | null>(null);
+
+  const [deleteTarget, setDeleteTarget] = useState<SampleCheckout | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkouts)); } catch {}
+  }, [checkouts]);
+
+  const resetSamples = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleCheckouts));
+      setCheckouts(sampleCheckouts);
+      alert('Sample checkouts loaded');
+    } catch (e) {
+      alert('Failed to load sample checkouts');
+    }
+  };
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return checkouts.filter((c) => {
+      if (statusFilter && c.paymentStatus !== statusFilter) return false;
+      if (!q) return true;
+      return (c.id + ' ' + (c.cartId || '') + ' ' + (c.userId || '') + ' ' + (c.email || '')).toLowerCase().includes(q);
+    });
+  }, [checkouts, search, statusFilter]);
+
+  const total = filtered.length;
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  function markPaid(id: string) {
+    setCheckouts((prev) => prev.map((c) => c.id === id ? { ...c, paymentStatus: 'completed' } : c));
+  }
+
+  function openDelete(id: string) {
+    const t = checkouts.find((c) => c.id === id) || null;
+    setDeleteTarget(t);
+    setDeleteConfirmInput('');
+    setDeleteOpen(true);
+  }
+
+  function handleConfirmDelete() {
+    if (!deleteTarget) return;
+    const expected = (deleteTarget.id || '').trim().toLowerCase();
+    if (deleteConfirmInput.trim().toLowerCase() !== expected) return;
+    setCheckouts((prev) => prev.filter((c) => c.id !== deleteTarget.id));
+    setDeleteTarget(null);
+    setDeleteOpen(false);
+    setDeleteConfirmInput('');
+  }
+
+  function productList(c: SampleCheckout) {
+    return c.items.map((it) => {
+      const p = it.productId ? sampleProducts.find((x) => x.id === it.productId) : null;
+      return p ? p.name : it.productName;
+    }).join(', ');
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow p-4">
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <div className="flex items-center gap-3">
+          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search checkouts by id/cart/user/email" className="px-3 py-2 border rounded w-72" />
+          <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
+            <option value="">All status</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+            <option value="failed">Failed</option>
+          </select>
+          <button onClick={resetSamples} className="px-3 py-2 bg-muted rounded text-sm">Reset sample checkouts</button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="text-sm text-gray-600">Showing <strong>{total === 0 ? 0 : (currentPage - 1) * pageSize + 1}</strong> - <strong>{Math.min(currentPage * pageSize, total)}</strong> of <strong>{total}</strong></div>
+          <div>
+            <label className="text-xs">Page size</label>
+            <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="ml-2 p-1 border rounded">
+              <option value={5}>5</option>
+              <option value={8}>8</option>
+              <option value={12}>12</option>
+              <option value={20}>20</option>
+            </select>
+          </div>
+          <div className="inline-flex items-center gap-1">
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">Prev</button>
+            <span className="px-2 text-sm">{currentPage} / {pageCount}</span>
+            <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Checkout</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cart / Owner</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
+              <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {paged.map((c) => (
+              <tr key={c.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-sm font-medium">{c.id}</td>
+                <td className="px-4 py-3 text-sm">{c.cartId || ''} {c.userId ? ` / ${c.userId}` : c.email ? ` / ${c.email}` : ''}</td>
+                <td className="px-4 py-3 text-sm">{productList(c)}</td>
+                <td className="px-4 py-3 text-sm font-semibold">${c.total.toFixed(2)}</td>
+                <td className="px-4 py-3 text-sm capitalize">{c.paymentStatus}</td>
+                <td className="px-4 py-3 text-right">
+                  <div className="inline-flex gap-2">
+                    <button onClick={() => setView(c)} className="px-3 py-1 bg-[#634bc1] text-white rounded text-sm">View</button>
+                    <button onClick={() => markPaid(c.id)} disabled={c.paymentStatus === 'completed'} className="px-3 py-1 bg-green-600 text-white rounded text-sm disabled:opacity-50">Mark paid</button>
+                    <button onClick={() => openDelete(c.id)} className="px-3 py-1 border border-red-300 text-red-600 rounded text-sm">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {view && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setView(null)} />
+          <div className="relative z-60 w-full max-w-2xl bg-card rounded shadow-lg p-6">
+            <h3 className="text-lg font-semibold mb-2">Checkout {view!.id}</h3>
+            <div className="mb-2 text-sm text-muted-foreground">Cart: {view!.cartId || '—'}</div>
+            <div className="divide-y">
+              {view!.items.map((it, idx) => (
+                <div key={idx} className="py-2 flex justify-between">
+                  <div>
+                    <div className="font-medium">{it.productName}</div>
+                    <div className="text-sm text-muted-foreground">Qty: {it.quantity}</div>
+                  </div>
+                  <div className="text-sm font-semibold">${((it.price || 0) * it.quantity).toFixed(2)}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 flex justify-between items-center">
+              <div className="text-sm font-medium">Total: ${view!.total.toFixed(2)}</div>
+              <div className="flex gap-2">
+                <button onClick={() => { markPaid(view!.id); setView(null); }} className="px-3 py-1 bg-green-600 text-white rounded">Mark paid</button>
+                <button onClick={() => setView(null)} className="px-3 py-1 bg-muted rounded">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setDeleteOpen(false)} />
+          <div className="relative z-60 w-full max-w-md bg-white rounded shadow-lg p-6">
+            <h3 className="text-lg font-semibold">Confirm deletion</h3>
+            <p className="text-sm text-gray-600 mt-2">Type <strong className="font-medium">{deleteTarget?.id}</strong> below to confirm deletion. This action cannot be undone.</p>
+            <input className="w-full mt-4 p-2 border rounded" value={deleteConfirmInput} onChange={(e) => setDeleteConfirmInput(e.target.value)} placeholder="Type checkout id to confirm" />
+            <div className="mt-4 flex justify-end gap-2">
+              <button onClick={() => setDeleteOpen(false)} className="px-3 py-1 bg-muted rounded">Cancel</button>
+              <button disabled={deleteTarget ? deleteConfirmInput.trim().toLowerCase() !== deleteTarget.id.trim().toLowerCase() : true} onClick={handleConfirmDelete} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
