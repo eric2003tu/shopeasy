@@ -31,6 +31,19 @@ export interface SampleRefund {
   createdAt: string;
 }
 
+export interface SamplePayment {
+  id: string;
+  orderId: string;
+  transactionId: string;
+  userId: string;
+  userName: string;
+  gateway: 'Stripe' | 'PayPal' | 'M-Pesa' | 'Manual';
+  amount: number;
+  status: 'completed' | 'pending' | 'failed' | 'refunded';
+  items?: Array<{ productId?: string; productName?: string; quantity: number; price?: number }>;
+  createdAt: string;
+}
+
 export interface SampleComment {
   id: string;
   productId: string;
@@ -105,4 +118,13 @@ export const sampleComments: SampleComment[] = [
   { id: 'c6', productId: 'p7', productName: 'Classic Sneakers', userId: 'u3', userName: 'Clara Nshimiyimana', rating: 4, comment: 'Comfortable and clean design.', status: 'published', createdAt: '2025-09-10' },
   { id: 'c7', productId: 'p8', productName: 'Evening Clutch', userId: 'u6', userName: 'Frank Ntege', rating: 5, comment: 'Perfect for nights out.', status: 'published', createdAt: '2025-10-03' },
   { id: 'c8', productId: 'p10', productName: 'Comfort Running Shoes', userId: 'u7', userName: 'Grace Karungi', rating: 4, comment: 'Good cushioning, light weight.', status: 'pending', createdAt: '2025-10-07' },
+];
+
+export const samplePayments: SamplePayment[] = [
+  { id: 'pay1', orderId: 'o1001', transactionId: 'txn_1A2B3C', userId: 'u3', userName: 'Clara Nshimiyimana', gateway: 'Stripe', amount: 249.99, status: 'completed', createdAt: '2025-09-20', items: [ { productId: 'p3', productName: 'Smart Watch Pro', quantity: 1, price: 249.99 } ] },
+  { id: 'pay2', orderId: 'o1002', transactionId: 'txn_4D5E6F', userId: 'u5', userName: 'Eve Mukasa', gateway: 'PayPal', amount: 59.99, status: 'completed', createdAt: '2025-08-18', items: [ { productId: 'p5', productName: 'Everyday Tote Bag', quantity: 1, price: 59.99 } ] },
+  { id: 'pay3', orderId: 'o1003', transactionId: 'txn_7G8H9I', userId: 'u2', userName: 'Bob Mwangi', gateway: 'M-Pesa', amount: 179.98, status: 'failed', createdAt: '2025-07-30', items: [ { productId: 'p1', productName: 'Premium Running Shoes', quantity: 2, price: 89.99 } ] },
+  { id: 'pay4', orderId: 'o1004', transactionId: 'txn_0J1K2L', userId: 'u6', userName: 'Frank Ntege', gateway: 'Stripe', amount: 179.99, status: 'pending', createdAt: '2025-10-01', items: [ { productId: 'p9', productName: 'Sportwatch X', quantity: 1, price: 179.99 } ] },
+  { id: 'pay5', orderId: 'o1005', transactionId: 'txn_3M4N5O', userId: 'u7', userName: 'Grace Karungi', gateway: 'Manual', amount: 459.98, status: 'refunded', createdAt: '2025-10-05', items: [ { productId: 'p11', productName: 'Leather Shoulder Bag', quantity: 2, price: 229.99 } ] },
+  { id: 'pay6', orderId: 'o1006', transactionId: 'txn_6P7Q8R', userId: 'u1', userName: 'Alice Johnson', gateway: 'Stripe', amount: 95.00, status: 'completed', createdAt: '2025-10-08', items: [ { productId: 'p10', productName: 'Comfort Running Shoes', quantity: 1, price: 95.00 } ] },
 ];
