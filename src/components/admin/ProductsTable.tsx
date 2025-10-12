@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { sampleProducts, SampleProduct } from '@/lib/sampleData';
 import ProductForm from './ProductForm';
@@ -35,6 +35,17 @@ export default function ProductsTable() {
   const [deleteTarget, setDeleteTarget] = useState<SampleProduct | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
+  // filtering & pagination
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>(''); // active | funded | completed
+  const [priceMin, setPriceMin] = useState<string>('');
+  const [priceMax, setPriceMax] = useState<string>('');
+  const [stockMin, setStockMin] = useState<string>('');
+  const [stockMax, setStockMax] = useState<string>('');
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
 
   useEffect(() => {
     try {
@@ -43,6 +54,38 @@ export default function ProductsTable() {
       // ignore
     }
   }, [products]);
+
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => p.category && set.add(p.category));
+    return Array.from(set).sort();
+  }, [products]);
+
+  const filtered = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return products.filter((p) => {
+      if (term) {
+        const inText = (p.name + ' ' + (p.description || '')).toLowerCase();
+        if (!inText.includes(term)) return false;
+      }
+      if (categoryFilter && p.category !== categoryFilter) return false;
+      if (statusFilter) {
+        if (statusFilter === 'active' && (p.funded || p.completed)) return false;
+        if (statusFilter === 'funded' && !p.funded) return false;
+        if (statusFilter === 'completed' && !p.completed) return false;
+      }
+      if (priceMin && Number(priceMin) > p.price) return false;
+      if (priceMax && Number(priceMax) < p.price) return false;
+      if (stockMin && Number(stockMin) > (p.stock || 0)) return false;
+      if (stockMax && Number(stockMax) < (p.stock || 0)) return false;
+      return true;
+    });
+  }, [products, searchTerm, categoryFilter, statusFilter, priceMin, priceMax, stockMin, stockMax]);
+
+  const total = filtered.length;
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleSave = (p: Partial<SampleProduct>) => {
     if (editing) {
@@ -94,8 +137,20 @@ export default function ProductsTable() {
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
-        <div />
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder="Search products" className="px-3 py-2 border rounded w-64" />
+          <select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
+            <option value="">All categories</option>
+            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
+            <option value="">All status</option>
+            <option value="active">Active</option>
+            <option value="funded">Funded</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
             <Dialog.Root open={sheetOpen} onOpenChange={setSheetOpen}>
               <Dialog.Trigger asChild>
                 <button className="px-3 py-1 bg-[#634bc1] text-white rounded hover:opacity-95 text-sm">Add product</button>
@@ -133,6 +188,25 @@ export default function ProductsTable() {
       </div>
 
       <div className="overflow-x-auto">
+        <div className="flex items-center justify-between px-2 py-3">
+          <div className="text-sm text-gray-600">Showing <strong>{(currentPage - 1) * pageSize + 1}</strong> - <strong>{Math.min(currentPage * pageSize, total)}</strong> of <strong>{total}</strong></div>
+          <div className="flex items-center gap-2">
+            <div>
+              <label className="text-xs">Page size</label>
+              <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="ml-2 p-1 border rounded">
+                <option value={5}>5</option>
+                <option value={8}>8</option>
+                <option value={12}>12</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+            <div className="inline-flex items-center gap-1">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">Prev</button>
+              <span className="px-2 text-sm">{currentPage} / {pageCount}</span>
+              <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">Next</button>
+            </div>
+          </div>
+        </div>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -145,7 +219,7 @@ export default function ProductsTable() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((p) => (
+            {paged.map((p) => (
               <tr key={p.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap flex items-center gap-4">
                   <div className="h-12 w-12 relative rounded overflow-hidden bg-gray-100">

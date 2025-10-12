@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { sampleUsers, SampleUser, organizations } from '@/lib/sampleData';
 import * as Dialog from '@radix-ui/react-dialog';
 
@@ -84,12 +84,37 @@ export default function UsersTable() {
   const [deleteTarget, setDeleteTarget] = useState<SampleUser | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
+  // filters & pagination
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string>('');
+  const [orgFilter, setOrgFilter] = useState<string>('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
 
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
     } catch (e) {}
   }, [users]);
+
+  const orgs = useMemo(() => Array.from(new Set(users.map((u) => u.organisation || ''))).filter(Boolean), [users]);
+
+  const filtered = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return users.filter((u) => {
+      if (term) {
+        if (!(`${u.name} ${u.email}`.toLowerCase().includes(term))) return false;
+      }
+      if (roleFilter && u.role !== roleFilter) return false;
+      if (orgFilter && u.organisation !== orgFilter) return false;
+      return true;
+    });
+  }, [users, searchTerm, roleFilter, orgFilter]);
+
+  const total = filtered.length;
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleSave = (u: SampleUser) => {
     if (editing) {
@@ -128,7 +153,19 @@ export default function UsersTable() {
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
-        <div />
+        <div className="flex items-center gap-3">
+          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder="Search users" className="px-3 py-2 border rounded w-64" />
+          <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
+            <option value="">All roles</option>
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+            <option value="user">User</option>
+          </select>
+          <select value={orgFilter} onChange={(e) => { setOrgFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
+            <option value="">All organisations</option>
+            {orgs.map((o) => <option key={o} value={o}>{o}</option>)}
+          </select>
+        </div>
         <div className="flex items-center gap-2">
           <Dialog.Root open={sheetOpen} onOpenChange={setSheetOpen}>
             <Dialog.Trigger asChild>
@@ -153,6 +190,25 @@ export default function UsersTable() {
       </div>
 
       <div className="overflow-x-auto">
+        <div className="flex items-center justify-between px-2 py-3">
+          <div className="text-sm text-gray-600">Showing <strong>{(currentPage - 1) * pageSize + 1}</strong> - <strong>{Math.min(currentPage * pageSize, total)}</strong> of <strong>{total}</strong></div>
+          <div className="flex items-center gap-2">
+            <div>
+              <label className="text-xs">Page size</label>
+              <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="ml-2 p-1 border rounded">
+                <option value={5}>5</option>
+                <option value={8}>8</option>
+                <option value={12}>12</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+            <div className="inline-flex items-center gap-1">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">Prev</button>
+              <span className="px-2 text-sm">{currentPage} / {pageCount}</span>
+              <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">Next</button>
+            </div>
+          </div>
+        </div>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -164,7 +220,7 @@ export default function UsersTable() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((u) => (
+            {paged.map((u) => (
               <tr key={u.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{u.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{u.email}</td>
