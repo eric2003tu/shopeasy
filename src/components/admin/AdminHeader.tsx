@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 export default function AdminHeader() {
   const { t } = useI18n();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen] = useState(false);
 
   const user = {
     name: 'Admin User',

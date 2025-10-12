@@ -192,8 +192,8 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
           </div>
         </header>
 
-        {/* Sidebar - Fixed colors for better readability */}
-        <Sidebar className="shadow-lg bg-white border-r border-gray-200 relative mt-16"> {/* Added mt-16 for header space */}
+  {/* Sidebar - fixed on the left, full height between header and footer */}
+  <Sidebar className="shadow-lg bg-white border-r border-gray-200 fixed left-0 top-16 bottom-0 w-64 overflow-y-auto z-40"> {/* fixed under header */}
           <SidebarHeader className="p-4 pt-6 min-h-40 relative overflow-hidden bg-gradient-to-r from-[#332e47] to-[#1d163c]">
             {/* decorative blobs matching home hero */}
             <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-gradient-to-r from-[#332e47] to-[#1d163c] opacity-10 pointer-events-none"></div>
@@ -280,7 +280,7 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
         </Sidebar>
 
         {/* Main Content Area */}
-        <SidebarInset className="flex-1 flex flex-col min-w-0 mt-16"> {/* Added mt-16 for header space */}
+  <SidebarInset className="flex-1 flex flex-col min-w-0 ml-2 mt-10"> {/* shifted right to accommodate fixed sidebar */}
           {/* Main content */}
           <main className="flex-1 p-8 bg-gray-50 overflow-auto">
             {children}
