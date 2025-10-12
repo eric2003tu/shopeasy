@@ -18,6 +18,31 @@ export interface SampleUser {
   organisation?: string;
 }
 
+export interface SampleRefund {
+  id: string;
+  orderId: string;
+  productId?: string;
+  productName?: string;
+  userId: string;
+  userName: string;
+  amount: number;
+  reason?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+}
+
+export interface SampleComment {
+  id: string;
+  productId: string;
+  productName?: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  status: 'published' | 'pending' | 'hidden';
+  createdAt: string;
+}
+
 export const organizations = [
   'Western Province Org 1',
   'Western Province Org 2',
@@ -61,3 +86,23 @@ const data = {
 };
 
 export default data;
+
+// Additional sample sets for admin pages
+export const sampleRefunds: SampleRefund[] = [
+  { id: 'r1', orderId: 'o1001', productId: 'p3', productName: 'Smart Watch Pro', userId: 'u3', userName: 'Clara Nshimiyimana', amount: 249.99, reason: 'Defective screen', status: 'pending', createdAt: '2025-09-20' },
+  { id: 'r2', orderId: 'o1002', productId: 'p5', productName: 'Everyday Tote Bag', userId: 'u5', userName: 'Eve Mukasa', amount: 59.99, reason: 'Wrong colour', status: 'approved', createdAt: '2025-08-18' },
+  { id: 'r3', orderId: 'o1003', productId: 'p1', productName: 'Premium Running Shoes', userId: 'u2', userName: 'Bob Mwangi', amount: 89.99, reason: 'Too small', status: 'rejected', createdAt: '2025-07-30' },
+  { id: 'r4', orderId: 'o1004', productId: 'p9', productName: 'Sportwatch X', userId: 'u6', userName: 'Frank Ntege', amount: 179.99, reason: 'Battery issue', status: 'pending', createdAt: '2025-10-01' },
+  { id: 'r5', orderId: 'o1005', productId: 'p11', productName: 'Leather Shoulder Bag', userId: 'u7', userName: 'Grace Karungi', amount: 229.99, reason: 'Arrived late', status: 'pending', createdAt: '2025-10-05' },
+];
+
+export const sampleComments: SampleComment[] = [
+  { id: 'c1', productId: 'p1', productName: 'Premium Running Shoes', userId: 'u1', userName: 'Alice Johnson', rating: 5, comment: 'Excellent shoes, very comfortable for long runs.', status: 'published', createdAt: '2025-06-12' },
+  { id: 'c2', productId: 'p2', productName: 'Designer Handbag', userId: 'u4', userName: 'David Uwimana', rating: 4, comment: 'Stylish and practical.', status: 'published', createdAt: '2025-07-01' },
+  { id: 'c3', productId: 'p3', productName: 'Smart Watch Pro', userId: 'u8', userName: 'Harrison Kamanzi', rating: 3, comment: 'Good features but battery could be better.', status: 'pending', createdAt: '2025-09-02' },
+  { id: 'c4', productId: 'p4', productName: 'Trail Runner Shoes', userId: 'u2', userName: 'Bob Mwangi', rating: 5, comment: 'Great traction on trails.', status: 'published', createdAt: '2025-08-20' },
+  { id: 'c5', productId: 'p6', productName: 'Fitness Smartband', userId: 'u5', userName: 'Eve Mukasa', rating: 2, comment: 'Unreliable heart-rate readings.', status: 'hidden', createdAt: '2025-07-15' },
+  { id: 'c6', productId: 'p7', productName: 'Classic Sneakers', userId: 'u3', userName: 'Clara Nshimiyimana', rating: 4, comment: 'Comfortable and clean design.', status: 'published', createdAt: '2025-09-10' },
+  { id: 'c7', productId: 'p8', productName: 'Evening Clutch', userId: 'u6', userName: 'Frank Ntege', rating: 5, comment: 'Perfect for nights out.', status: 'published', createdAt: '2025-10-03' },
+  { id: 'c8', productId: 'p10', productName: 'Comfort Running Shoes', userId: 'u7', userName: 'Grace Karungi', rating: 4, comment: 'Good cushioning, light weight.', status: 'pending', createdAt: '2025-10-07' },
+];
