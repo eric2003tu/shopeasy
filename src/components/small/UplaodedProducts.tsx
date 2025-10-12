@@ -6,7 +6,7 @@ import { OneProduct } from './OneProduct';
 import { useI18n } from '@/i18n/I18nProvider';
 
 
-interface Product {
+export interface Product {
   _id: string;
   name: string;
   description: string;
@@ -81,7 +81,7 @@ const UploadedProducts: React.FC = () => {
     setFilteredProducts(defaultProducts);
     try {
       // expose for admin seeding in the browser dev environment
-      (window as any).__SHOPEASY_DEFAULT_PRODUCTS = defaultProducts;
+      window.__SHOPEASY_DEFAULT_PRODUCTS = defaultProducts;
     } catch {
       // ignore
     }

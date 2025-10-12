@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import ProductForm from './ProductForm';
 import ConfirmDialog from './ConfirmDialog';
+import Image from 'next/image';
 
 interface Product {
-  _id: string;
+  _id?: string;
   name: string;
   description?: string;
   price: number;
@@ -37,12 +38,10 @@ const ProductsAdmin: React.FC = () => {
   const [confirm, setConfirm] = useState<{ open: boolean; id?: string; message?: string }>({ open: false });
 
   useEffect(() => {
-    // initialize with existing store or fallback to app products
     const stored = loadFromStorage();
     if (stored.length) setProducts(stored);
     else {
-      // try to reuse products rendered in UplaodedProducts
-      const defaultProducts = (window as any).__SHOPEASY_DEFAULT_PRODUCTS as Product[] | undefined;
+      const defaultProducts = window.__SHOPEASY_DEFAULT_PRODUCTS as Product[] | undefined;
       if (defaultProducts && defaultProducts.length) {
         setProducts(defaultProducts);
         saveToStorage(defaultProducts);
@@ -64,7 +63,8 @@ const ProductsAdmin: React.FC = () => {
     setShowForm(true);
   };
 
-  const onDelete = (id: string) => {
+  const onDelete = (id?: string) => {
+    if (!id) return;
     setConfirm({ open: true, id, message: 'Are you sure you want to delete this product?' });
   };
 
@@ -75,7 +75,7 @@ const ProductsAdmin: React.FC = () => {
   };
 
   const saveProduct = (product: Product) => {
-    if (product._id) {
+    if (product._id && product._id !== '') {
       setProducts(prev => prev.map(p => p._id === product._id ? product : p));
     } else {
       product._id = Date.now().toString();
@@ -89,8 +89,8 @@ const ProductsAdmin: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Products</h2>
         <div className="flex items-center gap-2">
-          <button onClick={onAdd} className="px-3 py-1 bg-green-600 text-white rounded">Add product</button>
-          <button onClick={() => { localStorage.removeItem(STORAGE_KEY); setProducts([]); }} className="px-3 py-1 bg-red-100 text-red-700 rounded">Clear</button>
+          <button onClick={onAdd} className="px-3 py-1 bg-primary text-primary-foreground rounded">Add product</button>
+          <button onClick={() => { localStorage.removeItem(STORAGE_KEY); setProducts([]); }} className="px-3 py-1 bg-destructive/10 text-destructive rounded">Clear</button>
         </div>
       </div>
 
@@ -98,17 +98,25 @@ const ProductsAdmin: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {products.map(p => (
-          <div key={p._id} className="bg-white rounded shadow p-4">
-            <div className="h-40 mb-3 bg-gray-100 flex items-center justify-center">
-              <img src={(p.images && p.images[0]) || '/placeholder-product.jpg'} alt={p.name} className="max-h-full object-contain" />
+          <div key={p._id} className="bg-card rounded shadow p-4">
+            <div className="h-40 mb-3 bg-muted/60 flex items-center justify-center">
+              <div className="relative h-20 w-20">
+                <Image
+                  src={(p.images && p.images[0]) || '/placeholder-product.jpg'}
+                  alt={p.name}
+                  fill
+                  className="object-contain"
+                  sizes="80px"
+                />
+              </div>
             </div>
             <h3 className="font-semibold text-lg">{p.name}</h3>
-            <p className="text-sm text-gray-600 mb-2">{p.description}</p>
+            <p className="text-sm text-muted-foreground mb-2">{p.description}</p>
             <div className="flex items-center justify-between">
-              <div className="text-indigo-600 font-bold">${p.price}</div>
+              <div className="text-primary font-bold">${p.price}</div>
               <div className="flex gap-2">
-                <button onClick={() => onEdit(p)} className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded">Edit</button>
-                <button onClick={() => onDelete(p._id)} className="px-2 py-1 bg-red-100 text-red-700 rounded">Delete</button>
+                <button onClick={() => onEdit(p)} className="px-2 py-1 bg-accent/10 text-accent rounded">Edit</button>
+                <button onClick={() => onDelete(p._id)} className="px-2 py-1 bg-destructive/10 text-destructive rounded">Delete</button>
               </div>
             </div>
           </div>

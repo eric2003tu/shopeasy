@@ -1,32 +1,43 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 
+interface Product {
+  _id?: string;
+  name: string;
+  description?: string;
+  price: number;
+  images: string[];
+  category?: string;
+  stock?: number;
+  featured?: boolean;
+}
+
 interface Props {
-  initial?: any;
-  onSave: (p: any) => void;
+  initial?: Partial<Product>;
+  onSave: (p: Product) => void;
   onCancel: () => void;
 }
 
 const ProductForm: React.FC<Props> = ({ initial, onSave, onCancel }) => {
-  const [product, setProduct] = useState(() => ({
+  const [product, setProduct] = useState<Product>(() => ({
     _id: initial?._id || '',
     name: initial?.name || '',
     description: initial?.description || '',
-    price: initial?.price || 0,
+    price: initial?.price ?? 0,
     images: initial?.images || ['/placeholder-product.jpg'],
     category: initial?.category || '',
-    stock: initial?.stock || 0,
-    featured: initial?.featured || false
-  }));
+    stock: initial?.stock ?? 0,
+    featured: initial?.featured ?? false,
+  } as Product));
 
   useEffect(() => {
-    setProduct(prev => ({ ...prev, ...initial }));
+    setProduct(prev => ({ ...prev, ...(initial || {}) } as Product));
   }, [initial]);
 
-  const change = (k: string, v: any) => setProduct(prev => ({ ...prev, [k]: v }));
+  const change = <K extends keyof Product>(k: K, v: Product[K]) => setProduct(prev => ({ ...prev, [k]: v } as Product));
 
   return (
-    <div className="bg-gray-50 p-4 rounded mb-4">
+  <div className="bg-card p-4 rounded mb-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <label className="text-sm mb-1 block">Name</label>
@@ -42,7 +53,7 @@ const ProductForm: React.FC<Props> = ({ initial, onSave, onCancel }) => {
         </div>
         <div>
           <label className="text-sm mb-1 block">Image URL</label>
-          <input value={product.images[0]} onChange={(e) => change('images', [e.target.value])} className="w-full p-2 border rounded" />
+          <input value={product.images[0]} onChange={(e) => change('images', [e.currentTarget.value])} className="w-full p-2 border rounded" />
         </div>
         <div>
           <label className="text-sm mb-1 block">Category</label>
@@ -59,8 +70,8 @@ const ProductForm: React.FC<Props> = ({ initial, onSave, onCancel }) => {
       </div>
 
       <div className="mt-3 flex gap-2">
-        <button onClick={() => onSave(product)} className="px-3 py-1 bg-indigo-600 text-white rounded">Save</button>
-        <button onClick={onCancel} className="px-3 py-1 bg-gray-100 rounded">Cancel</button>
+        <button onClick={() => onSave(product)} className="px-3 py-1 bg-primary text-primary-foreground rounded">Save</button>
+        <button onClick={onCancel} className="px-3 py-1 bg-muted rounded">Cancel</button>
       </div>
     </div>
   );

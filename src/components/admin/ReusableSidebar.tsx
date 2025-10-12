@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Globe, Moon, Sun, Settings, Bell } from 'lucide-react';
+import { Moon, Sun, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface SidebarSubItem {
@@ -18,7 +18,7 @@ export interface SidebarSubItem {
 export interface SidebarItem {
   title: string;
   url: string;
-  icon?: React.ComponentType<any>;
+  icon?: React.ElementType;
   isActive?: boolean;
   badge?: string;
   subItems?: SidebarSubItem[];
@@ -64,7 +64,7 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
         document.documentElement.classList.toggle('dark', saved === 'dark');
         return;
       }
-    } catch (e) {
+    } catch {
       // ignore
     }
     const prefersDark = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
@@ -76,7 +76,7 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
     setTheme(next);
     try {
       localStorage.setItem('theme', next);
-    } catch (e) {
+    } catch {
       // ignore
     }
     document.documentElement.classList.toggle('dark', next === 'dark');
@@ -96,26 +96,74 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
   return (
     <SidebarProvider className="w-full">
       <div className="flex w-full min-h-screen">
-        {/* Sidebar */}
-        <Sidebar className="shadow-lg bg-white flex-shrink-0">
-          <SidebarHeader className="p-4 pt-6 min-h-60 bg-white">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <Image src="/logo.jpg" alt="logo" width={80} height={80} className="rounded-full object-cover" />
-              <div className="text-sm font-semibold">{config.user.systemName || 'ShopEasy'}</div>
+        {/* Fixed Header at the top - always full width */}
+        <header className="fixed top-0 left-0 right-0 h-16 flex items-center gap-4 border-b px-6 z-50 bg-white text-gray-800 shadow-sm">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="text-gray-600 hover:bg-[#634bc1] hover:text-white transition-colors" />
+            <div className="ml-2 font-semibold text-sm">
+              {config.user.systemName || 'Dashboard'}
+            </div>
+          </div>
+
+          <div className="flex-1" />
+
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              aria-label="Notifications"
+              className="text-gray-600 hover:bg-[#634bc1] hover:text-white transition-colors"
+            >
+              <Bell className="h-4 w-4" />
+            </Button>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-[#634bc1] border border-[#ffdc89]">
+                {config.user.avatar ? (
+                  <Image src={config.user.avatar} alt={config.user.name} width={32} height={32} />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-[#634bc1] text-white text-xs font-bold">
+                    {config.user.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <div className="text-sm text-right">
+                <div className="font-medium text-gray-800">{config.user.name}</div>
+                <div className="text-xs text-gray-500">{config.user.role}</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Sidebar - Fixed colors for better readability */}
+        <Sidebar className="shadow-lg bg-white border-r border-gray-200 relative mt-16"> {/* Added mt-16 for header space */}
+          <SidebarHeader className="p-4 pt-6 min-h-40 relative overflow-hidden bg-gradient-to-r from-[#332e47] to-[#1d163c]">
+            {/* decorative blobs matching home hero */}
+            <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-gradient-to-r from-[#332e47] to-[#1d163c] opacity-10 pointer-events-none"></div>
+            <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-[#634bc1] opacity-10 pointer-events-none"></div>
+            <div className="flex flex-col items-center gap-3 text-center relative z-10">
+              <Image src="/logo.jpg" alt="logo" width={60} height={60} className="rounded-full object-cover border-2 border-[#ffdc89]" />
+              <div className="text-sm font-semibold text-white">{config.user.systemName || 'ShopEasy'}</div>
+              <div className="text-xs text-[#ffdc89]">Admin Panel</div>
             </div>
           </SidebarHeader>
 
           <SidebarContent className="overflow-y-auto">
             {config.navigationGroups.map((group, gi) => (
               <SidebarGroup key={gi}>
-                <SidebarGroupLabel>{t ? t(group.label) : group.label}</SidebarGroupLabel>
+                <SidebarGroupLabel className="text-gray-500 font-medium text-xs uppercase tracking-wide px-4">
+                  {t ? t(group.label) : group.label}
+                </SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {group.items.map((item, ii) => (
                       <SidebarMenuItem key={ii}>
                         {item.subItems && item.subItems.length > 0 ? (
                           <div>
-                            <SidebarMenuButton className="w-full" onClick={() => toggleGroup(gi)} isActive={item.isActive || currentPath === item.url}>
+                            <SidebarMenuButton 
+                              className="w-full text-gray-700 hover:bg-[#634bc1] hover:text-white transition-colors"
+                              onClick={() => toggleGroup(gi)} 
+                              isActive={item.isActive || currentPath === item.url}
+                            >
                               {item.icon && React.createElement(item.icon, { className: 'h-4 w-4' })}
                               <span>{t ? t(item.title) : item.title}</span>
                             </SidebarMenuButton>
@@ -123,7 +171,11 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
                               <SidebarMenuSub>
                                 {item.subItems!.map((s, si) => (
                                   <SidebarMenuSubItem key={si}>
-                                    <SidebarMenuSubButton asChild isActive={s.isActive || currentPath === s.url}>
+                                    <SidebarMenuSubButton 
+                                      asChild 
+                                      isActive={s.isActive || currentPath === s.url}
+                                      className="text-gray-600 hover:text-[#634bc1] hover:bg-gray-100 transition-colors"
+                                    >
                                       <Link href={s.url}>{t ? t(s.title) : s.title}</Link>
                                     </SidebarMenuSubButton>
                                   </SidebarMenuSubItem>
@@ -132,7 +184,11 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
                             )}
                           </div>
                         ) : (
-                          <SidebarMenuButton asChild isActive={item.isActive || currentPath === item.url}>
+                          <SidebarMenuButton 
+                            asChild 
+                            isActive={item.isActive || currentPath === item.url}
+                            className="text-gray-700 hover:bg-[#634bc1] hover:text-white transition-colors"
+                          >
                             <Link href={item.url} className="flex items-center gap-2">
                               {item.icon && React.createElement(item.icon, { className: 'h-4 w-4' })}
                               <span>{t ? t(item.title) : item.title}</span>
@@ -147,22 +203,27 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
             ))}
           </SidebarContent>
 
-          <SidebarFooter className="p-4">
+          <SidebarFooter className="p-4 border-t border-gray-200">
             <div className="flex items-center justify-between">
-              <Button variant="ghost" size="icon" onClick={toggleTheme}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleTheme}
+                className="text-gray-600 hover:bg-[#634bc1] hover:text-white transition-colors"
+              >
                 {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
               </Button>
 
               <div className="relative">
                 <select
-                  className={cn('bg-transparent text-sm p-1 rounded')}
+                  className={cn('bg-white text-sm p-1 rounded text-gray-700 border border-gray-300 focus:border-[#634bc1] focus:outline-none transition-colors')}
                   onChange={(e) => {
                     document.cookie = `locale=${e.target.value}; path=/`;
                     window.location.reload();
                   }}
                 >
                   {languages.map((l) => (
-                    <option key={l.code} value={l.code}>
+                    <option key={l.code} value={l.code} className="bg-white text-gray-700">
                       {l.label}
                     </option>
                   ))}
@@ -174,40 +235,13 @@ export default function ReusableSidebar({ config, currentPath = '/', children }:
           <SidebarRail />
         </Sidebar>
 
-        {/* Main Content Area - Full width from sidebar to right edge */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Full-width header that spans from sidebar edge to page right */}
-          <header className="flex h-16 items-center gap-4 border-b px-6 bg-white w-full sticky top-0 z-50">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger />
-              <div className="ml-2 font-semibold text-sm">{config.user.systemName || 'Dashboard'}</div>
-            </div>
-
-            <div className="flex-1" />
-
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" aria-label="Notifications">
-                <Bell className="h-4 w-4" />
-              </Button>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100">
-                  {config.user.avatar ? (
-                    <Image src={config.user.avatar} alt={config.user.name} width={32} height={32} />
-                  ) : null}
-                </div>
-                <div className="text-sm text-right">
-                  <div className="font-medium text-indigo-600">{config.user.name}</div>
-                  <div className="text-xs text-muted-foreground">{config.user.role}</div>
-                </div>
-              </div>
-            </div>
-          </header>
-
+        {/* Main Content Area */}
+        <SidebarInset className="flex-1 flex flex-col min-w-0 mt-16"> {/* Added mt-16 for header space */}
           {/* Main content */}
-          <main className="flex-1 p-8 bg-background overflow-auto">
+          <main className="flex-1 p-8 bg-gray-50 overflow-auto">
             {children}
           </main>
-        </div>
+        </SidebarInset>
       </div>
     </SidebarProvider>
   );
