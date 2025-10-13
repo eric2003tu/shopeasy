@@ -250,6 +250,12 @@
     "settings": "Paramètres",
     "settingsSub": "Paramètres de l'application et apparence"
     ,
+    "nav": {
+      "main": "Principal",
+      "carts": "Paniers",
+      "refunds": "Remboursements",
+      "comments": "Commentaires"
+    },
     "settingsPage": {
       "fields": {
         "theme": "Thème",

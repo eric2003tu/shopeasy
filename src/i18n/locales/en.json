@@ -298,6 +298,12 @@
       "markPaid": "Mark paid",
       "delete": "Delete"
     },
+    "nav": {
+      "main": "Main",
+      "carts": "Carts",
+      "refunds": "Refunds",
+      "comments": "Comments"
+    },
     "placeholders": {
       "searchProducts": "Search products",
       "searchUsers": "Search users",

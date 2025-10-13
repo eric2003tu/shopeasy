@@ -251,6 +251,12 @@
     "settings": "Ibyihariye",
     "settingsSub": "Imiterere y'uburyo n'ibigaragara"
     ,
+    "nav": {
+      "main": "Ibikuru",
+      "carts": "Imifuka",
+      "refunds": "Gusubizwa",
+      "comments": "Ibitekerezo"
+    },
     "settingsPage": {
       "fields": {
         "theme": "Insanganyamatsiko",

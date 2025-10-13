@@ -273,6 +273,12 @@
     "settings": "Ajustes",
     "settingsSub": "Ajustes de la aplicación y apariencia"
     ,
+    "nav": {
+      "main": "Principal",
+      "carts": "Carritos",
+      "refunds": "Reembolsos",
+      "comments": "Comentarios"
+    },
     "settingsPage": {
       "fields": {
         "theme": "Tema",
