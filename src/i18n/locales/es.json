@@ -321,6 +321,7 @@
       "convertToCheckout": "Convertir a checkout",
       "markPaid": "Marcar como pagado",
       "delete": "Eliminar"
+      ,"logout": "Cerrar sesión"
     },
     "placeholders": {
       "searchProducts": "Buscar productos",

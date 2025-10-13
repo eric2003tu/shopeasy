@@ -297,6 +297,7 @@
       "convertToCheckout": "Convert to checkout",
       "markPaid": "Mark paid",
       "delete": "Delete"
+      ,"logout": "Log out"
     },
     "nav": {
       "main": "Main",

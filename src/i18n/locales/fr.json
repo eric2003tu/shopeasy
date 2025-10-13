@@ -299,6 +299,7 @@
       "convertToCheckout": "Convertir en commande",
       "markPaid": "Marquer comme payé",
       "delete": "Supprimer"
+      ,"logout": "Se déconnecter"
     },
     "placeholders": {
       "searchProducts": "Rechercher des produits",

@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, Bell, Globe } from 'lucide-react';
+import { Moon, Sun, Bell, Globe, LogOut, LogOutIcon } from 'lucide-react';
 
 export interface SidebarSubItem {
   title: string;
@@ -122,13 +122,13 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
         </Button>
 
         {open && (
-          <div className="absolute right-0 mt-2 w-40 bg-[#1f1730] border border-white/10 rounded-lg shadow-lg z-50 backdrop-blur-sm">
+          <div className="absolute right-0 mt-2 w-40 bg-[#634bc1] border border-white/10 rounded-lg shadow-lg z-50 backdrop-blur-sm">
             <div className="py-1">
               {languages.map((l) => (
                 <button
                   key={l.code}
-                  className={`w-full text-left px-4 py-2 text-sm transition-colors hover:bg-accent/10 ${
-                    locale === l.code ? 'font-semibold text-primary bg-accent/10' : 'text-white/80'
+                  className={`w-full text-left px-4 py-2 text-sm transition-colors font-bold hover:bg-accent/10 ${
+                    locale === l.code ? 'font-semibold text-primary bg-accent/10' : 'text-white'
                   }`}
                   onClick={() => { setLocale(l.code as 'en' | 'fr' | 'es' | 'rw'); setOpen(false); }}
                 >
@@ -271,7 +271,7 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
           </SidebarContent>
 
           <SidebarFooter className="p-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-3">
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -280,8 +280,20 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
               >
                 {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
               </Button>
-
               <div />
+            </div>
+
+            {/* Visible full-width logout button pinned to footer */}
+            <div>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => { /* UI-only: no auth wired */ }}
+                className="w-full justify-center flex items-center gap-2 bg-[#634bc1] text-white hover:bg-[#5236a8] transition-colors"
+              >
+                <LogOutIcon className="h-4 w-4 text-gray-800" />
+                <span className="font-medium">{t ? t('admin.buttons.logout') : 'Logout'}</span>
+              </Button>
             </div>
           </SidebarFooter>
 
