@@ -41,6 +41,8 @@ export default function CartsTable() {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const currentPage = Math.min(page, pageCount);
   const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const to = Math.min(currentPage * pageSize, total);
 
   function convertToCheckout(cart: SampleCart) {
     // create a checkout object and persist to localStorage checkouts list
@@ -109,17 +111,17 @@ export default function CartsTable() {
           <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchCheckouts')} className="px-3 py-2 border rounded w-72" />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allStatus')}</option>
-            <option value="active">Active</option>
-            <option value="abandoned">Abandoned</option>
-            <option value="converted">Converted</option>
+            <option value="active">{t('admin.carts.status.active', { defaultValue: 'Active' })}</option>
+            <option value="abandoned">{t('admin.carts.status.abandoned', { defaultValue: 'Abandoned' })}</option>
+            <option value="converted">{t('admin.carts.status.converted', { defaultValue: 'Converted' })}</option>
           </select>
           <button onClick={resetSamples} className="px-3 py-2 bg-muted rounded text-sm">{t('admin.buttons.resetSampleCarts')}</button>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-sm text-gray-600">Showing <strong>{total === 0 ? 0 : (currentPage - 1) * pageSize + 1}</strong> - <strong>{Math.min(currentPage * pageSize, total)}</strong> of <strong>{total}</strong></div>
+          <div className="text-sm text-gray-600">{t('admin.pagination.showing', { from, to, total })}</div>
           <div>
-            <label className="text-xs">Page size</label>
+            <label className="text-xs">{t('admin.pagination.pageSize')}</label>
             <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="ml-2 p-1 border rounded">
               <option value={5}>5</option>
               <option value={8}>8</option>
@@ -128,9 +130,9 @@ export default function CartsTable() {
             </select>
           </div>
           <div className="inline-flex items-center gap-1">
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">Prev</button>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">{t('admin.pagination.prev')}</button>
             <span className="px-2 text-sm">{currentPage} / {pageCount}</span>
-            <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">Next</button>
+            <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">{t('admin.pagination.next')}</button>
           </div>
         </div>
       </div>
@@ -139,27 +141,27 @@ export default function CartsTable() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cart</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.carts.cart')}</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.carts.owner')}</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.carts.items')}</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.carts.total')}</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.carts.status')}</th>
+              <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">{t('admin.tables.carts.actions')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {paged.map((c) => (
               <tr key={c.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-sm font-medium">{c.id}</td>
-                <td className="px-4 py-3 text-sm">{c.userId || c.guestEmail || 'Guest'}</td>
+                <td className="px-4 py-3 text-sm">{c.userId || c.guestEmail || t('admin.guest', { defaultValue: 'Guest' })}</td>
                 <td className="px-4 py-3 text-sm">{c.items.length}</td>
                 <td className="px-4 py-3 text-sm font-semibold">${c.total.toFixed(2)}</td>
-                <td className="px-4 py-3 text-sm capitalize">{c.status}</td>
+                <td className="px-4 py-3 text-sm capitalize">{t(`admin.carts.status.${c.status}`, { defaultValue: c.status })}</td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex gap-2">
-                    <button onClick={() => setView(c)} className="px-3 py-1 bg-[#634bc1] text-white rounded text-sm">View</button>
-                    <button onClick={() => convertToCheckout(c)} className="px-3 py-1 bg-green-600 text-white rounded text-sm">Convert</button>
-                    <button onClick={() => openDelete(c.id)} className="px-3 py-1 border border-red-300 text-red-600 rounded text-sm">Delete</button>
+                    <button onClick={() => setView(c)} className="px-3 py-1 bg-[#634bc1] text-white rounded text-sm">{t('admin.buttons.view')}</button>
+                    <button onClick={() => convertToCheckout(c)} className="px-3 py-1 bg-green-600 text-white rounded text-sm">{t('admin.buttons.convertToCheckout')}</button>
+                    <button onClick={() => openDelete(c.id)} className="px-3 py-1 border border-red-300 text-red-600 rounded text-sm">{t('admin.buttons.delete')}</button>
                   </div>
                 </td>
               </tr>
@@ -174,8 +176,8 @@ export default function CartsTable() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black/50" onClick={() => setView(null)} />
           <div className="relative z-60 w-full max-w-2xl bg-card rounded shadow-lg p-6">
-            <h3 className="text-lg font-semibold mb-2">Cart {view!.id}</h3>
-            <div className="mb-4 text-sm text-muted-foreground">Owner: {view!.userId || view!.guestEmail || 'Guest'}</div>
+            <h3 className="text-lg font-semibold mb-2">{t('admin.tables.carts.cart')} {view!.id}</h3>
+            <div className="mb-4 text-sm text-muted-foreground">{t('admin.tables.carts.owner')}: {view!.userId || view!.guestEmail || t('admin.guest', { defaultValue: 'Guest' })}</div>
             <div className="divide-y">
               {view!.items.map((it, idx) => (
                 <div key={idx} className="py-2 flex justify-between">

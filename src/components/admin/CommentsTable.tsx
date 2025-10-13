@@ -28,6 +28,9 @@ export default function CommentsTable() {
   const currentPage = Math.min(page, pageCount);
   const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
+  const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const to = Math.min(currentPage * pageSize, total);
+
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
@@ -41,17 +44,17 @@ export default function CommentsTable() {
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <div className="text-sm text-gray-600">Showing <strong>{(currentPage - 1) * pageSize + 1}</strong> - <strong>{Math.min(currentPage * pageSize, total)}</strong> of <strong>{total}</strong></div>
+          <div className="text-sm text-gray-600">{t('admin.pagination.showing', { from, to, total })}</div>
           <div className="flex items-center gap-2">
-            <label className="text-xs">Page size</label>
+            <label className="text-xs">{t('admin.pagination.pageSize')}</label>
             <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="ml-2 p-1 border rounded">
               <option value={5}>5</option>
               <option value={8}>8</option>
               <option value={12}>12</option>
             </select>
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">Prev</button>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">{t('admin.pagination.prev')}</button>
             <span className="px-2 text-sm">{currentPage} / {pageCount}</span>
-            <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">Next</button>
+            <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">{t('admin.pagination.next')}</button>
           </div>
         </div>
       </div>
@@ -60,12 +63,12 @@ export default function CommentsTable() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comment</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.comments.product')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.comments.user')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.comments.rating')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.comments.comment')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.comments.status')}</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.comments.actions')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -121,23 +124,23 @@ function CommentViewButton({ comment }: { comment: SampleComment }) {
               </Dialog.Close>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <div className="text-xs text-gray-500">Product</div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="text-xs text-gray-500">{t('admin.comments.fields.product')}</div>
               <div className="font-medium">{comment.productName}</div>
 
-              <div className="text-xs text-gray-500">User</div>
+              <div className="text-xs text-gray-500">{t('admin.comments.fields.user')}</div>
               <div className="font-medium">{comment.userName}</div>
 
-              <div className="text-xs text-gray-500">Rating</div>
+              <div className="text-xs text-gray-500">{t('admin.comments.fields.rating')}</div>
               <div className="font-medium">{comment.rating} / 5</div>
 
-              <div className="text-xs text-gray-500">Created</div>
+              <div className="text-xs text-gray-500">{t('admin.comments.fields.created')}</div>
               <div className="font-medium">{comment.createdAt}</div>
 
-              <div className="text-xs text-gray-500">Status</div>
-              <div className="font-medium capitalize">{comment.status}</div>
+              <div className="text-xs text-gray-500">{t('admin.comments.fields.status')}</div>
+              <div className="font-medium capitalize">{t(`admin.comments.status.${comment.status}`)}</div>
 
-              <div className="text-xs text-gray-500">Comment</div>
+              <div className="text-xs text-gray-500">{t('admin.comments.fields.comment')}</div>
               <div className="font-medium col-span-2 break-words">{comment.comment}</div>
             </div>
 

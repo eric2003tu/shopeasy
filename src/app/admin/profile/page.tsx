@@ -49,8 +49,8 @@ export default function ProfilePage() {
   }, [profile.name]);
 
   function validate(p: Profile) {
-    if (!p.name.trim()) return 'Name is required';
-    if (!p.email.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) return 'Valid email required';
+    if (!p.name.trim()) return t('admin.profileInfo.errors.nameRequired') || 'Name is required';
+    if (!p.email.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) return t('admin.profileInfo.errors.emailRequired') || 'Valid email required';
     return null;
   }
 
@@ -69,7 +69,7 @@ export default function ProfilePage() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
-      setError('Failed to save');
+      setError(t('admin.profileInfo.errors.saveFailed') || 'Failed to save');
     } finally {
       setSaving(false);
     }
@@ -78,7 +78,7 @@ export default function ProfilePage() {
   function onReset() {
     try {
       localStorage.removeItem(STORAGE_KEY);
-      setProfile({ name: '', email: '', phone: '', role: 'Administrator', avatar: '/avatar.png', bio: '', updatedAt: '' });
+      setProfile({ name: '', email: '', phone: '', role: t('admin.roles.admin') || 'Administrator', avatar: '/avatar.png', bio: '', updatedAt: '' });
     } catch {}
   }
 
@@ -94,8 +94,8 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-600">{t('admin.profile')}</h1>
-        <p className="text-sm text-muted-foreground mt-1">{t('admin.profileSub') || 'Manage your account and profile details'}</p>
+  <h1 className="text-2xl font-semibold text-gray-600">{t('admin.profile')}</h1>
+  <p className="text-sm text-muted-foreground mt-1">{t('admin.profileSub') || 'Manage your account and profile details'}</p>
       </div>
 
       <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -114,21 +114,21 @@ export default function ProfilePage() {
               )}
             </div>
 
-            <div className="text-lg font-medium">{profile.name || 'Admin User'}</div>
-            <div className="text-sm text-muted-foreground">{profile.role || 'Administrator'}</div>
+            <div className="text-lg font-medium">{profile.name || (t('admin.profileInfo.defaultName') || 'Admin User')}</div>
+            <div className="text-sm text-muted-foreground">{profile.role || (t('admin.roles.admin') || 'Administrator')}</div>
 
             <div className="mt-4 w-full text-left text-sm">
-              <div className="text-muted-foreground">Email</div>
-              <div className="font-medium">{profile.email || 'not set'}</div>
+              <div className="text-muted-foreground">{t('admin.profileInfo.fields.email') || 'Email'}</div>
+              <div className="font-medium">{profile.email || (t('admin.profileInfo.notSet') || 'not set')}</div>
             </div>
 
             <div className="mt-3 w-full text-left text-sm">
-              <div className="text-muted-foreground">Phone</div>
-              <div className="font-medium">{profile.phone || 'not set'}</div>
+              <div className="text-muted-foreground">{t('admin.profileInfo.fields.phone') || 'Phone'}</div>
+              <div className="font-medium">{profile.phone || (t('admin.profileInfo.notSet') || 'not set')}</div>
             </div>
 
             <div className="mt-6 w-full">
-              <label className="block text-sm text-muted-foreground mb-1">Upload avatar</label>
+              <label className="block text-sm text-muted-foreground mb-1">{t('admin.profileInfo.uploadAvatar') || 'Upload avatar'}</label>
               <input type="file" accept="image/*" onChange={onFile} />
             </div>
           </div>
@@ -138,23 +138,23 @@ export default function ProfilePage() {
         <div className="col-span-2 bg-card p-6 rounded-lg shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm block mb-1">Name</label>
+              <label className="text-sm block mb-1">{t('admin.profileInfo.fields.name') || 'Name'}</label>
               <Input value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
             </div>
             <div>
-              <label className="text-sm block mb-1">Email</label>
+              <label className="text-sm block mb-1">{t('admin.profileInfo.fields.email') || 'Email'}</label>
               <Input type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
             </div>
             <div>
-              <label className="text-sm block mb-1">Phone</label>
+              <label className="text-sm block mb-1">{t('admin.profileInfo.fields.phone') || 'Phone'}</label>
               <Input value={profile.phone} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} />
             </div>
             <div>
-              <label className="text-sm block mb-1">Role</label>
+              <label className="text-sm block mb-1">{t('admin.profileInfo.fields.role') || 'Role'}</label>
               <Input value={profile.role} onChange={(e) => setProfile({ ...profile, role: e.target.value })} />
             </div>
             <div className="md:col-span-2">
-              <label className="text-sm block mb-1">Bio</label>
+              <label className="text-sm block mb-1">{t('admin.profileInfo.fields.bio') || 'Bio'}</label>
               <textarea value={profile.bio} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} className="w-full min-h-[120px] rounded-md border bg-transparent px-3 py-2 text-sm" />
             </div>
           </div>
@@ -163,18 +163,18 @@ export default function ProfilePage() {
 
           <div className="flex items-center justify-between mt-6">
             <div className="text-sm text-muted-foreground">
-              {profile.updatedAt ? `Last saved: ${new Date(profile.updatedAt).toLocaleString()}` : 'Not saved yet'}
+              {profile.updatedAt ? `${t('admin.profileInfo.lastSaved') || 'Last saved'}: ${new Date(profile.updatedAt).toLocaleString()}` : (t('admin.profileInfo.notSavedYet') || 'Not saved yet')}
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={onReset}>Reset</Button>
-              <Button onClick={onSave} disabled={saving}>{saving ? 'Saving...' : 'Save changes'}</Button>
+              <Button variant="outline" onClick={onReset}>{t('admin.buttons.clear') || 'Reset'}</Button>
+              <Button onClick={onSave} disabled={saving}>{saving ? (t('admin.profileInfo.saving') || 'Saving...') : (t('admin.profileInfo.saveChanges') || 'Save changes')}</Button>
             </div>
           </div>
         </div>
       </div>
 
       {saved && (
-        <div className="fixed bottom-6 right-6 bg-green-600 text-white px-4 py-2 rounded shadow">Saved</div>
+  <div className="fixed bottom-6 right-6 bg-green-600 text-white px-4 py-2 rounded shadow">{t('admin.profileInfo.saved') || 'Saved'}</div>
       )}
     </div>
   );

@@ -5,7 +5,7 @@
     "startShopping": "Tangira gukorera ubucuruzi",
     "signUpNow": "Iyandikishe ubu"
   },
-  "header": {
+    "profileInfo": {
     "products": "Ibicuruzwa",
     "cart": "Imifuka",
     "login": "Injira",
@@ -251,6 +251,30 @@
     "settings": "Ibyihariye",
     "settingsSub": "Imiterere y'uburyo n'ibigaragara"
     ,
+    "settingsPage": {
+      "fields": {
+        "theme": "Insanganyamatsiko",
+        "accent": "Ibara ry'inyongera",
+        "notifications": "Amatangazo",
+        "currency": "Ifaranga risanzwe"
+      },
+      "theme": {
+        "system": "Sisitemu",
+        "light": "Urumuri",
+        "dark": "Umwijima"
+      },
+      "notifications": {
+        "enable": "Wemeze amatangazo"
+      },
+      "currency": {
+        "USD": "USD",
+        "EUR": "EUR",
+        "GBP": "GBP",
+        "RWF": "RWF"
+      },
+      "saved": "Ibyahindutse byabitswe"
+    }
+    ,
     "buttons": {
       "products": "Ibicuruzwa",
       "orders": "Amabwiriza",
@@ -273,7 +297,9 @@
     "placeholders": {
       "searchProducts": "Shakisha ibicuruzwa",
       "searchUsers": "Shakisha abakoresha",
-      "searchCheckouts": "Shakisha checkouts kuri id/paneri/umukoresha/email",
+      "searchPayments": "Shakisha ubwishyu",
+  "searchCheckouts": "Shakisha checkouts kuri id/paneri/umukoresha/email",
+  "searchRefunds": "Shakisha ubwishyu",
       "productName": "Izina ry'igicuruzwa",
       "userName": "Izina ry'umukoresha",
       "userEmail": "Imeyili y'umukoresha",
@@ -285,14 +311,69 @@
     "labels": {
       "allCategories": "Ibice byose",
       "allStatus": "Imiterere yose",
+      "allGateways": "Izindi nzira z'ubwishyu zose",
       "allRoles": "Uruhare rwose",
       "allOrganisations": "Imiryango yose"
     },
     "tables": {
       "products": { "product": "Igicuruzwa", "category": "Agace", "price": "Igiciro", "stock": "Ububiko", "status": "Imiterere", "actions": "Ibikorwa" },
+      "comments": { "product": "Igicuruzwa", "user": "Umukoresha", "rating": "Amanota", "comment": "Igitekerezo", "status": "Imiterere", "actions": "Ibikorwa" },
+      "refunds": { "order": "Itegeko", "product": "Igicuruzwa", "user": "Umukiriya", "amount": "Amafaranga", "reason": "Impamvu", "status": "Imiterere", "actions": "Ibikorwa" },
       "users": { "user": "Umukoresha", "email": "Imeri", "role": "Uruhare", "organisation": "Umuryango", "actions": "Ibikorwa" },
       "carts": { "cart": "Umufuka", "owner": "Nyir'umufuka", "items": "Ibintu", "total": "Igiteranyo", "status": "Imiterere", "actions": "Ibikorwa" },
       "checkouts": { "checkout": "Checkout", "cartOwner": "Umufuka / Nyirawo", "items": "Ibintu", "total": "Igiteranyo", "payment": "Ukwishyura", "actions": "Ibikorwa" }
+      ,
+      "payments": { "order": "Itegeko", "items": "Ibintu", "transaction": "Transisiyo", "user": "Umukiriya", "gateway": "Uburyo bwo kwishyura", "amount": "Amafaranga", "status": "Imiterere", "actions": "Ibikorwa" }
+    },
+    "payments": {
+      "status": {
+        "completed": "Byarangiye",
+        "pending": "Itegerezanyijwe",
+        "failed": "Byanze",
+        "refunded": "Byasubijwe"
+      },
+      "actions": {
+        "reconcile": "Guhuza"
+      },
+      "dialog": {
+        "title": "Ibisobanuro by'ubwishyu",
+        "id": "ID y'ubwishyu"
+      },
+      "fields": {
+        "order": "ID y'itegeko",
+        "transaction": "ID ya transisiyo",
+        "customer": "Umukiriya",
+        "gateway": "Uburyo bwo kwishyura",
+        "amount": "Amafaranga",
+        "status": "Imiterere",
+        "created": "Yaremwe"
+      },
+      "items": {
+        "title": "Ibintu",
+        "none": "Nta kintu"
+      }
+    },
+    "comments": {
+      "status": {
+        "published": "Yasohotse",
+        "pending": "Itegerezanyijwe",
+        "hidden": "Yihishe"
+      },
+      "fields": {
+        "product": "Ibicuruzwa",
+        "user": "Umukoresha",
+        "rating": "Amanota",
+        "created": "Yaremwe",
+        "status": "Imiterere",
+        "comment": "Igitekerezo"
+      },
+      "dialog": {
+        "title": "Ibisobanuro by'igitekerezo",
+        "id": "ID y'igitekerezo"
+      },
+      "actions": {
+        "hide": "Hisha"
+      }
     },
     "deleteDialog": {
       "title": "Emeza gusiba",
@@ -338,6 +419,43 @@
         "organisation": "Umuryango"
       }
     },
+    "profileInfo": {
+      "defaultName": "Umukoresha Admin",
+      "notSet": "ntibashizwe",
+      "uploadAvatar": "Shyira ifoto y'umwirondoro",
+      "fields": {
+        "name": "Izina",
+        "email": "Imeyili",
+        "phone": "Telefoni",
+        "role": "Uruhare",
+        "bio": "Ibisobanuro"
+      },
+      "errors": {
+        "nameRequired": "Izina rirakenewe",
+        "emailRequired": "Imeyili yemewe irakenewe",
+        "saveFailed": "Ntibyashobotse kubika"
+      },
+      "lastSaved": "Byaherutse kubikwa",
+      "notSavedYet": "Ntibirabikwa",
+      "saving": "Kubika...",
+      "saveChanges": "Bika impinduka",
+      "saved": "Byabitswe"
+    },
+    "carts": {
+      "status": {
+        "active": "Gukora",
+        "abandoned": "Yaretse",
+        "converted": "Byahinduwe"
+      }
+    },
+    "checkouts": {
+      "status": {
+        "pending": "Itegerezanyijwe",
+        "completed": "Byarangiye",
+        "failed": "Byanze"
+      }
+    },
+    "guest": "Umushyitsi",
     "roles": {
       "admin": "Umuyobozi",
       "manager": "Umuyobozi wungirije",
@@ -350,6 +468,30 @@
     },
     "dashboardTitle": "Dashboard",
     "dashboardSubtitle": "Iby'ingenzi n'imibare byihuse"
+    ,
+    "refunds": {
+      "status": {
+        "pending": "Itegerezanyijwe",
+        "approved": "Yemejwe",
+        "rejected": "Yanze"
+      },
+      "actions": {
+        "resolve": "Gukemura"
+      },
+      "dialog": {
+        "title": "Ibisobanuro by'ubwishyu",
+        "id": "ID y'ubwishyu"
+      },
+      "fields": {
+        "order": "ID y'itegeko",
+        "product": "Igicuruzwa",
+        "customer": "Umukiriya",
+        "amount": "Amafaranga",
+        "reason": "Impamvu",
+        "status": "Imiterere",
+        "created": "Yaremwe"
+      }
+    }
   },
   "projects": {
     "title": "Imishinga",

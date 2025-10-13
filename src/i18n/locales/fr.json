@@ -5,7 +5,7 @@
     "startShopping": "Commencer les achats",
     "signUpNow": "Inscrivez-vous maintenant"
   },
-  "header": {
+    "profileInfo": {
     "products": "Produits",
     "cart": "Panier",
     "login": "Connexion",
@@ -15,8 +15,8 @@
     "heroSubtitle": "Votre guichet unique pour les meilleures offres, les dernières tendances et tous vos produits préférés. De la mode à l'électronique, nous vous couvrons avec plus de 50 000 articles de qualité !",
     "freeShipping": "Livraison gratuite au-dessus de $50",
     "secureCheckout": "Paiement sécurisé",
-    "whyChoose": "Pourquoi choisir {{brand}} ?",
-    "whyChooseSubtitle": "Nous nous engageons à offrir une expérience d'achat exceptionnelle avec des avantages qui nous distinguent",
+  "whyChoose": "Pourquoi choisir {{brand}} ?",
+  "whyChooseSubtitle": "Nous nous engageons à offrir une expérience d'achat exceptionnelle avec des avantages qui nous distinguent",
     "features": [
       { "title": "Large gamme de produits", "description": "Explorez des milliers de produits de haute qualité dans plusieurs catégories à des prix compétitifs" },
       { "title": "Paiements sécurisés", "description": "Achetez en toute confiance en utilisant nos options de paiement sécurisées. Votre sécurité est notre priorité" },
@@ -250,6 +250,30 @@
     "settings": "Paramètres",
     "settingsSub": "Paramètres de l'application et apparence"
     ,
+    "settingsPage": {
+      "fields": {
+        "theme": "Thème",
+        "accent": "Couleur d'accent",
+        "notifications": "Notifications",
+        "currency": "Devise par défaut"
+      },
+      "theme": {
+        "system": "Système",
+        "light": "Clair",
+        "dark": "Sombre"
+      },
+      "notifications": {
+        "enable": "Activer les notifications"
+      },
+      "currency": {
+        "USD": "USD",
+        "EUR": "EUR",
+        "GBP": "GBP",
+        "RWF": "RWF"
+      },
+      "saved": "Paramètres enregistrés"
+    }
+    ,
     "buttons": {
       "products": "Produits",
       "orders": "Commandes",
@@ -273,7 +297,9 @@
     "placeholders": {
       "searchProducts": "Rechercher des produits",
       "searchUsers": "Rechercher des utilisateurs",
+      "searchPayments": "Rechercher des paiements",
       "searchCheckouts": "Rechercher les checkouts par id/panier/utilisateur/email",
+      "searchRefunds": "Rechercher des remboursements",
       "productName": "Nom du produit",
       "userName": "Nom de l'utilisateur",
       "userEmail": "Email de l'utilisateur",
@@ -282,17 +308,72 @@
       "typeCartConfirm": "Tapez l'id du panier pour confirmer",
       "typeCheckoutConfirm": "Tapez l'id du checkout pour confirmer"
     },
+    "comments": {
+      "status": {
+        "published": "Publié",
+        "pending": "En attente",
+        "hidden": "Masqué"
+      },
+      "fields": {
+        "product": "Produit",
+        "user": "Utilisateur",
+        "rating": "Note",
+        "created": "Créé",
+        "status": "Statut",
+        "comment": "Commentaire"
+      },
+      "dialog": {
+        "title": "Détails du commentaire",
+        "id": "ID du commentaire"
+      },
+      "actions": {
+        "hide": "Masquer"
+      }
+    },
     "labels": {
       "allCategories": "Toutes les catégories",
       "allStatus": "Tous les statuts",
+      "allGateways": "Toutes les passerelles",
       "allRoles": "Tous les rôles",
       "allOrganisations": "Toutes les organisations"
     },
     "tables": {
       "products": { "product": "Produit", "category": "Catégorie", "price": "Prix", "stock": "Stock", "status": "Statut", "actions": "Actions" },
+      "comments": { "product": "Produit", "user": "Utilisateur", "rating": "Note", "comment": "Commentaire", "status": "Statut", "actions": "Actions" },
+      "refunds": { "order": "Commande", "product": "Produit", "user": "Utilisateur", "amount": "Montant", "reason": "Motif", "status": "Statut", "actions": "Actions" },
       "users": { "user": "Utilisateur", "email": "Email", "role": "Rôle", "organisation": "Organisation", "actions": "Actions" },
       "carts": { "cart": "Panier", "owner": "Propriétaire", "items": "Articles", "total": "Total", "status": "Statut", "actions": "Actions" },
       "checkouts": { "checkout": "Checkout", "cartOwner": "Panier / Propriétaire", "items": "Articles", "total": "Total", "payment": "Paiement", "actions": "Actions" }
+      ,
+      "payments": { "order": "Commande", "items": "Articles", "transaction": "Transaction", "user": "Utilisateur", "gateway": "Passerelle", "amount": "Montant", "status": "Statut", "actions": "Actions" }
+    },
+    "payments": {
+      "status": {
+        "completed": "Terminé",
+        "pending": "En attente",
+        "failed": "Échoué",
+        "refunded": "Remboursé"
+      },
+      "actions": {
+        "reconcile": "Rapprocher"
+      },
+      "dialog": {
+        "title": "Détails du paiement",
+        "id": "ID du paiement"
+      },
+      "fields": {
+        "order": "ID de commande",
+        "transaction": "ID de transaction",
+        "customer": "Client",
+        "gateway": "Passerelle",
+        "amount": "Montant",
+        "status": "Statut",
+        "created": "Créé"
+      },
+      "items": {
+        "title": "Articles",
+        "none": "Aucun article"
+      }
     },
     "deleteDialog": {
       "title": "Confirmer la suppression",
@@ -338,6 +419,43 @@
         "organisation": "Organisation"
       }
     },
+    "profileInfo": {
+      "defaultName": "Utilisateur Admin",
+      "notSet": "non défini",
+      "uploadAvatar": "Téléverser l'avatar",
+      "fields": {
+        "name": "Nom",
+        "email": "Email",
+        "phone": "Téléphone",
+        "role": "Rôle",
+        "bio": "Bio"
+      },
+      "errors": {
+        "nameRequired": "Le nom est requis",
+        "emailRequired": "Un email valide est requis",
+        "saveFailed": "Échec de l'enregistrement"
+      },
+      "lastSaved": "Dernière sauvegarde",
+      "notSavedYet": "Pas encore sauvegardé",
+      "saving": "Enregistrement...",
+      "saveChanges": "Enregistrer les modifications",
+      "saved": "Enregistré"
+    },
+    "carts": {
+      "status": {
+        "active": "Actif",
+        "abandoned": "Abandonné",
+        "converted": "Converti"
+      }
+    },
+    "checkouts": {
+      "status": {
+        "pending": "En attente",
+        "completed": "Terminé",
+        "failed": "Échoué"
+      }
+    },
+    "guest": "Invité",
     "roles": {
       "admin": "Administrateur",
       "manager": "Gestionnaire",
@@ -349,7 +467,30 @@
       "completed": "Terminé"
     },
     "dashboardTitle": "Tableau de bord",
-    "dashboardSubtitle": "Aperçu et statistiques rapides"
+    "dashboardSubtitle": "Aperçu et statistiques rapides",
+    "refunds": {
+      "status": {
+        "pending": "En attente",
+        "approved": "Approuvé",
+        "rejected": "Rejeté"
+      },
+      "actions": {
+        "resolve": "Résoudre"
+      },
+      "dialog": {
+        "title": "Détails du remboursement",
+        "id": "ID du remboursement"
+      },
+      "fields": {
+        "order": "ID de commande",
+        "product": "Produit",
+        "customer": "Client",
+        "amount": "Montant",
+        "reason": "Motif",
+        "status": "Statut",
+        "created": "Créé"
+      }
+    }
   },
   "projects": {
     "title": "Projets",

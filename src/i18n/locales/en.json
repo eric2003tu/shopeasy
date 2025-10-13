@@ -254,7 +254,30 @@
     "profile": "Profile",
     "profileSub": "Your account and preferences",
     "settings": "Settings",
-    "settingsSub": "Application and appearance settings"
+    "settingsSub": "Application and appearance settings",
+    "settingsPage": {
+      "fields": {
+        "theme": "Theme",
+        "accent": "Accent color",
+        "notifications": "Notifications",
+        "currency": "Default currency"
+      },
+      "theme": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "notifications": {
+        "enable": "Enable notifications"
+      },
+      "currency": {
+        "USD": "USD",
+        "EUR": "EUR",
+        "GBP": "GBP",
+        "RWF": "RWF"
+      },
+      "saved": "Settings saved"
+    }
     ,
     "buttons": {
       "products": "Products",
@@ -278,7 +301,9 @@
     "placeholders": {
       "searchProducts": "Search products",
       "searchUsers": "Search users",
+      "searchPayments": "Search payments",
       "searchCheckouts": "Search checkouts by id/cart/user/email",
+      "searchRefunds": "Search refunds",
       "productName": "Product name",
       "userName": "User name",
       "userEmail": "User email",
@@ -294,6 +319,14 @@
         "pending": "Pending",
         "hidden": "Hidden"
       },
+      "fields": {
+        "product": "Product",
+        "user": "User",
+        "rating": "Rating",
+        "created": "Created",
+        "status": "Status",
+        "comment": "Comment"
+      },
       "dialog": {
         "title": "Comment details",
         "id": "Comment ID"
@@ -302,17 +335,73 @@
         "hide": "Hide"
       }
     },
+    "refunds": {
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "resolve": "Resolve"
+      },
+      "dialog": {
+        "title": "Refund details",
+        "id": "Refund ID"
+      },
+      "fields": {
+        "order": "Order ID",
+        "product": "Product",
+        "customer": "Customer",
+        "amount": "Amount",
+        "reason": "Reason",
+        "status": "Status",
+        "created": "Created"
+      }
+    },
     "labels": {
       "allCategories": "All categories",
       "allStatus": "All status",
+      "allGateways": "All gateways",
       "allRoles": "All roles",
       "allOrganisations": "All organisations"
     },
     "tables": {
       "products": { "product": "Product", "category": "Category", "price": "Price", "stock": "Stock", "status": "Status", "actions": "Actions" },
+      "comments": { "product": "Product", "user": "User", "rating": "Rating", "comment": "Comment", "status": "Status", "actions": "Actions" },
+      "refunds": { "order": "Order", "product": "Product", "user": "User", "amount": "Amount", "reason": "Reason", "status": "Status", "actions": "Actions" },
       "users": { "user": "User", "email": "Email", "role": "Role", "organisation": "Organisation", "actions": "Actions" },
       "carts": { "cart": "Cart", "owner": "Owner", "items": "Items", "total": "Total", "status": "Status", "actions": "Actions" },
       "checkouts": { "checkout": "Checkout", "cartOwner": "Cart / Owner", "items": "Items", "total": "Total", "payment": "Payment", "actions": "Actions" }
+      ,
+      "payments": { "order": "Order", "items": "Items", "transaction": "Transaction", "user": "User", "gateway": "Gateway", "amount": "Amount", "status": "Status", "actions": "Actions" }
+    },
+    "payments": {
+      "status": {
+        "completed": "Completed",
+        "pending": "Pending",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      },
+      "actions": {
+        "reconcile": "Reconcile"
+      },
+      "dialog": {
+        "title": "Payment details",
+        "id": "Payment ID"
+      },
+      "fields": {
+        "order": "Order ID",
+        "transaction": "Transaction ID",
+        "customer": "Customer",
+        "gateway": "Gateway",
+        "amount": "Amount",
+        "status": "Status",
+        "created": "Created"
+      },
+      "items": {
+        "title": "Items",
+        "none": "No items"
+      }
     },
     "deleteDialog": {
       "title": "Confirm deletion",
@@ -358,6 +447,43 @@
         "organisation": "Organisation"
       }
     },
+    "profileInfo": {
+      "defaultName": "Admin User",
+      "notSet": "not set",
+      "uploadAvatar": "Upload avatar",
+      "fields": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "role": "Role",
+        "bio": "Bio"
+      },
+      "errors": {
+        "nameRequired": "Name is required",
+        "emailRequired": "Valid email required",
+        "saveFailed": "Failed to save"
+      },
+      "lastSaved": "Last saved",
+      "notSavedYet": "Not saved yet",
+      "saving": "Saving...",
+      "saveChanges": "Save changes",
+      "saved": "Saved"
+    },
+    "carts": {
+      "status": {
+        "active": "Active",
+        "abandoned": "Abandoned",
+        "converted": "Converted"
+      }
+    },
+    "checkouts": {
+      "status": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "failed": "Failed"
+      }
+    },
+    "guest": "Guest",
     "roles": {
       "admin": "Admin",
       "manager": "Manager",

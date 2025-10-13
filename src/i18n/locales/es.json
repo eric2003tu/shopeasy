@@ -5,7 +5,7 @@
     "startShopping": "Comenzar a comprar",
     "signUpNow": "Regístrate ahora"
   },
-  "header": {
+    "profileInfo": {
     "products": "Productos",
     "cart": "Carrito",
     "login": "Iniciar sesión",
@@ -248,8 +248,54 @@
     "paymentSub": "Pasarelas de pago y conciliación",
     "profile": "Perfil",
     "profileSub": "Tu cuenta y preferencias",
+    "profileInfo": {
+      "defaultName": "Usuario Admin",
+      "notSet": "no establecido",
+      "uploadAvatar": "Subir avatar",
+      "fields": {
+        "name": "Nombre",
+        "email": "Correo",
+        "phone": "Teléfono",
+        "role": "Rol",
+        "bio": "Biografía"
+      },
+      "errors": {
+        "nameRequired": "El nombre es obligatorio",
+        "emailRequired": "Se requiere un correo válido",
+        "saveFailed": "Error al guardar"
+      },
+      "lastSaved": "Última actualización",
+      "notSavedYet": "Aún no guardado",
+      "saving": "Guardando...",
+      "saveChanges": "Guardar cambios",
+      "saved": "Guardado"
+    },
     "settings": "Ajustes",
     "settingsSub": "Ajustes de la aplicación y apariencia"
+    ,
+    "settingsPage": {
+      "fields": {
+        "theme": "Tema",
+        "accent": "Color de acento",
+        "notifications": "Notificaciones",
+        "currency": "Moneda predeterminada"
+      },
+      "theme": {
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Oscuro"
+      },
+      "notifications": {
+        "enable": "Habilitar notificaciones"
+      },
+      "currency": {
+        "USD": "USD",
+        "EUR": "EUR",
+        "GBP": "GBP",
+        "RWF": "RWF"
+      },
+      "saved": "Ajustes guardados"
+    }
     ,
     "buttons": {
       "products": "Productos",
@@ -273,7 +319,9 @@
     "placeholders": {
       "searchProducts": "Buscar productos",
       "searchUsers": "Buscar usuarios",
+      "searchPayments": "Buscar pagos",
       "searchCheckouts": "Buscar checkouts por id/carrito/usuario/email",
+      "searchRefunds": "Buscar reembolsos",
       "productName": "Nombre del producto",
       "userName": "Nombre del usuario",
       "userEmail": "Email del usuario",
@@ -285,14 +333,93 @@
     "labels": {
       "allCategories": "Todas las categorías",
       "allStatus": "Todos los estados",
+      "allGateways": "Todas las pasarelas",
       "allRoles": "Todos los roles",
       "allOrganisations": "Todas las organizaciones"
     },
     "tables": {
       "products": { "product": "Producto", "category": "Categoría", "price": "Precio", "stock": "Stock", "status": "Estado", "actions": "Acciones" },
+      "comments": { "product": "Producto", "user": "Usuario", "rating": "Calificación", "comment": "Comentario", "status": "Estado", "actions": "Acciones" },
+      "refunds": { "order": "Pedido", "product": "Producto", "user": "Usuario", "amount": "Monto", "reason": "Motivo", "status": "Estado", "actions": "Acciones" },
       "users": { "user": "Usuario", "email": "Correo", "role": "Rol", "organisation": "Organización", "actions": "Acciones" },
       "carts": { "cart": "Carrito", "owner": "Propietario", "items": "Artículos", "total": "Total", "status": "Estado", "actions": "Acciones" },
       "checkouts": { "checkout": "Checkout", "cartOwner": "Carrito / Propietario", "items": "Artículos", "total": "Total", "payment": "Pago", "actions": "Acciones" }
+      ,
+      "payments": { "order": "Pedido", "items": "Artículos", "transaction": "Transacción", "user": "Usuario", "gateway": "Pasarela", "amount": "Monto", "status": "Estado", "actions": "Acciones" }
+    },
+    "payments": {
+      "status": {
+        "completed": "Completado",
+        "pending": "Pendiente",
+        "failed": "Fallido",
+        "refunded": "Reembolsado"
+      },
+      "actions": {
+        "reconcile": "Conciliar"
+      },
+      "dialog": {
+        "title": "Detalles del pago",
+        "id": "ID del pago"
+      },
+      "fields": {
+        "order": "ID del pedido",
+        "transaction": "ID de transacción",
+        "customer": "Cliente",
+        "gateway": "Pasarela",
+        "amount": "Monto",
+        "status": "Estado",
+        "created": "Creado"
+      },
+      "items": {
+        "title": "Artículos",
+        "none": "Sin artículos"
+      }
+    },
+
+    "refunds": {
+      "status": {
+        "pending": "Pendiente",
+        "approved": "Aprobado",
+        "rejected": "Rechazado"
+      },
+      "actions": {
+      "comments": {
+        "status": {
+          "published": "Publicado",
+          "pending": "Pendiente",
+          "hidden": "Oculto"
+        },
+        "fields": {
+          "product": "Producto",
+          "user": "Usuario",
+          "rating": "Calificación",
+          "created": "Creado",
+          "status": "Estado",
+          "comment": "Comentario"
+        },
+        "dialog": {
+          "title": "Detalles del comentario",
+          "id": "ID del comentario"
+        },
+        "actions": {
+          "hide": "Ocultar"
+        }
+      },
+        "resolve": "Resolver"
+      },
+      "dialog": {
+        "title": "Detalles del reembolso",
+        "id": "ID de reembolso"
+      },
+      "fields": {
+        "order": "ID de pedido",
+        "product": "Producto",
+        "customer": "Cliente",
+        "amount": "Monto",
+        "reason": "Motivo",
+        "status": "Estado",
+        "created": "Creado"
+      }
     },
     "deleteDialog": {
       "title": "Confirmar eliminación",
@@ -338,6 +465,21 @@
         "organisation": "Organización"
       }
     },
+    "carts": {
+      "status": {
+        "active": "Activo",
+        "abandoned": "Abandonado",
+        "converted": "Convertido"
+      }
+    },
+    "checkouts": {
+      "status": {
+        "pending": "Pendiente",
+        "completed": "Completado",
+        "failed": "Fallido"
+      }
+    },
+    "guest": "Invitado",
     "roles": {
       "admin": "Administrador",
       "manager": "Gerente",

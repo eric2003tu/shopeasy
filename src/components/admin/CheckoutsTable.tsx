@@ -53,6 +53,8 @@ export default function CheckoutsTable() {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const currentPage = Math.min(page, pageCount);
   const paged = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const to = Math.min(currentPage * pageSize, total);
 
   function markPaid(id: string) {
     setCheckouts((prev) => prev.map((c) => c.id === id ? { ...c, paymentStatus: 'completed' } : c));
@@ -89,17 +91,17 @@ export default function CheckoutsTable() {
           <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchCheckouts')} className="px-3 py-2 border rounded w-72" />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allStatus')}</option>
-            <option value="pending">Pending</option>
-            <option value="completed">Completed</option>
-            <option value="failed">Failed</option>
+            <option value="pending">{t('admin.checkouts.status.pending', { defaultValue: 'Pending' })}</option>
+            <option value="completed">{t('admin.checkouts.status.completed', { defaultValue: 'Completed' })}</option>
+            <option value="failed">{t('admin.checkouts.status.failed', { defaultValue: 'Failed' })}</option>
           </select>
           <button onClick={resetSamples} className="px-3 py-2 bg-muted rounded text-sm">{t('admin.buttons.resetSampleCheckouts')}</button>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-sm text-gray-600">Showing <strong>{total === 0 ? 0 : (currentPage - 1) * pageSize + 1}</strong> - <strong>{Math.min(currentPage * pageSize, total)}</strong> of <strong>{total}</strong></div>
+          <div className="text-sm text-gray-600">{t('admin.pagination.showing', { from, to, total })}</div>
           <div>
-            <label className="text-xs">Page size</label>
+            <label className="text-xs">{t('admin.pagination.pageSize')}</label>
             <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="ml-2 p-1 border rounded">
               <option value={5}>5</option>
               <option value={8}>8</option>
@@ -108,9 +110,9 @@ export default function CheckoutsTable() {
             </select>
           </div>
           <div className="inline-flex items-center gap-1">
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">Prev</button>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">{t('admin.pagination.prev')}</button>
             <span className="px-2 text-sm">{currentPage} / {pageCount}</span>
-            <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">Next</button>
+            <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">{t('admin.pagination.next')}</button>
           </div>
         </div>
       </div>
@@ -119,12 +121,12 @@ export default function CheckoutsTable() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Checkout</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cart / Owner</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-              <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.checkouts.checkout')}</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.checkouts.cartOwner')}</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.checkouts.items')}</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.checkouts.total')}</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('admin.tables.checkouts.payment')}</th>
+              <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">{t('admin.tables.checkouts.actions')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -134,12 +136,12 @@ export default function CheckoutsTable() {
                 <td className="px-4 py-3 text-sm">{c.cartId || ''} {c.userId ? ` / ${c.userId}` : c.email ? ` / ${c.email}` : ''}</td>
                 <td className="px-4 py-3 text-sm">{productList(c)}</td>
                 <td className="px-4 py-3 text-sm font-semibold">${c.total.toFixed(2)}</td>
-                <td className="px-4 py-3 text-sm capitalize">{c.paymentStatus}</td>
+                <td className="px-4 py-3 text-sm capitalize">{t(`admin.checkouts.status.${c.paymentStatus}`, { defaultValue: c.paymentStatus })}</td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex gap-2">
                         <button onClick={() => setView(c)} className="px-3 py-1 bg-[#634bc1] text-white rounded text-sm">{t('admin.buttons.view')}</button>
                         <button onClick={() => markPaid(c.id)} disabled={c.paymentStatus === 'completed'} className="px-3 py-1 bg-green-600 text-white rounded text-sm disabled:opacity-50">{t('admin.buttons.markPaid')}</button>
-                    <button onClick={() => openDelete(c.id)} className="px-3 py-1 border border-red-300 text-red-600 rounded text-sm">Delete</button>
+                    <button onClick={() => openDelete(c.id)} className="px-3 py-1 border border-red-300 text-red-600 rounded text-sm">{t('admin.buttons.delete')}</button>
                   </div>
                 </td>
               </tr>
