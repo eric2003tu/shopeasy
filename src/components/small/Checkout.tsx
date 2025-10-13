@@ -31,7 +31,7 @@ export default function Checkout() {
   if (placed) return (
     <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-6 text-center">
       <h2 className="text-2xl font-bold">Thank you for your order</h2>
-      <p className="mt-2 text-gray-600">We've received your order and will process it shortly.</p>
+  <p className="mt-2 text-gray-600">We&#39;ve received your order and will process it shortly.</p>
     </div>
   );
 

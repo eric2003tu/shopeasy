@@ -4,11 +4,12 @@ import { notFound } from 'next/navigation';
 import ProductCard from '@/components/ui/ProductCard';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default function ProductDetail({ params }: Props) {
-  const product = sampleProducts.find((p) => p.id === params.id);
+export default async function ProductDetail({ params }: Props) {
+  const { id } = await params;
+  const product = sampleProducts.find((p) => p.id === id);
   if (!product) return notFound();
 
   return (

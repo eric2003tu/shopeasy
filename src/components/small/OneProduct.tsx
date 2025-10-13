@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image'
 import { useI18n } from '@/i18n/I18nProvider';
-import { sampleProducts } from '@/lib/sampleData';
+import { sampleProducts, SampleProduct } from '@/lib/sampleData';
 import { IoClose } from "react-icons/io5";
 import { addToCart } from '@/lib/cart';
 
@@ -42,7 +42,7 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
           name: local.name,
           price: local.price,
           description: local.description || '',
-          seller: (local as any).seller || 'ShopEasy',
+          seller: (local as SampleProduct & { seller?: string }).seller || 'ShopEasy',
           stock: local.stock || 0,
           category: local.category || ''
         });
@@ -82,7 +82,7 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
             name: fallback.name,
             price: fallback.price,
             description: fallback.description || '',
-            seller: (fallback as any).seller || 'ShopEasy',
+            seller: (fallback as SampleProduct & { seller?: string }).seller || 'ShopEasy',
             stock: fallback.stock || 0,
             category: fallback.category || ''
           });

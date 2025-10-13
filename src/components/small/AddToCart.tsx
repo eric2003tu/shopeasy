@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { sampleProducts } from '@/lib/sampleData';
+import { CartItem, getCart, saveCart } from '@/lib/cart';
 
 interface Product {
   id: string;
@@ -42,14 +43,15 @@ export default function AddToCart() {
     }
 
     try {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const existing = cart.find((c: any) => c.id === product.id);
+      const cart: CartItem[] = getCart();
+      const existing = cart.find((c: CartItem) => c.id === product.id);
       if (existing) {
         existing.quantity += 1;
       } else {
-        cart.push({ id: product.id, name: product.name, price: product.price, image: product.images[0], quantity: 1 });
+        const newItem: CartItem = { id: product.id, name: product.name, price: product.price, image: product.images[0], quantity: 1 };
+        cart.push(newItem);
       }
-      localStorage.setItem('cart', JSON.stringify(cart));
+      saveCart(cart);
       setWarning('Product added to cart');
     } catch (err) {
       setWarning('Failed to add product to cart');
