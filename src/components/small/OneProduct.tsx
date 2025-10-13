@@ -2,7 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image'
 import { useI18n } from '@/i18n/I18nProvider';
+import { sampleProducts } from '@/lib/sampleData';
 import { IoClose } from "react-icons/io5";
+import { addToCart } from '@/lib/cart';
 
 interface Product {
   _id: string;
@@ -26,10 +28,27 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
       if (!productId) return; // Don't fetch if no productId
+      // Try to resolve from local sample data first to avoid failing when backend isn't available
+      const local = sampleProducts.find((p) => p.id === productId || p.id === String(productId));
+      if (local) {
+        setProduct({
+          _id: local.id,
+          images: local.images || [],
+          name: local.name,
+          price: local.price,
+          description: local.description || '',
+          seller: (local as any).seller || 'ShopEasy',
+          stock: local.stock || 0,
+          category: local.category || ''
+        });
+        setLoading(false);
+        return;
+      }
 
       try {
         const isLocal = window.location.hostname === 'localhost';
@@ -39,27 +58,38 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
 
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error('Failed to fetch product');
-        
+
         const data = await response.json();
-        
-        // Handle response data
         const productData = data.product || data;
-        
         if (!productData) throw new Error('Product data not found in response');
-        
-        // Transform image path to full URL if needed
-        const images = productData.images?.map((image: string) => 
+
+        const images = productData.images?.map((image: string) =>
           image.startsWith('http') ? image : `${isLocal ? 'http://localhost:5000' : 'https://e-commerce-back-xy6s.onrender.com'}${image}`
         ) || [];
-        
-        
+
         setProduct({
           ...productData,
           images
         });
       } catch (err) {
         console.error("Failed to view the product", err);
-        setError('Failed to load product details');
+        // Final fallback: try sampleProducts once more (in case id formats differ)
+        const fallback = sampleProducts.find((p) => p.id === String(productId));
+        if (fallback) {
+          setProduct({
+            _id: fallback.id,
+            images: fallback.images || [],
+            name: fallback.name,
+            price: fallback.price,
+            description: fallback.description || '',
+            seller: (fallback as any).seller || 'ShopEasy',
+            stock: fallback.stock || 0,
+            category: fallback.category || ''
+          });
+          setError('');
+        } else {
+          setError('Failed to load product details');
+        }
       } finally {
         setLoading(false);
       }
@@ -152,13 +182,21 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
               </span>
             </div>
 
-            <div className="flex space-x-4">
-                <button className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
-                {t('product.addToCart')}
-              </button>
-              <button className="flex-1 py-3 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-                Buy Now
-              </button>
+            <div className="flex space-x-4 items-center">
+                <button
+                  className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                  onClick={() => {
+                    addToCart({ id: product._id, name: product.name, price: product.price, image: product.images[0], quantity: 1 });
+                    setAdded(true);
+                    setTimeout(() => setAdded(false), 2500);
+                  }}
+                >
+                  {t('product.addToCart')}
+                </button>
+                <button className="flex-1 py-3 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                  Buy Now
+                </button>
+                {added && <div className="text-green-600 font-medium">Added ✓</div>}
             </div>
           </div>
         </div>

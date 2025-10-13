@@ -6,6 +6,7 @@ import { FaStar, FaRegHeart, FaRegUser, FaRegCreditCard } from 'react-icons/fa'
 import { BsBoxSeam } from 'react-icons/bs'
 import Link from 'next/link';
 import Search from './Search';
+import ProductCard from '@/components/ui/ProductCard';
 import { useI18n } from '@/i18n/I18nProvider';
 
 const Home: React.FC = () => {
@@ -240,52 +241,16 @@ const Home: React.FC = () => {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product, index) => (
-              <div 
+              <ProductCard
                 key={index}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all group"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={product.image} 
-                    alt={product.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {product.isNew && (
-                    <div className="absolute top-4 left-4 bg-[#ffdc89] text-[#634bc1] px-3 py-1 rounded-full text-sm font-semibold">
-                      {t('product.newArrival')}
-                    </div>
-                  )}
-                  <button className="absolute top-4 right-4 p-2 bg-white/80 rounded-full hover:bg-white transition-colors">
-                    <FaRegHeart className="text-gray-700 hover:text-red-500" />
-                  </button>
-                </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
-                    <span className="flex items-center bg-gray-100 px-2 py-1 rounded text-sm">
-                      <FaStar className="text-yellow-500 mr-1" />
-                      {product.rating} <span className="text-gray-500 ml-1">({product.reviews})</span>
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <p className="text-2xl font-bold text-[#634bc1]">${product.price}</p>
-                    {product.originalPrice && (
-                      <p className="text-gray-400 line-through">${product.originalPrice}</p>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Link 
-                      href="/products" 
-                      className="py-2 text-center bg-[#634bc1] text-white rounded-lg hover:bg-[#756a9f] transition-colors"
-                    >
-                      {t('product.viewDetails')}
-                    </Link>
-                    <button className="py-2 text-center border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
-                      {t('product.addToCart')}
-                    </button>
-                  </div>
-                </div>
-              </div>
+                image={product.image}
+                name={product.name}
+                price={product.price}
+                originalPrice={product.originalPrice}
+                rating={product.rating}
+                reviews={product.reviews}
+                isNew={product.isNew}
+              />
             ))}
           </div>
         </div>

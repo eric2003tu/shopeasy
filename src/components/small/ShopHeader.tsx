@@ -1,0 +1,82 @@
+"use client";
+import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { BsBoxSeam, BsCart2 } from 'react-icons/bs';
+import { MdPayment } from 'react-icons/md';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { HiOutlineGlobeAlt } from 'react-icons/hi';
+import { useI18n } from '@/i18n/I18nProvider';
+
+export default function ShopHeader() {
+	const [scrolled, setScrolled] = useState(false);
+	const [langOpen, setLangOpen] = useState(false);
+	const { t, locale, setLocale } = useI18n();
+	const langRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		const handleScroll = () => setScrolled(window.scrollY > 10);
+		window.addEventListener('scroll', handleScroll);
+		return () => window.removeEventListener('scroll', handleScroll);
+	}, []);
+
+	useEffect(() => {
+		const onClick = (e: MouseEvent) => {
+			if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+		};
+		window.addEventListener('click', onClick);
+		return () => window.removeEventListener('click', onClick);
+	}, []);
+
+	return (
+		<header className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#634bc1] shadow-md' : 'bg-[#634bc1]/90 backdrop-blur-sm'} shadow-lg`}>
+			<div className="max-w-7xl mx-auto px-4">
+				<div className="flex items-center justify-between">
+					<Link href="/shop" className="flex items-center gap-3 group">
+						<div className="relative h-12 w-12">
+							<Image src="/logo.jpg" alt="ShopEasy Logo" fill className="rounded-full border-2 border-white/30 group-hover:border-[#ffdc89] transition-all object-cover" sizes="48px" />
+						</div>
+						<span className="text-white font-bold text-xl md:text-2xl ml-2">
+							Shop<span className="text-[#ffdc89]">Easy</span>
+						</span>
+					</Link>
+
+					<nav className="hidden md:flex items-center space-x-4">
+						<Link href="/shop/products" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+							<BsBoxSeam className="text-lg" />
+							{t('header.products')}
+						</Link>
+						<Link href="/shop/carts" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+							<BsCart2 className="text-lg" />
+							{t('header.carts')}
+						</Link>
+						<Link href="/shop/checkouts" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+							<AiOutlineCheckCircle className="text-lg" />
+							{t('header.checkouts')}
+						</Link>
+						<Link href="/shop/payments" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+							<MdPayment className="text-lg" />
+							{t('header.payments')}
+						</Link>
+
+						<div className="relative" ref={langRef}>
+							<button onClick={(e) => { e.stopPropagation(); setLangOpen(!langOpen); }} className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+								<HiOutlineGlobeAlt className="text-lg" />
+								<span className="hidden sm:inline">{locale.toUpperCase()}</span>
+							</button>
+							{langOpen && (
+								<div className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg text-gray-800 py-2 z-50">
+									{(['en','fr','es','rw'] as const).map(l => (
+										<button key={l} onClick={() => { setLocale(l); setLangOpen(false); }} className={`w-full text-left px-4 py-2 hover:bg-gray-100 ${locale===l? 'font-semibold' : ''}`}>
+											{l.toUpperCase()}
+										</button>
+									))}
+								</div>
+							)}
+						</div>
+					</nav>
+				</div>
+			</div>
+		</header>
+	);
+}

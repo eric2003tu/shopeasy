@@ -5,6 +5,15 @@
     "startShopping": "Commencer les achats",
     "signUpNow": "Inscrivez-vous maintenant"
   },
+    "header": {
+      "products": "Produits",
+      "cart": "Panier",
+      "carts": "Paniers",
+      "checkouts": "Checkouts",
+      "payments": "Paiements",
+      "login": "Connexion",
+      "searchPlaceholder": "Rechercher des produits..."
+    },
     "profileInfo": {
     "products": "Produits",
     "cart": "Panier",

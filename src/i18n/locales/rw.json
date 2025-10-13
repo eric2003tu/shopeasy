@@ -5,6 +5,15 @@
     "startShopping": "Tangira gukorera ubucuruzi",
     "signUpNow": "Iyandikishe ubu"
   },
+    "header": {
+      "products": "Ibicuruzwa",
+      "cart": "Umufuka",
+      "carts": "Imifuka",
+      "checkouts": "Checkouts",
+      "payments": "Ukwishyura",
+      "login": "Injira",
+      "searchPlaceholder": "Shaka ibicuruzwa..."
+    },
     "profileInfo": {
     "products": "Ibicuruzwa",
     "cart": "Imifuka",

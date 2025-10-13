@@ -8,6 +8,9 @@
   "header": {
     "products": "Products",
     "cart": "Cart",
+    "carts": "Carts",
+    "checkouts": "Checkouts",
+    "payments": "Payments",
     "login": "Login",
     "searchPlaceholder": "Find products..."
   },

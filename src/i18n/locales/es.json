@@ -5,6 +5,15 @@
     "startShopping": "Comenzar a comprar",
     "signUpNow": "Regístrate ahora"
   },
+    "header": {
+      "products": "Productos",
+      "cart": "Carrito",
+      "carts": "Carritos",
+      "checkouts": "Checkouts",
+      "payments": "Pagos",
+      "login": "Iniciar sesión",
+      "searchPlaceholder": "Buscar productos..."
+    },
     "profileInfo": {
     "products": "Productos",
     "cart": "Carrito",
