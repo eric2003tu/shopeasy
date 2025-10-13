@@ -250,5 +250,112 @@
     "profileSub": "Konti yawe n'ibyo ukunda",
     "settings": "Ibyihariye",
     "settingsSub": "Imiterere y'uburyo n'ibigaragara"
+    ,
+    "buttons": {
+      "products": "Ibicuruzwa",
+      "orders": "Amabwiriza",
+      "users": "Abakoresha",
+      "addProduct": "Ongeraho igicuruzwa",
+      "editProduct": "Hindura igicuruzwa",
+      "addUser": "Ongeraho umukoresha",
+      "editUser": "Hindura umukoresha",
+      "save": "Bika",
+      "cancel": "Hagarika",
+      "clear": "Siba",
+      "resetSampleCheckouts": "Subiza checkouts z'icyitegererezo",
+  "resetSampleCarts": "Subiza imifuka y'icyitegererezo",
+  "view": "Reba",
+  "close": "Funga",
+      "convertToCheckout": "Hindura kuba checkout",
+      "markPaid": "Shyira nk'ibyishyuwe",
+      "delete": "Siba"
+    },
+    "placeholders": {
+      "searchProducts": "Shakisha ibicuruzwa",
+      "searchUsers": "Shakisha abakoresha",
+      "searchCheckouts": "Shakisha checkouts kuri id/paneri/umukoresha/email",
+      "productName": "Izina ry'igicuruzwa",
+      "userName": "Izina ry'umukoresha",
+      "userEmail": "Imeyili y'umukoresha",
+      "typeProductConfirm": "Andika izina ry'igicuruzwa kugirango wemeze",
+      "typeUserConfirm": "Andika izina ry'umukoresha kugirango wemeze",
+      "typeCartConfirm": "Andika id y'umufuka kugirango wemeze",
+      "typeCheckoutConfirm": "Andika id ya checkout kugirango wemeze"
+    },
+    "labels": {
+      "allCategories": "Ibice byose",
+      "allStatus": "Imiterere yose",
+      "allRoles": "Uruhare rwose",
+      "allOrganisations": "Imiryango yose"
+    },
+    "tables": {
+      "products": { "product": "Igicuruzwa", "category": "Agace", "price": "Igiciro", "stock": "Ububiko", "status": "Imiterere", "actions": "Ibikorwa" },
+      "users": { "user": "Umukoresha", "email": "Imeri", "role": "Uruhare", "organisation": "Umuryango", "actions": "Ibikorwa" },
+      "carts": { "cart": "Umufuka", "owner": "Nyir'umufuka", "items": "Ibintu", "total": "Igiteranyo", "status": "Imiterere", "actions": "Ibikorwa" },
+      "checkouts": { "checkout": "Checkout", "cartOwner": "Umufuka / Nyirawo", "items": "Ibintu", "total": "Igiteranyo", "payment": "Ukwishyura", "actions": "Ibikorwa" }
+    },
+    "deleteDialog": {
+      "title": "Emeza gusiba",
+      "body": "Andika {{target}} hasi kugirango wemeze gusiba. Ibi ntibisubizwa.",
+      "placeholder": "Andika {{target}} kugirango wemeze",
+      "confirm": "Siba",
+      "cancel": "Hagarika"
+    },
+    "pagination": {
+      "pageSize": "Ingano y'urupapuro",
+      "prev": "Icyabanje",
+      "next": "ibikurikira",
+      "showing": "Kwerekana {from} - {to} muri {total}"
+    }
+    ,
+    "stats": {
+      "totalProducts": "Ibicuruzwa byose",
+      "totalUsers": "Abakoresha bose",
+      "totalRevenue": "Inyungu yose",
+      "totalRefunds": "ibyasubijwe byose",
+      "totalFeedbacks": "Ibitekerezo by'abakiriya"
+    },
+    "charts": {
+      "revenueByCategory": "Inyungu z'ibyiciro by'ibicuruzwa",
+      "productsPerCategory": "Ibicuruzwa buri cyiciro",
+      "revenue": "Inyungu",
+      "products": "ibicuruzwa"
+    },
+    "fields": {
+      "product": {
+        "name": "Izina",
+        "price": "Igiciro",
+        "description": "Ibisobanuro",
+        "imageUrl": "URL y'ishusho",
+        "category": "Agace",
+        "stock": "Ububiko",
+        "featured": "By'ingenzi"
+      },
+      "user": {
+        "name": "Izina",
+        "email": "Imeyili",
+        "role": "Uruhare",
+        "organisation": "Umuryango"
+      }
+    },
+    "roles": {
+      "admin": "Umuyobozi",
+      "manager": "Umuyobozi wungirije",
+      "user": "Umukoresha"
+    },
+    "status": {
+      "active": "Gukora",
+      "funded": "Byishyuwe",
+      "completed": "Birangiye"
+    },
+    "dashboardTitle": "Dashboard",
+    "dashboardSubtitle": "Iby'ingenzi n'imibare byihuse"
+  },
+  "projects": {
+    "title": "Imishinga",
+    "subtitle": "Ibikorwa bimwe byerekana uko imishinga y'ubucuruzi bwo kuri murandasi ikora.",
+    "sampleTitle": "Imishinga Y'icyitegererezo",
+    "seeAll": "Reba byose",
+    "viewDetails": "Reba ibisobanuro"
   }
 }

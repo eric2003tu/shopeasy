@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react';
 import { sampleCheckouts, SampleCheckout, sampleProducts } from '@/lib/sampleData';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const STORAGE_KEY = 'shopeasy_admin_checkouts_v1';
 
@@ -26,6 +27,8 @@ export default function CheckoutsTable() {
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkouts)); } catch {}
   }, [checkouts]);
+
+  const { t } = useI18n();
 
   const resetSamples = () => {
     try {
@@ -83,14 +86,14 @@ export default function CheckoutsTable() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
-          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search checkouts by id/cart/user/email" className="px-3 py-2 border rounded w-72" />
+          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchCheckouts')} className="px-3 py-2 border rounded w-72" />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
-            <option value="">All status</option>
+            <option value="">{t('admin.labels.allStatus')}</option>
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
             <option value="failed">Failed</option>
           </select>
-          <button onClick={resetSamples} className="px-3 py-2 bg-muted rounded text-sm">Reset sample checkouts</button>
+          <button onClick={resetSamples} className="px-3 py-2 bg-muted rounded text-sm">{t('admin.buttons.resetSampleCheckouts')}</button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -134,8 +137,8 @@ export default function CheckoutsTable() {
                 <td className="px-4 py-3 text-sm capitalize">{c.paymentStatus}</td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex gap-2">
-                    <button onClick={() => setView(c)} className="px-3 py-1 bg-[#634bc1] text-white rounded text-sm">View</button>
-                    <button onClick={() => markPaid(c.id)} disabled={c.paymentStatus === 'completed'} className="px-3 py-1 bg-green-600 text-white rounded text-sm disabled:opacity-50">Mark paid</button>
+                        <button onClick={() => setView(c)} className="px-3 py-1 bg-[#634bc1] text-white rounded text-sm">{t('admin.buttons.view')}</button>
+                        <button onClick={() => markPaid(c.id)} disabled={c.paymentStatus === 'completed'} className="px-3 py-1 bg-green-600 text-white rounded text-sm disabled:opacity-50">{t('admin.buttons.markPaid')}</button>
                     <button onClick={() => openDelete(c.id)} className="px-3 py-1 border border-red-300 text-red-600 rounded text-sm">Delete</button>
                   </div>
                 </td>
@@ -165,8 +168,8 @@ export default function CheckoutsTable() {
             <div className="mt-4 flex justify-between items-center">
               <div className="text-sm font-medium">Total: ${view!.total.toFixed(2)}</div>
               <div className="flex gap-2">
-                <button onClick={() => { markPaid(view!.id); setView(null); }} className="px-3 py-1 bg-green-600 text-white rounded">Mark paid</button>
-                <button onClick={() => setView(null)} className="px-3 py-1 bg-muted rounded">Close</button>
+                <button onClick={() => { markPaid(view!.id); setView(null); }} className="px-3 py-1 bg-green-600 text-white rounded">{t('admin.buttons.markPaid')}</button>
+                <button onClick={() => setView(null)} className="px-3 py-1 bg-muted rounded">{t('admin.deleteDialog.cancel')}</button>
               </div>
             </div>
           </div>
@@ -177,12 +180,12 @@ export default function CheckoutsTable() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black/50" onClick={() => setDeleteOpen(false)} />
           <div className="relative z-60 w-full max-w-md bg-white rounded shadow-lg p-6">
-            <h3 className="text-lg font-semibold">Confirm deletion</h3>
-            <p className="text-sm text-gray-600 mt-2">Type <strong className="font-medium">{deleteTarget?.id}</strong> below to confirm deletion. This action cannot be undone.</p>
-            <input className="w-full mt-4 p-2 border rounded" value={deleteConfirmInput} onChange={(e) => setDeleteConfirmInput(e.target.value)} placeholder="Type checkout id to confirm" />
-            <div className="mt-4 flex justify-end gap-2">
-              <button onClick={() => setDeleteOpen(false)} className="px-3 py-1 bg-muted rounded">Cancel</button>
-              <button disabled={deleteTarget ? deleteConfirmInput.trim().toLowerCase() !== deleteTarget.id.trim().toLowerCase() : true} onClick={handleConfirmDelete} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">Delete</button>
+            <h3 className="text-lg font-semibold">{t('admin.deleteDialog.title')}</h3>
+              <p className="text-sm text-gray-600 mt-2">{t('admin.deleteDialog.body', { target: deleteTarget?.id ?? '' })}</p>
+              <input className="w-full mt-4 p-2 border rounded" value={deleteConfirmInput} onChange={(e) => setDeleteConfirmInput(e.target.value)} placeholder={t('admin.placeholders.typeCheckoutConfirm')} />
+              <div className="mt-4 flex justify-end gap-2">
+                <button onClick={() => setDeleteOpen(false)} className="px-3 py-1 bg-muted rounded">{t('admin.deleteDialog.cancel')}</button>
+                <button disabled={deleteTarget ? deleteConfirmInput.trim().toLowerCase() !== deleteTarget.id.trim().toLowerCase() : true} onClick={handleConfirmDelete} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">{t('admin.deleteDialog.confirm')}</button>
             </div>
           </div>
         </div>

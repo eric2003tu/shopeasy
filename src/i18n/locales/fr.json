@@ -13,7 +13,6 @@
   },
   "home": {
     "heroSubtitle": "Votre guichet unique pour les meilleures offres, les dernières tendances et tous vos produits préférés. De la mode à l'électronique, nous vous couvrons avec plus de 50 000 articles de qualité !",
-    "support24": "Support 24/7",
     "freeShipping": "Livraison gratuite au-dessus de $50",
     "secureCheckout": "Paiement sécurisé",
     "whyChoose": "Pourquoi choisir {{brand}} ?",
@@ -250,5 +249,113 @@
     "profileSub": "Votre compte et préférences",
     "settings": "Paramètres",
     "settingsSub": "Paramètres de l'application et apparence"
+    ,
+    "buttons": {
+      "products": "Produits",
+      "orders": "Commandes",
+      "users": "Utilisateurs",
+      "addProduct": "Ajouter un produit",
+      "editProduct": "Modifier le produit",
+      "addUser": "Ajouter un utilisateur",
+      "editUser": "Modifier l'utilisateur",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "clear": "Effacer",
+      "resetSampleCheckouts": "Réinitialiser les checkouts exemples",
+  "resetSampleCarts": "Réinitialiser les paniers exemples",
+  "view": "Voir",
+  "close": "Fermer",
+      "convert": "Convertir",
+      "convertToCheckout": "Convertir en commande",
+      "markPaid": "Marquer comme payé",
+      "delete": "Supprimer"
+    },
+    "placeholders": {
+      "searchProducts": "Rechercher des produits",
+      "searchUsers": "Rechercher des utilisateurs",
+      "searchCheckouts": "Rechercher les checkouts par id/panier/utilisateur/email",
+      "productName": "Nom du produit",
+      "userName": "Nom de l'utilisateur",
+      "userEmail": "Email de l'utilisateur",
+      "typeProductConfirm": "Tapez le nom du produit pour confirmer",
+      "typeUserConfirm": "Tapez le nom de l'utilisateur pour confirmer",
+      "typeCartConfirm": "Tapez l'id du panier pour confirmer",
+      "typeCheckoutConfirm": "Tapez l'id du checkout pour confirmer"
+    },
+    "labels": {
+      "allCategories": "Toutes les catégories",
+      "allStatus": "Tous les statuts",
+      "allRoles": "Tous les rôles",
+      "allOrganisations": "Toutes les organisations"
+    },
+    "tables": {
+      "products": { "product": "Produit", "category": "Catégorie", "price": "Prix", "stock": "Stock", "status": "Statut", "actions": "Actions" },
+      "users": { "user": "Utilisateur", "email": "Email", "role": "Rôle", "organisation": "Organisation", "actions": "Actions" },
+      "carts": { "cart": "Panier", "owner": "Propriétaire", "items": "Articles", "total": "Total", "status": "Statut", "actions": "Actions" },
+      "checkouts": { "checkout": "Checkout", "cartOwner": "Panier / Propriétaire", "items": "Articles", "total": "Total", "payment": "Paiement", "actions": "Actions" }
+    },
+    "deleteDialog": {
+      "title": "Confirmer la suppression",
+      "body": "Tapez {{target}} ci-dessous pour confirmer la suppression. Cette action est irréversible.",
+      "placeholder": "Tapez {{target}} pour confirmer",
+      "confirm": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "pagination": {
+      "pageSize": "Taille de page",
+      "prev": "Préc",
+      "next": "Suiv",
+      "showing": "Affichage {from} - {to} sur {total}"
+    }
+    ,
+    "stats": {
+      "totalProducts": "Nombre total de produits",
+      "totalUsers": "Nombre total d'utilisateurs",
+      "totalRevenue": "Revenu total",
+      "totalRefunds": "Nombre total de remboursements",
+      "totalFeedbacks": "Nombre total de retours utilisateurs"
+    },
+    "charts": {
+      "revenueByCategory": "Revenu par catégorie de produit",
+      "productsPerCategory": "Produits par catégorie",
+      "revenue": "Revenu",
+      "products": "produits"
+    },
+    "fields": {
+      "product": {
+        "name": "Nom",
+        "price": "Prix",
+        "description": "Description",
+        "imageUrl": "URL de l'image",
+        "category": "Catégorie",
+        "stock": "Stock",
+        "featured": "En vedette"
+      },
+      "user": {
+        "name": "Nom",
+        "email": "Email",
+        "role": "Rôle",
+        "organisation": "Organisation"
+      }
+    },
+    "roles": {
+      "admin": "Administrateur",
+      "manager": "Gestionnaire",
+      "user": "Utilisateur"
+    },
+    "status": {
+      "active": "Actif",
+      "funded": "Financé",
+      "completed": "Terminé"
+    },
+    "dashboardTitle": "Tableau de bord",
+    "dashboardSubtitle": "Aperçu et statistiques rapides"
+  },
+  "projects": {
+    "title": "Projets",
+    "subtitle": "Quelques projets d'exemple démontrant des fonctionnalités e-commerce courantes.",
+    "sampleTitle": "Projets d'exemple",
+    "seeAll": "Voir tout",
+    "viewDetails": "Voir les détails"
   }
 }

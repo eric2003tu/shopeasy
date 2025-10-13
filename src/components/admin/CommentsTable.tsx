@@ -2,8 +2,10 @@
 import React, { useMemo, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { sampleComments, SampleComment } from '@/lib/sampleData';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export default function CommentsTable() {
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [page, setPage] = useState(1);
@@ -30,12 +32,12 @@ export default function CommentsTable() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder="Search comments" className="px-3 py-2 border rounded w-64" />
+          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchComments') || 'Search comments'} className="px-3 py-2 border rounded w-64" />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
-            <option value="">All status</option>
-            <option value="published">Published</option>
-            <option value="pending">Pending</option>
-            <option value="hidden">Hidden</option>
+            <option value="">{t('admin.labels.allStatus')}</option>
+            <option value="published">{t('admin.comments.status.published')}</option>
+            <option value="pending">{t('admin.comments.status.pending')}</option>
+            <option value="hidden">{t('admin.comments.status.hidden')}</option>
           </select>
         </div>
         <div className="flex items-center gap-2">
@@ -74,12 +76,12 @@ export default function CommentsTable() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600">{c.rating} / 5</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{c.comment}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  {c.status === 'published' ? <span className="text-green-600">Published</span> : c.status === 'hidden' ? <span className="text-red-600">Hidden</span> : <span className="text-yellow-600">Pending</span>}
+                  {c.status === 'published' ? <span className="text-green-600">{t('admin.comments.status.published')}</span> : c.status === 'hidden' ? <span className="text-red-600">{t('admin.comments.status.hidden')}</span> : <span className="text-yellow-600">{t('admin.comments.status.pending')}</span>}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <div className="inline-flex gap-2">
                     <CommentViewButton comment={c} />
-                    <button className="px-3 py-1 border border-red-300 text-red-600 rounded hover:bg-red-50 text-sm">Hide</button>
+                    <button className="px-3 py-1 border border-red-300 text-red-600 rounded hover:bg-red-50 text-sm">{t('admin.comments.actions.hide')}</button>
                   </div>
                 </td>
               </tr>
@@ -96,12 +98,13 @@ function CommentDialogOverlay() {
 }
 
 function CommentViewButton({ comment }: { comment: SampleComment }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button onClick={() => setOpen(true)} className="px-3 py-1 bg-[#634bc1] text-white rounded hover:opacity-90 text-sm">View</button>
+        <button onClick={() => setOpen(true)} className="px-3 py-1 bg-[#634bc1] text-white rounded hover:opacity-90 text-sm">{t('admin.buttons.view')}</button>
       </Dialog.Trigger>
 
       <Dialog.Portal>
@@ -110,8 +113,8 @@ function CommentViewButton({ comment }: { comment: SampleComment }) {
           <div className="w-full max-w-lg bg-card rounded-lg shadow-lg p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-semibold">Comment details</h3>
-                <p className="text-sm text-gray-500">Comment ID: {comment.id}</p>
+                <h3 className="text-lg font-semibold">{t('admin.comments.dialog.title')}</h3>
+                <p className="text-sm text-gray-500">{t('admin.comments.dialog.id')}: {comment.id}</p>
               </div>
               <Dialog.Close asChild>
                 <button className="text-gray-500 hover:text-gray-700">Close</button>
@@ -138,9 +141,9 @@ function CommentViewButton({ comment }: { comment: SampleComment }) {
               <div className="font-medium col-span-2 break-words">{comment.comment}</div>
             </div>
 
-            <div className="mt-6 text-right">
+                <div className="mt-6 text-right">
               <Dialog.Close asChild>
-                <button className="px-4 py-2 bg-gray-100 rounded">Close</button>
+                <button className="px-4 py-2 bg-gray-100 rounded">{t('admin.buttons.close')}</button>
               </Dialog.Close>
             </div>
           </div>

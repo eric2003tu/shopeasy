@@ -54,29 +54,29 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-1">Province Coordinator of Western Province Dashboard</h2>
-      <p className="text-sm text-gray-600 mb-6">Overview of your organisations, projects, and performance metrics.</p>
+      <h2 className="text-3xl font-bold mb-1">{t('admin.dashboardTitle')}</h2>
+      <p className="text-sm text-gray-600 mb-6">{t('admin.dashboardSubtitle')}</p>
 
       <AdminStats />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold mb-4">Revenue by Product Category</h3>
+          <h3 className="font-semibold mb-4">{t('admin.charts.revenueByCategory')}</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={revenueByCategory} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="category" angle={-20} textAnchor="end" interval={0} height={60} />
                 <YAxis tickFormatter={(v) => `$${Number(v).toFixed(0)}`} />
-                <Tooltip formatter={(value: number | string) => [`$${Number(value).toFixed(2)}`, 'Revenue']} />
+                <Tooltip formatter={(value: number | string) => [`$${Number(value).toFixed(2)}`, t('admin.charts.revenue')]} />
                 <Legend />
-                <Bar dataKey="value" name="Revenue" fill="#6366F1" />
+                <Bar dataKey="value" name={t('admin.charts.revenue')} fill="#6366F1" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold mb-4">Products per Category</h3>
+          <h3 className="font-semibold mb-4">{t('admin.charts.productsPerCategory')}</h3>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -85,7 +85,7 @@ export default function DashboardPage() {
                     <Cell key={`cell-${idx}`} fill={colors[idx % colors.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(v: number) => `${v} products`} />
+                <Tooltip formatter={(v: number) => `${v} ${t('admin.charts.products')}`} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>

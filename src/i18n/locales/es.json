@@ -250,5 +250,112 @@
     "profileSub": "Tu cuenta y preferencias",
     "settings": "Ajustes",
     "settingsSub": "Ajustes de la aplicación y apariencia"
+    ,
+    "buttons": {
+      "products": "Productos",
+      "orders": "Pedidos",
+      "users": "Usuarios",
+      "addProduct": "Agregar producto",
+      "editProduct": "Editar producto",
+      "addUser": "Agregar usuario",
+      "editUser": "Editar usuario",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "clear": "Borrar",
+      "resetSampleCheckouts": "Restablecer checkouts de muestra",
+  "resetSampleCarts": "Restablecer carritos de muestra",
+  "view": "Ver",
+  "close": "Cerrar",
+      "convertToCheckout": "Convertir a checkout",
+      "markPaid": "Marcar como pagado",
+      "delete": "Eliminar"
+    },
+    "placeholders": {
+      "searchProducts": "Buscar productos",
+      "searchUsers": "Buscar usuarios",
+      "searchCheckouts": "Buscar checkouts por id/carrito/usuario/email",
+      "productName": "Nombre del producto",
+      "userName": "Nombre del usuario",
+      "userEmail": "Email del usuario",
+      "typeProductConfirm": "Escribe el nombre del producto para confirmar",
+      "typeUserConfirm": "Escribe el nombre del usuario para confirmar",
+      "typeCartConfirm": "Escribe el id del carrito para confirmar",
+      "typeCheckoutConfirm": "Escribe el id del checkout para confirmar"
+    },
+    "labels": {
+      "allCategories": "Todas las categorías",
+      "allStatus": "Todos los estados",
+      "allRoles": "Todos los roles",
+      "allOrganisations": "Todas las organizaciones"
+    },
+    "tables": {
+      "products": { "product": "Producto", "category": "Categoría", "price": "Precio", "stock": "Stock", "status": "Estado", "actions": "Acciones" },
+      "users": { "user": "Usuario", "email": "Correo", "role": "Rol", "organisation": "Organización", "actions": "Acciones" },
+      "carts": { "cart": "Carrito", "owner": "Propietario", "items": "Artículos", "total": "Total", "status": "Estado", "actions": "Acciones" },
+      "checkouts": { "checkout": "Checkout", "cartOwner": "Carrito / Propietario", "items": "Artículos", "total": "Total", "payment": "Pago", "actions": "Acciones" }
+    },
+    "deleteDialog": {
+      "title": "Confirmar eliminación",
+      "body": "Escribe {{target}} abajo para confirmar la eliminación. Esta acción no se puede deshacer.",
+      "placeholder": "Escribe {{target}} para confirmar",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "pagination": {
+      "pageSize": "Tamaño de página",
+      "prev": "Anterior",
+      "next": "Siguiente",
+      "showing": "Mostrando {from} - {to} de {total}"
+    }
+    ,
+    "stats": {
+      "totalProducts": "Total de productos",
+      "totalUsers": "Total de usuarios",
+      "totalRevenue": "Ingresos totales",
+      "totalRefunds": "Total de reembolsos",
+      "totalFeedbacks": "Total de comentarios de usuarios"
+    },
+    "charts": {
+      "revenueByCategory": "Ingresos por categoría de producto",
+      "productsPerCategory": "Productos por categoría",
+      "revenue": "Ingresos",
+      "products": "productos"
+    },
+    "fields": {
+      "product": {
+        "name": "Nombre",
+        "price": "Precio",
+        "description": "Descripción",
+        "imageUrl": "URL de la imagen",
+        "category": "Categoría",
+        "stock": "Stock",
+        "featured": "Destacado"
+      },
+      "user": {
+        "name": "Nombre",
+        "email": "Correo",
+        "role": "Rol",
+        "organisation": "Organización"
+      }
+    },
+    "roles": {
+      "admin": "Administrador",
+      "manager": "Gerente",
+      "user": "Usuario"
+    },
+    "status": {
+      "active": "Activo",
+      "funded": "Financiado",
+      "completed": "Completado"
+    },
+    "dashboardTitle": "Panel de administración",
+    "dashboardSubtitle": "Resumen y estadísticas rápidas"
+  },
+  "projects": {
+    "title": "Proyectos",
+    "subtitle": "Algunos proyectos de ejemplo que muestran características comunes de comercio electrónico.",
+    "sampleTitle": "Proyectos de muestra",
+    "seeAll": "Ver todo",
+    "viewDetails": "Ver detalles"
   }
 }

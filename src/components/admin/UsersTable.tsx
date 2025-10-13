@@ -2,10 +2,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { sampleUsers, SampleUser, organizations } from '@/lib/sampleData';
 import * as Dialog from '@radix-ui/react-dialog';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const STORAGE_KEY = 'shopeasy_admin_users_v1';
 
 function UserForm({ initial, onSave, onCancel }: { initial?: Partial<SampleUser>; onSave: (u: SampleUser) => void; onCancel: () => void }) {
+  const { t } = useI18n();
   const [name, setName] = useState(initial?.name || '');
   const [email, setEmail] = useState(initial?.email || '');
   const [role, setRole] = useState<SampleUser['role']>(initial?.role || 'user');
@@ -15,31 +17,33 @@ function UserForm({ initial, onSave, onCancel }: { initial?: Partial<SampleUser>
     <div className="p-2">
       <div className="grid grid-cols-1 gap-3">
         <div>
-          <label className="text-sm mb-1 block">Name</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 border rounded" />
+          <label className="text-sm mb-1 block">{t('admin.fields.user.name')}</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 border rounded" placeholder={t('admin.placeholders.userName')}
+          />
         </div>
         <div>
-          <label className="text-sm mb-1 block">Email</label>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 border rounded" />
+          <label className="text-sm mb-1 block">{t('admin.fields.user.email')}</label>
+          <input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-2 border rounded" placeholder={t('admin.placeholders.userEmail')}
+          />
         </div>
         <div>
-          <label className="text-sm mb-1 block">Role</label>
+          <label className="text-sm mb-1 block">{t('admin.fields.user.role')}</label>
           <select value={role} onChange={(e) => setRole(e.target.value as SampleUser['role'])} className="w-full p-2 border rounded">
-            <option value="admin">Admin</option>
-            <option value="manager">Manager</option>
-            <option value="user">User</option>
+            <option value="admin">{t('admin.roles.admin')}</option>
+            <option value="manager">{t('admin.roles.manager')}</option>
+            <option value="user">{t('admin.roles.user')}</option>
           </select>
         </div>
         <div>
-          <label className="text-sm mb-1 block">Organisation</label>
+          <label className="text-sm mb-1 block">{t('admin.fields.user.organisation')}</label>
           <select value={org} onChange={(e) => setOrg(e.target.value)} className="w-full p-2 border rounded">
             {organizations.map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
         </div>
       </div>
       <div className="mt-3 flex gap-2">
-        <button onClick={() => onSave({ id: initial?.id || `${Date.now().toString(36)}${Math.random().toString(36).slice(2,8)}`, name, email, role, organisation: org })} className="px-3 py-1 bg-primary text-primary-foreground rounded">Save</button>
-        <button onClick={onCancel} className="px-3 py-1 bg-muted rounded">Cancel</button>
+        <button onClick={() => onSave({ id: initial?.id || `${Date.now().toString(36)}${Math.random().toString(36).slice(2,8)}`, name, email, role, organisation: org })} className="px-3 py-1 bg-primary text-primary-foreground rounded">{t('admin.buttons.save')}</button>
+        <button onClick={onCancel} className="px-3 py-1 bg-muted rounded">{t('admin.buttons.cancel')}</button>
       </div>
     </div>
   );
@@ -53,17 +57,18 @@ function DeleteDialogUser({ open, onOpenChange, target, value, setValue, onConfi
   setValue: (v: string) => void;
   onConfirm: () => void;
 }) {
+  const { t } = useI18n();
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" onClick={() => onOpenChange(false)} />
       <div className="relative z-60 w-full max-w-md bg-white rounded shadow-lg p-6">
-        <h3 className="text-lg font-semibold">Confirm deletion</h3>
-        <p className="text-sm text-gray-600 mt-2">Type <strong className="font-medium">{target?.name}</strong> below to confirm deletion. This action cannot be undone.</p>
-        <input className="w-full mt-4 p-2 border rounded" value={value} onChange={(e) => setValue(e.target.value)} placeholder="Type user name to confirm" />
+  <h3 className="text-lg font-semibold">{t('admin.deleteDialog.title')}</h3>
+  <p className="text-sm text-gray-600 mt-2">{t('admin.deleteDialog.body', { target: target?.name ?? '' })}</p>
+  <input className="w-full mt-4 p-2 border rounded" value={value} onChange={(e) => setValue(e.target.value)} placeholder={t('admin.placeholders.typeUserConfirm')} />
         <div className="mt-4 flex justify-end gap-2">
-          <button onClick={() => onOpenChange(false)} className="px-3 py-1 bg-muted rounded">Cancel</button>
-          <button disabled={target ? value.trim().toLowerCase() !== target.name.trim().toLowerCase() : true} onClick={onConfirm} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">Delete</button>
+            <button onClick={() => onOpenChange(false)} className="px-3 py-1 bg-muted rounded">{t('admin.deleteDialog.cancel')}</button>
+            <button disabled={target ? value.trim().toLowerCase() !== target.name.trim().toLowerCase() : true} onClick={onConfirm} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">{t('admin.deleteDialog.confirm')}</button>
         </div>
       </div>
     </div>
@@ -71,6 +76,7 @@ function DeleteDialogUser({ open, onOpenChange, target, value, setValue, onConfi
 }
 
 export default function UsersTable() {
+  const { t } = useI18n();
   const [users, setUsers] = useState<SampleUser[]>(() => {
     try {
       const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
@@ -154,29 +160,29 @@ export default function UsersTable() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder="Search users" className="px-3 py-2 border rounded w-64" />
+          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchUsers')} className="px-3 py-2 border rounded w-64" />
           <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
-            <option value="">All roles</option>
+            <option value="">{t('admin.labels.allRoles')}</option>
             <option value="admin">Admin</option>
             <option value="manager">Manager</option>
             <option value="user">User</option>
           </select>
           <select value={orgFilter} onChange={(e) => { setOrgFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
-            <option value="">All organisations</option>
+            <option value="">{t('admin.labels.allOrganisations')}</option>
             {orgs.map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
         </div>
         <div className="flex items-center gap-2">
           <Dialog.Root open={sheetOpen} onOpenChange={setSheetOpen}>
-            <Dialog.Trigger asChild>
-              <button className="px-3 py-1 bg-[#634bc1] text-white rounded hover:opacity-95 text-sm">Add user</button>
+              <Dialog.Trigger asChild>
+              <button className="px-3 py-1 bg-[#634bc1] text-white rounded hover:opacity-95 text-sm">{t('admin.buttons.addUser')}</button>
             </Dialog.Trigger>
             <Dialog.Portal>
               <div className="fixed inset-0 z-50 flex items-center justify-center">
                 <div className="fixed inset-0 bg-black/40" />
                 <Dialog.Content className="w-full max-w-lg bg-card rounded shadow-lg z-50">
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold mb-2">{editing ? 'Edit user' : 'Add user'}</h3>
+                    <h3 className="text-lg font-semibold mb-2">{editing ? t('admin.buttons.editUser') : t('admin.buttons.addUser')}</h3>
                     <UserForm initial={editing ?? undefined} onSave={handleSave} onCancel={() => { setEditing(null); setSheetOpen(false); }} />
                   </div>
                   <Dialog.Close asChild>
@@ -194,7 +200,7 @@ export default function UsersTable() {
           <div className="text-sm text-gray-600">Showing <strong>{(currentPage - 1) * pageSize + 1}</strong> - <strong>{Math.min(currentPage * pageSize, total)}</strong> of <strong>{total}</strong></div>
           <div className="flex items-center gap-2">
             <div>
-              <label className="text-xs">Page size</label>
+              <label className="text-xs">{t('admin.pagination.pageSize')}</label>
               <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="ml-2 p-1 border rounded">
                 <option value={5}>5</option>
                 <option value={8}>8</option>
@@ -203,20 +209,20 @@ export default function UsersTable() {
               </select>
             </div>
             <div className="inline-flex items-center gap-1">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">Prev</button>
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="px-2 py-1 border rounded">{t('admin.pagination.prev')}</button>
               <span className="px-2 text-sm">{currentPage} / {pageCount}</span>
-              <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">Next</button>
+              <button onClick={() => setPage((p) => Math.min(pageCount, p + 1))} className="px-2 py-1 border rounded">{t('admin.pagination.next')}</button>
             </div>
           </div>
         </div>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organisation</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.users.user')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.users.email')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.users.role')}</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.users.organisation')}</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.tables.users.actions')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -228,8 +234,8 @@ export default function UsersTable() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{u.organisation}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <div className="inline-flex gap-2">
-                    <button onClick={() => handleEdit(u.id)} className="px-3 py-1 bg-[#634bc1] text-white rounded hover:opacity-90 text-sm">Edit</button>
-                    <button onClick={() => handleDelete(u.id)} className="px-3 py-1 border border-red-300 text-red-600 rounded hover:bg-red-50 text-sm">Delete</button>
+                    <button onClick={() => handleEdit(u.id)} className="px-3 py-1 bg-[#634bc1] text-white rounded hover:opacity-90 text-sm">{t('admin.buttons.editUser')}</button>
+                    <button onClick={() => handleDelete(u.id)} className="px-3 py-1 border border-red-300 text-red-600 rounded hover:bg-red-50 text-sm">{t('admin.buttons.delete')}</button>
                   </div>
                 </td>
               </tr>

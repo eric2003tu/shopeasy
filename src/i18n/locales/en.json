@@ -255,5 +255,127 @@
     "profileSub": "Your account and preferences",
     "settings": "Settings",
     "settingsSub": "Application and appearance settings"
+    ,
+    "buttons": {
+      "products": "Products",
+      "orders": "Orders",
+      "users": "Users",
+      "addProduct": "Add product",
+      "editProduct": "Edit product",
+      "addUser": "Add user",
+      "editUser": "Edit user",
+      "save": "Save",
+      "cancel": "Cancel",
+      "clear": "Clear",
+      "resetSampleCheckouts": "Reset sample checkouts",
+      "resetSampleCarts": "Reset sample carts",
+      "view": "View",
+      "convert": "Convert",
+      "convertToCheckout": "Convert to checkout",
+      "markPaid": "Mark paid",
+      "delete": "Delete"
+    },
+    "placeholders": {
+      "searchProducts": "Search products",
+      "searchUsers": "Search users",
+      "searchCheckouts": "Search checkouts by id/cart/user/email",
+      "productName": "Product name",
+      "userName": "User name",
+      "userEmail": "User email",
+  "searchComments": "Search comments",
+      "typeProductConfirm": "Type product name to confirm",
+      "typeUserConfirm": "Type user name to confirm",
+      "typeCartConfirm": "Type cart id to confirm",
+      "typeCheckoutConfirm": "Type checkout id to confirm"
+    },
+  "comments": {
+      "status": {
+        "published": "Published",
+        "pending": "Pending",
+        "hidden": "Hidden"
+      },
+      "dialog": {
+        "title": "Comment details",
+        "id": "Comment ID"
+      },
+      "actions": {
+        "hide": "Hide"
+      }
+    },
+    "labels": {
+      "allCategories": "All categories",
+      "allStatus": "All status",
+      "allRoles": "All roles",
+      "allOrganisations": "All organisations"
+    },
+    "tables": {
+      "products": { "product": "Product", "category": "Category", "price": "Price", "stock": "Stock", "status": "Status", "actions": "Actions" },
+      "users": { "user": "User", "email": "Email", "role": "Role", "organisation": "Organisation", "actions": "Actions" },
+      "carts": { "cart": "Cart", "owner": "Owner", "items": "Items", "total": "Total", "status": "Status", "actions": "Actions" },
+      "checkouts": { "checkout": "Checkout", "cartOwner": "Cart / Owner", "items": "Items", "total": "Total", "payment": "Payment", "actions": "Actions" }
+    },
+    "deleteDialog": {
+      "title": "Confirm deletion",
+      "body": "Type {{target}} below to confirm deletion. This action cannot be undone.",
+      "placeholder": "Type {{target}} to confirm",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "pagination": {
+      "pageSize": "Page size",
+      "prev": "Prev",
+      "next": "Next",
+      "showing": "Showing {from} - {to} of {total}"
+    }
+    ,
+    "stats": {
+      "totalProducts": "Total products",
+      "totalUsers": "Total users",
+      "totalRevenue": "Total revenue",
+      "totalRefunds": "Total refunds",
+      "totalFeedbacks": "Total user feedbacks"
+    },
+    "charts": {
+      "revenueByCategory": "Revenue by Product Category",
+      "productsPerCategory": "Products per Category",
+      "revenue": "Revenue",
+      "products": "products"
+    },
+    "fields": {
+      "product": {
+        "name": "Name",
+        "price": "Price",
+        "description": "Description",
+        "imageUrl": "Image URL",
+        "category": "Category",
+        "stock": "Stock",
+        "featured": "Featured"
+      },
+      "user": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "organisation": "Organisation"
+      }
+    },
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "user": "User"
+    },
+    "status": {
+      "active": "Active",
+      "funded": "Funded",
+      "completed": "Completed"
+    },
+    "dashboardTitle": "Admin Dashboard",
+    "dashboardSubtitle": "Overview and quick stats"
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "A few sample projects demonstrating common e-commerce features.",
+    "sampleTitle": "Sample Projects",
+    "seeAll": "See all",
+    "viewDetails": "View details"
   }
 }

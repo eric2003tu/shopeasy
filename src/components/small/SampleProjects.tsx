@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const sampleProjects = [
   {
@@ -24,12 +25,13 @@ const sampleProjects = [
 ];
 
 const SampleProjects: React.FC = () => {
+  const { t } = useI18n();
   return (
     <section className="py-12 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Sample Projects</h2>
-          <Link href="/projects" className="text-sm text-indigo-600 hover:underline">See all</Link>
+          <h2 className="text-2xl font-bold text-gray-800">{t('projects.sampleTitle')}</h2>
+          <Link href="/projects" className="text-sm text-indigo-600 hover:underline">{t('projects.seeAll')}</Link>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {sampleProjects.map(p => (
@@ -41,7 +43,7 @@ const SampleProjects: React.FC = () => {
                   <span key={tag} className="text-xs bg-gray-100 px-2 py-1 rounded">{tag}</span>
                 ))}
               </div>
-              <Link href="#" className="inline-block text-sm font-medium text-indigo-600 hover:underline">View details</Link>
+              <Link href="#" className="inline-block text-sm font-medium text-indigo-600 hover:underline">{t('projects.viewDetails')}</Link>
             </div>
           ))}
         </div>

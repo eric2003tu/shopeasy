@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ProductForm from './ProductForm';
 import ConfirmDialog from './ConfirmDialog';
 import Image from 'next/image';
+import { useI18n } from '@/i18n/I18nProvider';
 
 interface Product {
   _id?: string;
@@ -65,7 +66,7 @@ const ProductsAdmin: React.FC = () => {
 
   const onDelete = (id?: string) => {
     if (!id) return;
-    setConfirm({ open: true, id, message: 'Are you sure you want to delete this product?' });
+    setConfirm({ open: true, id, message: '' });
   };
 
   const confirmDelete = (id?: string) => {
@@ -84,13 +85,15 @@ const ProductsAdmin: React.FC = () => {
     setShowForm(false);
   };
 
+  const { t } = useI18n();
+
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Products</h2>
+        <h2 className="text-xl font-semibold">{t('admin.products')}</h2>
         <div className="flex items-center gap-2">
-          <button onClick={onAdd} className="px-3 py-1 bg-primary text-primary-foreground rounded">Add product</button>
-          <button onClick={() => { localStorage.removeItem(STORAGE_KEY); setProducts([]); }} className="px-3 py-1 bg-destructive/10 text-destructive rounded">Clear</button>
+          <button onClick={onAdd} className="px-3 py-1 bg-primary text-primary-foreground rounded">{t('admin.buttons.addProduct')}</button>
+          <button onClick={() => { localStorage.removeItem(STORAGE_KEY); setProducts([]); }} className="px-3 py-1 bg-destructive/10 text-destructive rounded">{t('admin.buttons.clear') || 'Clear'}</button>
         </div>
       </div>
 
@@ -115,8 +118,8 @@ const ProductsAdmin: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="text-primary font-bold">${p.price}</div>
               <div className="flex gap-2">
-                <button onClick={() => onEdit(p)} className="px-2 py-1 bg-accent/10 text-accent rounded">Edit</button>
-                <button onClick={() => onDelete(p._id)} className="px-2 py-1 bg-destructive/10 text-destructive rounded">Delete</button>
+                <button onClick={() => onEdit(p)} className="px-2 py-1 bg-accent/10 text-accent rounded">{t('admin.buttons.editProduct')}</button>
+                <button onClick={() => onDelete(p._id)} className="px-2 py-1 bg-destructive/10 text-destructive rounded">{t('admin.buttons.delete')}</button>
               </div>
             </div>
           </div>

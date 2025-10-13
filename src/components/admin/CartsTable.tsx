@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react';
 import { sampleCarts, SampleCart, sampleProducts, SampleCartItem } from '@/lib/sampleData';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const STORAGE_KEY = 'shopeasy_admin_carts_v1';
 
@@ -25,6 +26,7 @@ export default function CartsTable() {
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(carts)); } catch {}
   }, [carts]);
+  const { t } = useI18n();
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -104,14 +106,14 @@ export default function CartsTable() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
-          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Search carts by id/user/email" className="px-3 py-2 border rounded w-72" />
+          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchCheckouts')} className="px-3 py-2 border rounded w-72" />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
-            <option value="">All status</option>
+            <option value="">{t('admin.labels.allStatus')}</option>
             <option value="active">Active</option>
             <option value="abandoned">Abandoned</option>
             <option value="converted">Converted</option>
           </select>
-          <button onClick={resetSamples} className="px-3 py-2 bg-muted rounded text-sm">Reset sample carts</button>
+          <button onClick={resetSamples} className="px-3 py-2 bg-muted rounded text-sm">{t('admin.buttons.resetSampleCarts')}</button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -186,8 +188,8 @@ export default function CartsTable() {
               ))}
             </div>
             <div className="mt-4 flex justify-end gap-3">
-              <button onClick={() => { convertToCheckout(view!); setView(null); }} className="px-3 py-1 bg-green-600 text-white rounded">Convert to checkout</button>
-              <button onClick={() => setView(null)} className="px-3 py-1 bg-muted rounded">Close</button>
+                    <button onClick={() => { convertToCheckout(view!); setView(null); }} className="px-3 py-1 bg-green-600 text-white rounded">{t('admin.buttons.convertToCheckout')}</button>
+              <button onClick={() => setView(null)} className="px-3 py-1 bg-muted rounded">{t('admin.deleteDialog.cancel')}</button>
             </div>
           </div>
         </div>
@@ -198,12 +200,12 @@ export default function CartsTable() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black/50" onClick={() => setDeleteOpen(false)} />
           <div className="relative z-60 w-full max-w-md bg-white rounded shadow-lg p-6">
-            <h3 className="text-lg font-semibold">Confirm deletion</h3>
-            <p className="text-sm text-gray-600 mt-2">Type <strong className="font-medium">{deleteTarget?.id}</strong> below to confirm deletion. This action cannot be undone.</p>
-            <input className="w-full mt-4 p-2 border rounded" value={deleteConfirmInput} onChange={(e) => setDeleteConfirmInput(e.target.value)} placeholder="Type cart id to confirm" />
+            <h3 className="text-lg font-semibold">{t('admin.deleteDialog.title')}</h3>
+            <p className="text-sm text-gray-600 mt-2">{t('admin.deleteDialog.body', { target: deleteTarget?.id ?? '' })}</p>
+            <input className="w-full mt-4 p-2 border rounded" value={deleteConfirmInput} onChange={(e) => setDeleteConfirmInput(e.target.value)} placeholder={t('admin.placeholders.typeCartConfirm')} />
             <div className="mt-4 flex justify-end gap-2">
-              <button onClick={() => setDeleteOpen(false)} className="px-3 py-1 bg-muted rounded">Cancel</button>
-              <button disabled={deleteTarget ? deleteConfirmInput.trim().toLowerCase() !== deleteTarget.id.trim().toLowerCase() : true} onClick={handleConfirmDelete} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">Delete</button>
+              <button onClick={() => setDeleteOpen(false)} className="px-3 py-1 bg-muted rounded">{t('admin.deleteDialog.cancel')}</button>
+              <button disabled={deleteTarget ? deleteConfirmInput.trim().toLowerCase() !== deleteTarget.id.trim().toLowerCase() : true} onClick={handleConfirmDelete} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">{t('admin.deleteDialog.confirm')}</button>
             </div>
           </div>
         </div>
