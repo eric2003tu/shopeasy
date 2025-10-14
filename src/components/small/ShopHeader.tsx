@@ -1,11 +1,16 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
+import { sampleUsers, SampleUser } from '@/lib/sampleData';
+import UserMenu from './UserMenu';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BsBoxSeam, BsCart2 } from 'react-icons/bs';
 import { MdPayment } from 'react-icons/md';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { HiOutlineGlobeAlt } from 'react-icons/hi';
+import { BiUser } from 'react-icons/bi';
+import { FiSettings, FiLogOut } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export default function ShopHeader() {
@@ -13,6 +18,24 @@ export default function ShopHeader() {
 	const [langOpen, setLangOpen] = useState(false);
 	const { t, locale, setLocale } = useI18n();
 	const langRef = useRef<HTMLDivElement | null>(null);
+		const [user, setUser] = useState<Partial<SampleUser> & { image?: string }>({ name: sampleUsers[0].name });
+		const [userMenuOpen, setUserMenuOpen] = useState(false);
+		const userMenuRef = useRef<HTMLDivElement | null>(null);
+		const router = useRouter();
+
+	// Creates a small SVG avatar with initials as a data URL
+	const makeInitialsAvatar = (fullName?: string) => {
+		const name = fullName || '';
+		const initials = name.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase() || 'U';
+		const bg = '#6b46c1';
+		const fg = '#ffffff';
+		const svg = `
+		<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'>
+		  <rect width='100%' height='100%' fill='${bg}' />
+		  <text x='50%' y='50%' dy='.35em' fill='${fg}' font-family='Arial, Helvetica, sans-serif' font-size='52' text-anchor='middle'>${initials}</text>
+		</svg>`;
+		return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+	};
 
 	useEffect(() => {
 		const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -20,12 +43,30 @@ export default function ShopHeader() {
 		return () => window.removeEventListener('scroll', handleScroll);
 	}, []);
 
+		useEffect(() => {
+			const onClick = (e: MouseEvent) => {
+				if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+				if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+			};
+			window.addEventListener('click', onClick);
+			return () => window.removeEventListener('click', onClick);
+		}, []);
+
 	useEffect(() => {
-		const onClick = (e: MouseEvent) => {
-			if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
-		};
-		window.addEventListener('click', onClick);
-		return () => window.removeEventListener('click', onClick);
+		// Try to read user from localStorage, fallback to sampleUsers[0]
+		if (typeof window !== 'undefined') {
+			const raw = localStorage.getItem('user');
+			if (raw) {
+				try {
+					const parsed = JSON.parse(raw);
+					setUser({ ...sampleUsers[0], name: parsed.name || sampleUsers[0].name, image: parsed.image });
+				} catch {
+					setUser(sampleUsers[0]);
+				}
+			} else {
+				setUser(sampleUsers[0]);
+			}
+		}
 	}, []);
 
 	return (
@@ -74,6 +115,9 @@ export default function ShopHeader() {
 								</div>
 							)}
 						</div>
+
+																		{/* User menu (reusable) */}
+																		<UserMenu />
 					</nav>
 				</div>
 			</div>

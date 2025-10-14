@@ -1,0 +1,92 @@
+"use client";
+import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { BiUser } from 'react-icons/bi';
+import { FiSettings, FiLogOut } from 'react-icons/fi';
+import { sampleUsers, SampleUser } from '@/lib/sampleData';
+import { useRouter } from 'next/navigation';
+
+// Creates a small SVG avatar with initials as a data URL
+function makeInitialsAvatar(fullName?: string) {
+  const name = fullName || '';
+  const initials = name.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase() || 'U';
+  const bg = '#6b46c1';
+  const fg = '#ffffff';
+  const svg = `
+  <svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'>
+    <rect width='100%' height='100%' fill='${bg}' />
+    <text x='50%' y='50%' dy='.35em' fill='${fg}' font-family='Arial, Helvetica, sans-serif' font-size='52' text-anchor='middle'>${initials}</text>
+  </svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+export default function UserMenu() {
+  const [user, setUser] = useState<Partial<SampleUser> & { image?: string }>({ name: sampleUsers[0].name });
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Try to read user from localStorage, fallback to sampleUsers[0]
+    if (typeof window !== 'undefined') {
+      const raw = localStorage.getItem('user');
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          setUser({ ...sampleUsers[0], name: parsed.name || sampleUsers[0].name, image: parsed.image });
+        } catch {
+          setUser(sampleUsers[0]);
+        }
+      } else {
+        setUser(sampleUsers[0]);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    window.addEventListener('click', onClick);
+    return () => window.removeEventListener('click', onClick);
+  }, []);
+
+  return (
+    <div className="ml-6 relative" ref={menuRef}>
+      <button
+        onClick={e => { e.stopPropagation(); setMenuOpen(!menuOpen); }}
+        className="flex items-center gap-2 focus:outline-none"
+      >
+        <div className="relative h-10 w-10 bg-gray-200 rounded-full overflow-hidden border border-white/30">
+          <Image src={(user.image && typeof user.image === 'string') ? user.image : makeInitialsAvatar(user.name)} alt={user.name || 'User'} fill className="rounded-full object-cover" sizes="40px" />
+        </div>
+        <span className="text-white font-medium text-base">{user.name}</span>
+      </button>
+      {menuOpen && (
+        <div className="absolute right-0 mt-2 w-44 bg-white rounded shadow-lg text-gray-800 py-2 z-50">
+          <Link href="/shop/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <BiUser className="text-lg" />
+            <span>My profile</span>
+          </Link>
+          <Link href="/shop/settings" className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+            <FiSettings className="text-lg" />
+            <span>Settings</span>
+          </Link>
+          <button
+            onClick={() => {
+              localStorage.removeItem('user');
+              setUser(sampleUsers[0]);
+              setMenuOpen(false);
+              router.push('/login');
+            }}
+            className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+          >
+            <FiLogOut className="text-lg" />
+            <span>Logout</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
