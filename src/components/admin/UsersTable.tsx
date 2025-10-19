@@ -77,13 +77,13 @@ function DeleteDialogUser({ open, onOpenChange, target, value, setValue, onConfi
 
 export default function UsersTable() {
   const { t } = useI18n();
-  const [users, setUsers] = useState<SampleUser[]>(() => {
-    try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-      if (raw) return JSON.parse(raw) as SampleUser[];
-    } catch (e) {}
-    return sampleUsers;
-  });
+      const [users, setUsers] = useState<SampleUser[]>(() => {
+        try {
+          const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+          if (raw) return JSON.parse(raw) as SampleUser[];
+        } catch {}
+        return sampleUsers;
+      });
 
   const [editing, setEditing] = useState<SampleUser | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -100,7 +100,7 @@ export default function UsersTable() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    } catch (e) {}
+    } catch {}
   }, [users]);
 
   const orgs = useMemo(() => Array.from(new Set(users.map((u) => u.organisation || ''))).filter(Boolean), [users]);

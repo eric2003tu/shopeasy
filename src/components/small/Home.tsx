@@ -1,13 +1,14 @@
 "use client";
 import React from 'react'
 import Image from 'next/image'
-import { FiTruck, FiShield, FiShoppingBag, FiClock, FiTag, FiHeadphones } from 'react-icons/fi'
-import { FaStar, FaRegHeart, FaRegUser, FaRegCreditCard } from 'react-icons/fa'
+import { FiTruck, FiShield, FiShoppingBag, FiTag, FiHeadphones } from 'react-icons/fi'
+import { FaStar, FaRegUser, FaRegCreditCard } from 'react-icons/fa'
 import { BsBoxSeam } from 'react-icons/bs'
 import Link from 'next/link';
 import Search from './Search';
 import ProductCard from '@/components/ui/ProductCard';
 import { useI18n } from '@/i18n/I18nProvider';
+import HeroSlideshow from '@/components/ui/HeroSlideshow';
 
 const Home: React.FC = () => {
   const features = [
@@ -30,7 +31,7 @@ const Home: React.FC = () => {
 
   const products = [
     {
-      image: "shoes.jpg",
+      image: "/shoes.jpg",
       name: "Premium Running Shoes",
       price: 89.99,
       originalPrice: 120.00,
@@ -39,7 +40,7 @@ const Home: React.FC = () => {
       isNew: true
     },
     {
-      image: "bag.jpg",
+      image: "/bag.jpg",
       name: "Designer Handbag",
       price: 199.99,
       originalPrice: 249.99,
@@ -48,7 +49,7 @@ const Home: React.FC = () => {
       isNew: false
     },
     {
-      image: "watch.jpg",
+      image: "/watch.jpg",
       name: "Smart Watch Pro",
       price: 249.99,
       originalPrice: 299.99,
@@ -60,17 +61,17 @@ const Home: React.FC = () => {
 
   const categories = [
     {
-      image: "electronics.png",
+      image: "/electronics.png",
       name: "Electronics",
       count: 1250
     },
     {
-      image: "fashion.png",
+      image: "/fashion.png",
       name: "Fashion",
       count: 3420
     },
     {
-      image: "Easy.png",
+      image: "/Easy.png",
       name: "Home & Living",
       count: 876
     }
@@ -96,57 +97,14 @@ const Home: React.FC = () => {
 
   const { t } = useI18n();
 
+  // Hero slideshow handled by reusable component `HeroSlideshow` below.
+
+  // Home now uses the reusable HeroSlideshow component below
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-[#332e47] to-[#1d163c] py-16 pt-20 px-4 text-white overflow-hidden">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center relative z-10">
-          <div className="space-y-6">
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              {t('site.welcome', { brand: 'ShopEasy' })}
-            </h1>
-            <p className="text-lg md:text-xl">
-              {t('home.heroSubtitle')}
-            </p>
-            <div className="flex flex-wrap gap-4">
-                <Link 
-                href="/signup" 
-                className="px-8 py-3 bg-[#ffdc89] text-[#634bc1] font-semibold rounded-lg hover:bg-[#ffe8a8] transition-colors shadow-lg"
-              >
-                {t('site.signUpNow')}
-              </Link>
-                <Link 
-                href="/products" 
-                className="px-8 py-3 border-2 border-white font-semibold rounded-lg hover:bg-white hover:text-[#634bc1] transition-colors"
-              >
-                {t('site.startShopping')}
-              </Link>
-            </div>
-            <div className="flex flex-wrap gap-6 pt-4">
-            <div className="flex flex-wrap gap-6 pt-4">
-              <div className="flex items-center gap-2">
-                <FiClock className="text-[#ffdc89]" />
-                <span>{t('home.support24')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <BsBoxSeam className="text-[#ffdc89]" />
-                <span>{t('home.freeShipping')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaRegCreditCard className="text-[#ffdc89]" />
-                <span>{t('home.secureCheckout')}</span>
-              </div>
-            </div>
-            </div>
-          </div>
-          <div className="hidden md:block">
-            <Search />
-          </div>
-        </div>
-        <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-[#ffdc89] opacity-10"></div>
-        <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-[#634bc1] opacity-10"></div>
-      </section>
+      {/* Reusable hero slideshow component */}
+      <HeroSlideshow delay={5000} className="bg-gradient-to-r from-[#332e47] to-[#1d163c]" />
 
       {/* Mobile Search */}
       <div className="md:hidden p-4 bg-white shadow-md">
@@ -193,12 +151,7 @@ const Home: React.FC = () => {
                 className="group relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all"
               >
                 <div className="h-64 overflow-hidden relative">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  />
+                  <Image src={category.image} alt={category.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
             <h3 className="text-2xl font-bold text-white mb-1">{t(`home.categories.${index}.name`, { name: category.name })}</h3>

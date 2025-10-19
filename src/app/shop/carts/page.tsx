@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface CartItem {
   id: string;
@@ -55,7 +56,9 @@ export default function CartsPage() {
           <div className='grid grid-cols-1 gap-6'>
             {cartItems.map(item => (
               <div key={item.id} className='bg-white rounded-lg shadow-sm p-4 flex items-center gap-4'>
-                <img src={item.image || '/placeholder.png'} alt={item.name} className='w-32 h-32 object-cover rounded' />
+                <div className='w-32 h-32 relative rounded overflow-hidden'>
+                  <Image src={item.image || '/placeholder.png'} alt={item.name} fill className='object-cover' />
+                </div>
                 <div className='flex-1'>
                   <h2 className='font-semibold text-lg'>{item.name}</h2>
                   <p className='text-gray-600'>${item.price.toFixed(2)}</p>

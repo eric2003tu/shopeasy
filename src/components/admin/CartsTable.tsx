@@ -10,7 +10,7 @@ export default function CartsTable() {
     try {
       const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
       if (raw) return JSON.parse(raw) as SampleCart[];
-    } catch (e) {}
+    } catch {}
     return sampleCarts;
   });
 
@@ -64,7 +64,7 @@ export default function CartsTable() {
       // mark cart as converted
       setCarts((prev) => prev.map((c) => c.id === cart.id ? { ...c, status: 'converted' } : c));
       alert('Checkout created from cart');
-    } catch (e) {
+    } catch {
       alert('Failed to convert cart');
     }
   }
@@ -99,7 +99,7 @@ export default function CartsTable() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleCarts));
       setCarts(sampleCarts);
       alert('Sample carts loaded');
-    } catch (e) {
+    } catch {
       alert('Failed to load sample carts');
     }
   };

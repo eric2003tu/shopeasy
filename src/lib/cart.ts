@@ -14,7 +14,6 @@ export function getCart(): CartItem[] {
     const raw = localStorage.getItem(CART_KEY) || '[]';
     return JSON.parse(raw) as CartItem[];
   } catch (err) {
-    console.error('Failed to read cart from localStorage', err);
     return [];
   }
 }
@@ -22,8 +21,8 @@ export function getCart(): CartItem[] {
 export function saveCart(cart: CartItem[]) {
   try {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  } catch (err) {
-    console.error('Failed to save cart to localStorage', err);
+  } catch {
+    // ignore
   }
 }
 
@@ -54,7 +53,7 @@ export function updateQuantity(id: string, quantity: number) {
 export function clearCart() {
   try {
     localStorage.removeItem(CART_KEY);
-  } catch (err) {
-    console.error('Failed to clear cart', err);
+  } catch {
+    // ignore
   }
 }

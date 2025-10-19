@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import UserMenu from '@/components/small/UserMenu';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -56,6 +57,7 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
   const pathname = usePathname() || '/';
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [openGroups, setOpenGroups] = useState<Record<number, boolean>>({});
+  const [adminName, setAdminName] = useState<string | undefined>(config.user.name || undefined);
 
   useEffect(() => {
     try {
@@ -70,6 +72,21 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
     }
     const prefersDark = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
     setTheme(prefersDark ? 'dark' : 'light');
+  }, []);
+
+  useEffect(() => {
+    // Try to read a logged-in user from localStorage and prefer its name if available
+    try {
+      if (typeof window !== 'undefined') {
+        const raw = localStorage.getItem('user');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.name) setAdminName(parsed.name);
+        }
+      }
+    } catch {
+      // ignore
+    }
   }, []);
 
   const toggleTheme = () => {
@@ -176,21 +193,7 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
             {/* Language globe button copied from admin header style */}
             <LanguageSelector />
 
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-[#634bc1] border border-[#ffdc89]">
-                {config.user.avatar ? (
-                  <Image src={config.user.avatar} alt={config.user.name} width={32} height={32} />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-[#634bc1] text-white text-xs font-bold">
-                    {config.user.name?.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <div className="text-sm text-right">
-                <div className="font-medium text-gray-800">{config.user.name}</div>
-                <div className="text-xs text-gray-500">{config.user.role}</div>
-              </div>
-            </div>
+            <UserMenu />
           </div>
         </header>
 
@@ -203,6 +206,8 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
             <div className="flex flex-col items-center gap-3 text-center relative z-10">
               <Image src="/logo.jpg" alt="logo" width={60} height={60} className="rounded-full object-cover border-2 border-[#ffdc89]" />
               <div className="text-sm font-semibold text-white">{config.user.systemName || 'ShopEasy'}</div>
+              {/* Show admin user name if available */}
+              <div className="text-xs text-white/80">{adminName || config.user.name || 'Administrator'}</div>
               <div className="text-xs text-[#ffdc89]">Admin Panel</div>
             </div>
           </SidebarHeader>

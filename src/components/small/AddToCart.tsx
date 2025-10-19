@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { sampleProducts } from '@/lib/sampleData';
 import { CartItem, getCart, saveCart } from '@/lib/cart';
 
@@ -53,7 +54,7 @@ export default function AddToCart() {
       }
       saveCart(cart);
       setWarning('Product added to cart');
-    } catch (err) {
+    } catch {
       setWarning('Failed to add product to cart');
     }
   };
@@ -68,11 +69,9 @@ export default function AddToCart() {
 
   return (
     <div className='lg:w-2/3 mx-auto bg-white rounded-lg shadow-md p-6 grid grid-cols-2 gap-6'>
-      <img
-        src={product.images[0] || '/placeholder.png'}
-        alt={`Image of ${product.name}`}
-        className='object-contain rounded-md w-full'
-      />
+      <div className='w-full h-64 relative'>
+        <Image src={product.images[0] || '/placeholder.png'} alt={`Image of ${product.name}`} fill className='object-contain rounded-md' sizes="(min-width: 1024px) 50vw, 100vw" />
+      </div>
       <div className='flex flex-col gap-3'>
         <h1 className='text-3xl font-bold text-[#634bc1]'>{product.name}</h1>
         <p>{product.description}</p>

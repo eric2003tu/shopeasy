@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { sampleProducts } from '@/lib/sampleData';
 import { notFound } from 'next/navigation';
 import ProductCard from '@/components/ui/ProductCard';
@@ -17,7 +18,7 @@ export default async function ProductDetail({ params }: Props) {
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
         <div>
           <div className="w-full h-96 bg-white rounded-xl overflow-hidden shadow-md">
-            <img src={product.images[0] || '/placeholder.png'} alt={product.name} className="w-full h-full object-cover" />
+            <Image src={product.images[0] || '/placeholder.png'} alt={product.name} fill className="w-full h-full object-cover" />
           </div>
         </div>
         <div>

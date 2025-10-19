@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface ProductCardProps {
   image: string;
@@ -16,7 +17,7 @@ export default function ProductCard({ image, name, price, originalPrice, rating,
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all group">
       <div className="relative h-64 overflow-hidden">
-        <img src={image} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        <Image src={image} alt={name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
       </div>
       <div className="p-6">
         <div className="flex justify-between items-start mb-2">
@@ -29,9 +30,9 @@ export default function ProductCard({ image, name, price, originalPrice, rating,
           )}
         </div>
         <div className="flex items-center gap-3 mb-4">
-          <p className="text-2xl font-bold text-[#634bc1]">${price}</p>
+          <p className="text-2xl font-bold text-[#634bc1]">${price.toFixed(2)}</p>
           {originalPrice && (
-            <p className="text-gray-400 line-through">${originalPrice}</p>
+            <p className="text-gray-400 line-through">${originalPrice.toFixed(2)}</p>
           )}
         </div>
         <div className="grid grid-cols-2 gap-3">

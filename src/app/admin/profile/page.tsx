@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -38,12 +39,13 @@ export default function ProfilePage() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setProfile(JSON.parse(raw));
-    } catch (e) {
+    } catch {
       // ignore
     }
   }, []);
 
-  const initials = useMemo(() => {
+  // initials calculation kept for potential avatar fallback, not currently used
+  useMemo(() => {
     const parts = (profile.name || '').trim().split(/\s+/).filter(Boolean);
     return (parts[0]?.[0] || 'A') + (parts[1]?.[0] || 'U');
   }, [profile.name]);
@@ -104,13 +106,9 @@ export default function ProfilePage() {
           <div className="flex flex-col items-center text-center">
             <div className="w-28 h-28 rounded-full overflow-hidden bg-muted flex items-center justify-center bg-gray-500 text-2xl font-bold text-white mb-4">
               {profile.avatar && profile.avatar.startsWith('data:') ? (
-                // preview uploaded dataURL
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={profile.avatar} alt={profile.name || 'avatar'} className="w-full h-full object-cover" />
+                <Image src={profile.avatar} alt={profile.name || 'avatar'} fill className="w-full h-full object-cover" />
               ) : (
-                // use static path or initials
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={profile.avatar || '/avatar.png'} alt={profile.name || 'avatar'} className="w-full h-full object-cover" />
+                <Image src={profile.avatar || '/avatar.png'} alt={profile.name || 'avatar'} fill className="w-full h-full object-cover" />
               )}
             </div>
 

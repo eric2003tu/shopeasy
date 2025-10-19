@@ -81,6 +81,14 @@ export const sampleProducts: SampleProduct[] = [
   { id: 'p12', name: 'Hybrid Smartwatch', description: 'Smart features with classic look', price: 199.99, images: ['/watch.jpg'], category: 'Electronics', stock: 14, funded: false, completed: false },
 ];
 
+// Hero slides derived from sampleProducts (first 10)
+export const sampleHeroSlides = sampleProducts.slice(0, 10).map(p => ({
+  id: p.id,
+  image: p.images && p.images.length ? p.images[0] : '/placeholder.png',
+  title: p.name,
+  subtitle: p.description || ''
+}));
+
 export const sampleUsers: SampleUser[] = [
   { id: 'u1', name: 'Alice Johnson', email: 'alice@example.com', role: 'admin', organisation: organizations[0] },
   { id: 'u2', name: 'Bob Mwangi', email: 'bob@example.com', role: 'manager', organisation: organizations[1] },

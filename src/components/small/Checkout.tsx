@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { getCart, clearCart, updateQuantity } from '@/lib/cart';
 
 export default function Checkout() {
@@ -46,7 +47,9 @@ export default function Checkout() {
             {cart.map(item => (
               <div key={item.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <img src={item.image || '/placeholder.png'} alt={item.name} className="h-12 w-12 object-cover rounded" />
+                  <div className="h-12 w-12 relative rounded overflow-hidden">
+                    <Image src={item.image || '/placeholder.png'} alt={item.name} fill className="object-cover" />
+                  </div>
                   <div>
                     <div className="font-medium">{item.name}</div>
                     <div className="text-sm text-gray-500">${item.price.toFixed(2)}</div>

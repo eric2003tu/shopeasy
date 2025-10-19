@@ -69,13 +69,13 @@ const Header: React.FC = () => {
               <BsBoxSeam className="text-lg" />
               {t('header.products')}
             </Link>
-            <Link 
+            {/* <Link 
               href="/cart" 
               className="px-3 py-2 rounded-md text-sm lg:text-base font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
             >
               <BsCart2 className="text-lg" />
               {t('header.cart')}
-            </Link>
+            </Link> */}
             <Link 
               href="/login" 
               className="px-3 py-2 rounded-md text-sm lg:text-base font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
@@ -131,13 +131,13 @@ const Header: React.FC = () => {
             <BsBoxSeam />
             {t('header.products')}
           </Link>
-          <Link
+          {/* <Link
             href="/cart"
             className="flex items-center gap-3 text-white hover:bg-white/10 block px-3 py-3 rounded-md text-base font-medium transition-colors"
           >
             <BsCart2 />
             {t('header.cart')}
-          </Link>
+          </Link> */}
           <Link
             href="/login"
             className="flex items-center gap-3 text-white hover:bg-white/10 block px-3 py-3 rounded-md text-base font-medium transition-colors"

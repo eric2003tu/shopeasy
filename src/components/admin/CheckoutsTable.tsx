@@ -35,7 +35,7 @@ export default function CheckoutsTable() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleCheckouts));
       setCheckouts(sampleCheckouts);
       alert('Sample checkouts loaded');
-    } catch (e) {
+    } catch {
       alert('Failed to load sample checkouts');
     }
   };

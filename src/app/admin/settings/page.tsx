@@ -25,14 +25,16 @@ export default function SettingsPage() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setSettings(JSON.parse(raw));
-    } catch (e) {}
+    } catch {
+    }
   }, []);
 
   function onSave() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       setOpenConfirm(true);
-    } catch (e) {}
+    } catch {
+    }
   }
 
   return (
