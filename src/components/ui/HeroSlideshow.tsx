@@ -9,23 +9,60 @@ interface HeroSlideshowProps {
   height?: string; // tailwind height classes or inline style
 }
 
+// Sliding carousel (right -> left) with cloned-first slide for seamless loop
 const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ delay = 5000, className = '', height = 'py-16' }) => {
-  const slides = sampleHeroSlides;
-  const [current, setCurrent] = useState(0);
+  const slides = sampleHeroSlides ?? [];
+
+  // add clone of first slide at end for seamless transition (compute before hooks)
+  const slidesWithClone = slides.length > 0 ? [...slides, slides[0]] : [];
+  const total = slidesWithClone.length;
+
+  // Hooks must be called unconditionally at the top level
+  const [index, setIndex] = useState(0); // 0 .. slides.length (clone index == slides.length)
   const [isPaused, setIsPaused] = useState(false);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
+  const innerRef = useRef<HTMLDivElement | null>(null);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (isPaused) return;
     timeoutRef.current = window.setTimeout(() => {
-      setCurrent((c) => (c + 1) % slides.length);
+      setIndex((i) => i + 1);
     }, delay);
     return () => {
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
-  }, [current, isPaused, delay, slides.length]);
+  }, [index, isPaused, delay]);
 
-  const heroSlide = slides[current] || slides[0];
+  // when we reach the cloned slide (index === slides.length), after transition ends we snap to 0 without transition
+  useEffect(() => {
+    const el = innerRef.current;
+    if (!el) return;
+    function onTransitionEnd() {
+      if (index === slides.length) {
+        // disable transition, snap back to real first slide
+        setIsTransitionEnabled(false);
+        setIndex(0);
+        // re-enable transition on next tick
+        requestAnimationFrame(() => requestAnimationFrame(() => setIsTransitionEnabled(true)));
+      }
+    }
+    el.addEventListener('transitionend', onTransitionEnd);
+    return () => el.removeEventListener('transitionend', onTransitionEnd);
+  }, [index, slides.length]);
+
+  // if there are no slides, return early AFTER hooks have been called
+  if (!slides || slides.length === 0) return null;
+
+  const goTo = (i: number) => {
+    setIsTransitionEnabled(true);
+    setIndex(i);
+  };
+
+  const percentPer = 100 / total; // percent width per slide inside inner container
+  const translatePercent = -(index * percentPer);
+
+  const heroSlide = slides[index % slides.length] || slides[0];
   const product = sampleProducts.find(p => p.id === heroSlide.id);
 
   return (
@@ -35,12 +72,22 @@ const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ delay = 5000, className =
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="absolute inset-0 z-0">
-        {slides.map((s, i) => (
-          <div key={s.id} className={`absolute inset-0 transition-opacity duration-1000 ${i === current ? 'opacity-100' : 'opacity-0'}`}>
-            <Image src={s.image} alt={s.title} fill className="object-contain w-full h-full" sizes="100vw" priority={i === current} />
-          </div>
-        ))}
+        <div
+          ref={innerRef}
+          className="h-full flex"
+          style={{
+            width: `${total * 100}%`,
+            transform: `translateX(${translatePercent}%)`,
+            transition: isTransitionEnabled ? 'transform 700ms ease' : 'none'
+          }}
+        >
+          {slidesWithClone.map((s, i) => (
+            <div key={`${s.id}-${i}`} style={{ width: `${percentPer}%` }} className="relative h-full">
+              <Image src={s.image} alt={s.title} fill className="object-contain w-full h-full" sizes="100vw" priority={i === 0} />
+            </div>
+          ))}
 
+        </div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#332e47]/60 to-[#1d163c]/60" />
       </div>
 
@@ -69,7 +116,7 @@ const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ delay = 5000, className =
 
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex gap-2">
         {slides.map((s, i) => (
-          <button key={s.id} aria-label={`Show slide ${i + 1}`} onClick={() => setCurrent(i)} className={`w-3 h-3 rounded-full ${i === current ? 'bg-white' : 'bg-white/50'}`} />
+          <button key={s.id} aria-label={`Show slide ${i + 1}`} onClick={() => goTo(i)} className={`w-3 h-3 rounded-full ${i === (index % slides.length) ? 'bg-white' : 'bg-white/50'}`} />
         ))}
       </div>
     </section>
