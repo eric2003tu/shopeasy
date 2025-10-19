@@ -2,6 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { sampleHeroSlides } from '@/lib/sampleData';
 
 interface Carousel3UpProps {
   categories: { image: string; name: string; count: number }[];
@@ -9,11 +10,17 @@ interface Carousel3UpProps {
 
 const Carousel3Up: React.FC<Carousel3UpProps> = ({ categories }) => {
   // prepare 15 cards (allow duplicates) by repeating the categories
+  // but mix in hero images so images vary and include the hero set
   const items: { image: string; name: string; count: number }[] = [];
+  const heroImages = sampleHeroSlides.map(s => s.image).filter(Boolean);
+  const imagePool = Array.from(new Set([...categories.map(c => c.image), ...heroImages]));
+  let ci = 0;
   while (items.length < 15) {
     for (const c of categories) {
       if (items.length >= 15) break;
-      items.push(c);
+      const img = imagePool[ci % imagePool.length];
+      items.push({ image: img, name: c.name, count: c.count });
+      ci++;
     }
   }
 
