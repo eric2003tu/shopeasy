@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Search from './Search';
 import ProductCard from '@/components/ui/ProductCard';
 import { useI18n } from '@/i18n/I18nProvider';
+import Carousel3Up from '@/components/ui/Carousel3Up';
 import HeroSlideshow from '@/components/ui/HeroSlideshow';
 
 const Home: React.FC = () => {
@@ -135,7 +136,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Categories Section */}
+      {/* Categories Section (3-up sliding carousel showing 15 cards) */}
       <section className="py-16 px-4 bg-gray-100">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
@@ -144,30 +145,11 @@ const Home: React.FC = () => {
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             {t('home.shopByCategorySubtitle')}
           </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category, index) => (
-              <div 
-                key={index}
-                className="group relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all"
-              >
-                <div className="h-64 overflow-hidden relative">
-                  <Image src={category.image} alt={category.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-            <h3 className="text-2xl font-bold text-white mb-1">{t(`home.categories.${index}.name`, { name: category.name })}</h3>
-              <p className="text-gray-200">{t('home.productsCount', { count: category.count })}</p>
-                  <Link 
-                    href={`/products?category=${category.name.toLowerCase()}`} 
-                    className="mt-3 inline-flex items-center text-white font-medium hover:text-[#ffdc89] transition-colors"
-                  >
-                    {t('home.shopNow')}
-                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-            ))}
+
+          {/* Sliding carousel container */}
+          <div className="relative overflow-hidden">
+            {/* Inner sliding track */}
+            <Carousel3Up categories={categories} />
           </div>
         </div>
       </section>
