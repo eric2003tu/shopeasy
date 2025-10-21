@@ -9,6 +9,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Moon, Sun, Bell, Globe, LogOut, LogOutIcon } from 'lucide-react';
+import VoiceRecognition from '@/components/ui/VoiceRecognition';
 
 export interface SidebarSubItem {
   title: string;
@@ -209,6 +210,7 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
               {/* Show admin user name if available */}
               <div className="text-xs text-white/80">{adminName || config.user.name || 'Administrator'}</div>
               <div className="text-xs text-[#ffdc89]">Admin Panel</div>
+              <div className="w-full mt-4"><VoiceRecognition /></div>
             </div>
           </SidebarHeader>
 

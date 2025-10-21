@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
 import { FiAlertCircle, FiInfo } from 'react-icons/fi';
-import { IoMdSearch } from 'react-icons/io';
+import VoiceSearchBar from '@/components/ui/VoiceSearchBar';
 import { OneProduct } from './OneProduct';
 import { useI18n } from '@/i18n/I18nProvider';
 import { sampleProducts } from '@/lib/sampleData';
@@ -36,21 +36,21 @@ const UploadedProducts: React.FC = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(mappedProducts);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  // Remove searchTerm state, use local state in VoiceSearchBar
   const [hasSearched, setHasSearched] = useState<boolean>(false);
+  const [lastSearchQuery, setLastSearchQuery] = useState<string>('');
   const [one,setOne] = useState<boolean>(false)
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [viewed, setViewed] = useState<boolean>(false)
 
-  const handleProductSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchTerm.trim()) {
+  const handleProductSearch = (query: string) => {
+    setLastSearchQuery(query);
+    if (!query.trim()) {
       setFilteredProducts(products);
       setHasSearched(false);
       return;
     }
-
-    const q = searchTerm.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
     const results = products.filter(p => (
       p.name.toLowerCase().includes(q) ||
       p.description.toLowerCase().includes(q) ||
@@ -124,21 +124,12 @@ const UploadedProducts: React.FC = () => {
   return (
     <div className='w-full grid grid-cols-1 justify-items-center text-center' >
       <h1 className="text-[#634bc1] text-md text-start mt-2">{t('footer.findYourProduct')}</h1>
-      <form onSubmit={handleProductSearch} className="flex flex-row lg:w-1/2 w-full px-4">
-        <input 
-          type="text" 
-          placeholder={t('header.searchPlaceholder') || 'Find products by name, category, seller, price...'} 
-          value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} 
-          className="w-full px-3 py-2 rounded-l text-gray-500 focus:outline-none border border-gray-500"
+      <div className="flex flex-row lg:w-1/2 w-full px-4 mb-4">
+        <VoiceSearchBar
+          onSearch={handleProductSearch}
+          placeholder={t('header.searchPlaceholder') || 'Find products by name, category, seller, price...'}
         />
-        <button 
-          type="submit" 
-          className="bg-[#ffdc89] text-[#634bc1] px-4 py-2 rounded-r cursor-pointer hover:bg-[#e6c97d] transition"
-        >
-          <IoMdSearch size={20} />
-        </button>
-      </form>
+      </div>
       <div className='w-fit grid bg-green-300 '> {one ? (
      <OneProduct  productId={selectedId}  onClose={() => setOne(false)} />
 ) : null}</div>
@@ -147,11 +138,12 @@ const UploadedProducts: React.FC = () => {
         <div className="flex flex-col items-center justify-center p-8 text-center w-full">
           <FiInfo className="text-blue-500 text-4xl mb-4" />
           <h2 className="text-xl font-semibold text-gray-800 mb-2">{t('product.noProductsFound')}</h2>
-          <p className="text-gray-600">No products match your search &quot;{searchTerm}&quot;</p>
+          <p className="text-gray-600">No products match your search &quot;{lastSearchQuery}&quot;</p>
           <button
             onClick={() => {
-              setSearchTerm('');
+              setLastSearchQuery('');
               setHasSearched(false);
+              setFilteredProducts(products);
             }}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
           >

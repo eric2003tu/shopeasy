@@ -10,6 +10,7 @@ import ProductCard from '@/components/ui/ProductCard';
 import { useI18n } from '@/i18n/I18nProvider';
 import Carousel3Up from '@/components/ui/Carousel3Up';
 import HeroSlideshow from '@/components/ui/HeroSlideshow';
+import TestimonialsCarousel from '@/components/ui/TestimonialsCarousel';
 
 const Home: React.FC = () => {
   const features = [
@@ -239,7 +240,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials (sliding 3-up carousel) */}
       <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
@@ -248,32 +249,7 @@ const Home: React.FC = () => {
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             {t('home.testimonialsSubtitle')}
           </p>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[0, 1, 2].map((_, index) => (
-              <div 
-                key={index}
-                className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-center mb-4 text-yellow-500">
-                  {[...Array(5)].map((__, i) => (
-                    <FaStar key={i} className="w-5 h-5" />
-                  ))}
-                </div>
-                <blockquote className="text-gray-600 italic mb-6">
-                  &quot;{t(`home.testimonials.${index}.quote`)}&quot;
-                </blockquote>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
-                    <FaRegUser className="text-gray-500" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-800">{t(`home.testimonials.${index}.author`)}</h4>
-                    <p className="text-sm text-gray-500">{t(`home.testimonials.${index}.role`)}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <TestimonialsCarousel />
         </div>
       </section>
 

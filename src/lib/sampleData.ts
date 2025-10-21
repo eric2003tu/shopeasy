@@ -128,6 +128,31 @@ export const sampleComments: SampleComment[] = [
   { id: 'c8', productId: 'p10', productName: 'Comfort Running Shoes', userId: 'u7', userName: 'Grace Karungi', rating: 4, comment: 'Good cushioning, light weight.', status: 'pending', createdAt: '2025-10-07' },
 ];
 
+export interface SampleTestimonial {
+  id: string;
+  quote: string;
+  author: string;
+  role?: string;
+}
+
+export const sampleTestimonials: SampleTestimonial[] = [
+  { id: 't1', quote: 'Amazing selection and fast delivery — I get everything I need in one place!', author: 'Asha K.', role: 'Verified Buyer' },
+  { id: 't2', quote: 'Customer support solved my issue within minutes. Excellent service.', author: 'Peter M.', role: 'Premium Member' },
+  { id: 't3', quote: 'Prices are great and the product quality exceeded my expectations.', author: 'Luyeye R.', role: 'Happy Customer' },
+  { id: 't4', quote: 'The product descriptions are accurate and the checkout was seamless.', author: 'Mina S.', role: 'Verified Buyer' },
+  { id: 't5', quote: 'I love the curated collections — always discover new favourites.', author: 'Carlos D.', role: 'Shopper' },
+  { id: 't6', quote: 'Easy returns and responsive refunds. Highly recommended.', author: 'Grace N.', role: 'Returning Customer' },
+  { id: 't7', quote: 'Mobile app experience is snappy and intuitive.', author: 'Sam O.', role: 'App User' },
+  { id: 't8', quote: 'Packaging is secure and delivery was faster than promised.', author: 'Fatima K.', role: 'Verified Buyer' },
+  { id: 't9', quote: 'Great product variety and helpful filters. Found what I needed quickly.', author: 'Nick R.', role: 'Shopper' },
+  { id: 't10', quote: 'They restocked my favourite item quickly — impressed with inventory updates.', author: 'Olivia P.', role: 'Premium Member' },
+  { id: 't11', quote: 'Checkout options include all the payment methods I use.', author: 'Rahim T.', role: 'Verified Buyer' },
+  { id: 't12', quote: 'The UI is clean and the search works very well.', author: 'Zoe L.', role: 'Designer' },
+  { id: 't13', quote: 'I liked the personalized recommendations — they nailed my taste.', author: 'Ben H.', role: 'Subscriber' },
+  { id: 't14', quote: 'Support team followed up and ensured my package arrived on time.', author: 'Anna K.', role: 'Loyal Customer' },
+  { id: 't15', quote: 'Regular discounts make this my go-to store for gifts.', author: 'Ibrahim S.', role: 'Shopper' },
+];
+
 export const samplePayments: SamplePayment[] = [
   { id: 'pay1', orderId: 'o1001', transactionId: 'txn_1A2B3C', userId: 'u3', userName: 'Clara Nshimiyimana', gateway: 'Stripe', amount: 249.99, status: 'completed', createdAt: '2025-09-20', items: [ { productId: 'p3', productName: 'Smart Watch Pro', quantity: 1, price: 249.99 } ] },
   { id: 'pay2', orderId: 'o1002', transactionId: 'txn_4D5E6F', userId: 'u5', userName: 'Eve Mukasa', gateway: 'PayPal', amount: 59.99, status: 'completed', createdAt: '2025-08-18', items: [ { productId: 'p5', productName: 'Everyday Tote Bag', quantity: 1, price: 59.99 } ] },
