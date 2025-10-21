@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react';
+import VoiceSearchBar from './VoiceSearchBar';
 import { sampleCheckouts, SampleCheckout, sampleProducts } from '@/lib/sampleData';
 import { useI18n } from '@/i18n/I18nProvider';
 
@@ -88,7 +89,11 @@ export default function CheckoutsTable() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
-          <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchCheckouts')} className="px-3 py-2 border rounded w-72" />
+          <VoiceSearchBar
+            value={search}
+            onChange={(val) => { setSearch(val); setPage(1); }}
+            placeholder={t('admin.placeholders.searchCheckouts')}
+          />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allStatus')}</option>
             <option value="pending">{t('admin.checkouts.status.pending', { defaultValue: 'Pending' })}</option>

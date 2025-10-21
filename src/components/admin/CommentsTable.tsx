@@ -1,5 +1,6 @@
 "use client";
 import React, { useMemo, useState } from 'react';
+import VoiceSearchBar from './VoiceSearchBar';
 import * as Dialog from '@radix-ui/react-dialog';
 import { sampleComments, SampleComment } from '@/lib/sampleData';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -35,7 +36,11 @@ export default function CommentsTable() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchComments') || 'Search comments'} className="px-3 py-2 border rounded w-64" />
+          <VoiceSearchBar
+            value={searchTerm}
+            onChange={(val) => { setSearchTerm(val); setPage(1); }}
+            placeholder={t('admin.placeholders.searchComments') || 'Search comments'}
+          />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allStatus')}</option>
             <option value="published">{t('admin.comments.status.published')}</option>

@@ -4,23 +4,17 @@ import { IoMdSearch } from 'react-icons/io';
 import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 
 interface VoiceSearchBarProps {
-  onSearch: (query: string) => void;
+  value: string;
+  onChange: (value: string) => void;
   placeholder?: string;
 }
 
-const VoiceSearchBar: React.FC<VoiceSearchBarProps> = ({ onSearch, placeholder }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+const VoiceSearchBar: React.FC<VoiceSearchBarProps> = ({ value, onChange, placeholder }) => {
   const [listening, setListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
   const recognitionRef = useRef<any>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(searchQuery.trim() || transcript.trim());
+    onChange(e.target.value);
   };
 
   const startListening = () => {
@@ -29,7 +23,6 @@ const VoiceSearchBar: React.FC<VoiceSearchBarProps> = ({ onSearch, placeholder }
       return;
     }
     setListening(true);
-    setTranscript("");
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
@@ -37,10 +30,8 @@ const VoiceSearchBar: React.FC<VoiceSearchBarProps> = ({ onSearch, placeholder }
     recognition.maxAlternatives = 1;
     recognition.onresult = (event: any) => {
       const spoken = event.results[0][0].transcript;
-      setTranscript(spoken);
-      setSearchQuery(spoken);
+      onChange(spoken);
       setListening(false);
-      onSearch(spoken);
     };
     recognition.onerror = (event: any) => {
       setListening(false);
@@ -57,14 +48,14 @@ const VoiceSearchBar: React.FC<VoiceSearchBarProps> = ({ onSearch, placeholder }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-row w-full items-center">
+    <div className="flex flex-row items-center w-64">
       <input
         type="text"
-        placeholder={placeholder || "Search products by name, category, ..."}
-        value={searchQuery}
+        placeholder={placeholder || "Search users..."}
+        value={value}
         onChange={handleInputChange}
         className="w-full px-3 py-2 rounded-l text-gray-700 focus:outline-none border border-gray-500"
-        aria-label="Search products"
+        aria-label="Search users"
       />
       <button
         type="button"
@@ -74,14 +65,8 @@ const VoiceSearchBar: React.FC<VoiceSearchBarProps> = ({ onSearch, placeholder }
       >
         {listening ? <FaMicrophoneSlash /> : <FaMicrophone />}
       </button>
-      <button
-        type="submit"
-        className="bg-[#ffdc89] text-[#634bc1] px-4 py-2 rounded-r cursor-pointer hover:bg-[#e6c97d] transition"
-        aria-label="Search"
-      >
-        <IoMdSearch size={20} />
-      </button>
-    </form>
+      <span className="px-2 py-2 text-gray-400"><IoMdSearch size={20} /></span>
+    </div>
   );
 };
 

@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+import React from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
-import { IoMdSearch } from 'react-icons/io';
+import VoiceSearchBar from '@/components/ui/VoiceSearchBar';
 
 // Exportable search function
 export const handleProductSearch = async (searchTerm: string) => {
@@ -25,15 +25,11 @@ export const handleProductSearch = async (searchTerm: string) => {
 };
 
 const Search: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const { t } = useI18n();
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Searching for:', searchQuery);
-    
+  const handleSearch = async (query: string) => {
     try {
-      const results = await handleProductSearch(searchQuery);
+      const results = await handleProductSearch(query);
       console.log('Search results:', results);
       // Here you would typically update state with the search results
       // For example: setSearchResults(results);
@@ -45,21 +41,10 @@ const Search: React.FC = () => {
   return (
     <div className='w-full'>
       <h1 className="text-[#634bc1] text-md text-start mt-2">{t('footer.findYourProduct')}</h1>
-      <form onSubmit={handleSearch} className="flex flex-row w-full">
-        <input
-          type="text"
-          placeholder={t('header.searchPlaceholder') || 'Find products...'}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value.trim())}
-          className="w-full px-3 py-2 rounded-l text-gray-100 focus:outline-none border border-gray-500 "
-        />
-        <button
-          type="submit"
-          className="bg-[#ffdc89] text-[#634bc1] px-4 py-2 rounded-r cursor-pointer hover:bg-[#e6c97d] transition"
-        >
-          <IoMdSearch size={20} />
-        </button>
-      </form>
+      <VoiceSearchBar
+        onSearch={handleSearch}
+        placeholder={t('header.searchPlaceholder') || 'Find products...'}
+      />
     </div>
   );
 };

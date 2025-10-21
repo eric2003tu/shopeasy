@@ -210,7 +210,6 @@ export default function ReusableSidebar({ config, children }: { config: SidebarC
               {/* Show admin user name if available */}
               <div className="text-xs text-white/80">{adminName || config.user.name || 'Administrator'}</div>
               <div className="text-xs text-[#ffdc89]">Admin Panel</div>
-              <div className="w-full mt-4"><VoiceRecognition /></div>
             </div>
           </SidebarHeader>
 

@@ -3,7 +3,6 @@ import React, { useRef, useState } from "react";
 
 const VoiceRecognition: React.FC = () => {
   const [transcript, setTranscript] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
   const startListening = () => {
@@ -11,18 +10,15 @@ const VoiceRecognition: React.FC = () => {
       alert("Speech recognition not supported in this browser.");
       return;
     }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  recognition.onresult = (event: any) => {
+    recognition.onresult = (event: any) => {
       setTranscript(event.results[0][0].transcript);
     };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  recognition.onerror = (event: any) => {
+    recognition.onerror = (event: any) => {
       alert("Error: " + event.error);
     };
     recognitionRef.current = recognition;

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState, useMemo } from 'react';
+import VoiceSearchBar from './VoiceSearchBar';
 import Image from 'next/image';
 import { sampleProducts, SampleProduct } from '@/lib/sampleData';
 import ProductForm from './ProductForm';
@@ -141,7 +142,11 @@ export default function ProductsTable() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchProducts')} className="px-3 py-2 border rounded w-64" />
+          <VoiceSearchBar
+            value={searchTerm}
+            onChange={(val) => { setSearchTerm(val); setPage(1); }}
+            placeholder={t('admin.placeholders.searchProducts')}
+          />
           <select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allCategories')}</option>
             {categories.map((c) => <option key={c} value={c}>{c}</option>)}

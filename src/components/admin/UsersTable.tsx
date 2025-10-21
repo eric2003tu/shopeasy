@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState, useMemo } from 'react';
+import VoiceSearchBar from './VoiceSearchBar';
 import { sampleUsers, SampleUser, organizations } from '@/lib/sampleData';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -160,7 +161,11 @@ export default function UsersTable() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <input value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} placeholder={t('admin.placeholders.searchUsers')} className="px-3 py-2 border rounded w-64" />
+          <VoiceSearchBar
+            value={searchTerm}
+            onChange={(v) => { setSearchTerm(v); setPage(1); }}
+            placeholder={t('admin.placeholders.searchUsers')}
+          />
           <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allRoles')}</option>
             <option value="admin">Admin</option>
