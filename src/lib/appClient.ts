@@ -35,6 +35,24 @@ export async function fetchProductById(id: number): Promise<ApiProduct> {
   return res.json();
 }
 
+// Fetch current authenticated user using access token
+export async function fetchCurrentUser(accessToken: string): Promise<AuthUser> {
+  const res = await fetch(`${BASE}/auth/me`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+    // include cookies in case server sets/relies on them
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to fetch current user: ${res.status} ${text}`);
+  }
+  return res.json();
+}
+
 // --- Auth helpers using dummyjson's auth endpoints ---
 export interface AuthUser {
   id: number;

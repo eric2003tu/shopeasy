@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { login as apiLogin, signup as apiSignup, AuthUser, LoginResponse, logout as apiLogout } from '@/lib/appClient';
+import { login as apiLogin, signup as apiSignup, AuthUser, LoginResponse, logout as apiLogout, fetchCurrentUser } from '@/lib/appClient';
 import { ToastProvider } from '@/context/ToastProvider';
 
 interface AuthContextValue {
@@ -37,6 +37,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (user) localStorage.setItem('shopeasy_user', JSON.stringify(user)); else localStorage.removeItem('shopeasy_user');
     } catch {}
   }, [user]);
+
+  // When a token is present try to fetch the authoritative user profile from the API
+  useEffect(() => {
+    let mounted = true;
+    const populate = async () => {
+      if (!token) return;
+      try {
+        const u = await fetchCurrentUser(token);
+        if (mounted) setUser(u);
+      } catch (e) {
+        // If token invalid or fetch fails, clear stored auth
+        if (mounted) {
+          setToken(null);
+          setUser(null);
+        }
+      }
+    };
+    populate();
+    return () => { mounted = false; };
+  }, [token]);
 
   const doLogin = async (username: string, password: string) => {
     setLoading(true);
