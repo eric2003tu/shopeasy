@@ -55,8 +55,6 @@ export async function fetchCurrentUser(accessToken: string): Promise<AuthUser> {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${accessToken}`,
     },
-    // include cookies in case server sets/relies on them
-    credentials: 'include',
   });
   if (!res.ok) {
     const text = await res.text();
@@ -99,7 +97,9 @@ export async function login(username: string, password: string, expiresInMins = 
     throw new Error(`Login failed: ${res.status} ${text}`);
   }
   // Response shape from dummyjson includes user fields + accessToken/refreshToken
-  return res.json();
+  const data = await res.json();
+  try { console.debug('[appClient.login] response', data); } catch { /* ignore */ }
+  return data;
 }
 
 export async function signup(payload: { firstName?: string; lastName?: string; username: string; email?: string; password: string; }): Promise<AuthUser> {

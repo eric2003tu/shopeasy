@@ -71,8 +71,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: res.email,
         image: res.image,
       } : null;
+      // set in state
       setToken(res.accessToken || null);
       setUser(mappedUser as any);
+      // also persist immediately to localStorage for visibility/debugging
+      try {
+        if (res.accessToken) localStorage.setItem('shopeasy_token', res.accessToken);
+        if (mappedUser) localStorage.setItem('shopeasy_user', JSON.stringify(mappedUser));
+        console.debug('[AuthProvider] persisted login to localStorage', { token: res.accessToken, user: mappedUser });
+      } catch (e) {
+        console.debug('[AuthProvider] failed to persist login to localStorage', e);
+      }
     } finally {
       setLoading(false);
     }

@@ -76,11 +76,13 @@ const Login: React.FC = () => {
 
     setIsLoading(true);
     try {
-  await auth.login(formData.username, formData.password);
-    setSuccessMessage(t('auth.loggedIn'));
-    toast({ title: 'Signed in', description: t('auth.loggedIn'), type: 'success' });
-    // Immediately navigate to /shop after successful login
-    router.replace('/shop');
+      console.debug('[Login] calling auth.login', { username: formData.username });
+      await auth.login(formData.username, formData.password);
+      console.debug('[Login] auth.login resolved', { token: auth.token, user: auth.user });
+      setSuccessMessage(t('auth.loggedIn'));
+      toast({ title: 'Signed in', description: t('auth.loggedIn'), type: 'success' });
+      // Immediately navigate to /shop after successful login
+      router.replace('/shop');
     } catch (err) {
       const msg = err instanceof Error ? err.message : t('auth.invalidCredentials');
       setErrors(prev => ({ ...prev, form: msg }));
