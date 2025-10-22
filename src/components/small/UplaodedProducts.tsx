@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
 import { FiAlertCircle, FiInfo } from 'react-icons/fi';
 import VoiceSearchBar from '@/components/ui/VoiceSearchBar';
-import { OneProduct } from './OneProduct';
+import { useRouter } from 'next/navigation';
 import { useI18n } from '@/i18n/I18nProvider';
 import { fetchProducts, ApiProduct } from '@/lib/appClient';
 
@@ -31,6 +31,7 @@ const UploadedProducts: React.FC = () => {
   const [one,setOne] = useState<boolean>(false)
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [viewed, setViewed] = useState<boolean>(false)
+  const router = useRouter();
 
   const handleProductSearch = (query: string) => {
     setLastSearchQuery(query);
@@ -133,9 +134,7 @@ const UploadedProducts: React.FC = () => {
           placeholder={t('header.searchPlaceholder') || 'Find products by name, category, seller, price...'}
         />
       </div>
-      <div className='w-fit grid bg-green-300 '> {one ? (
-     <OneProduct  productId={selectedId}  onClose={() => setOne(false)} />
-) : null}</div>
+  {/* removed popup OneProduct; navigation will go directly to product page */}
 
       {noSearchResults ? (
         <div className="flex flex-col items-center justify-center p-8 text-center w-full">
@@ -199,10 +198,9 @@ const UploadedProducts: React.FC = () => {
                   </div>
                   
                   <button
-                    onClick={()=>{
-                      setSelectedId(product._id);
-                      setViewed(true)
-                      setOne(true);
+                    onClick={() => {
+                      // navigate to the product detail page
+                      router.push(`/shop/product/${product._id}`);
                     }}
                     className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-colors"
                   >

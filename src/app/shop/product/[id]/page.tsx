@@ -1,45 +1,112 @@
+"use server";
 import React from 'react';
 import Image from 'next/image';
-import { sampleProducts } from '@/lib/sampleData';
 import { notFound } from 'next/navigation';
 import ProductCard from '@/components/ui/ProductCard';
+import { fetchProductById, fetchProducts, ApiProduct } from '@/lib/appClient';
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: { id: string };
+}
+
+function formatPrice(p: number) {
+  return `$${p.toFixed(2)}`;
 }
 
 export default async function ProductDetail({ params }: Props) {
-  const { id } = await params;
-  const product = sampleProducts.find((p) => p.id === id);
-  if (!product) return notFound();
+  const id = Number(params.id);
+  if (Number.isNaN(id)) return notFound();
+
+  let product: ApiProduct | null = null;
+  try {
+    product = await fetchProductById(id);
+  } catch (e) {
+    return notFound();
+  }
+
+  // get related products (same category)
+  let related: ApiProduct[] = [];
+  try {
+    const list = await fetchProducts(30, 0);
+    related = list.products.filter(p => p.id !== product!.id && p.category === product!.category).slice(0,6);
+  } catch (e) {
+    related = [];
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
         <div>
-          <div className="w-full h-96 bg-white rounded-xl overflow-hidden shadow-md">
-            <Image src={product.images[0] || '/placeholder.png'} alt={product.name} fill className="w-full h-full object-cover" />
+          <div className="w-full bg-white rounded-xl overflow-hidden shadow-md">
+            <div className="relative w-full h-[520px]">
+              <Image src={product.images?.[0] || product.thumbnail || '/placeholder.png'} alt={product.title} fill className="w-full h-full object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
+            </div>
+            {product.images && product.images.length > 1 && (
+              <div className="mt-4 px-4 py-3 flex gap-3 overflow-x-auto">
+                {product.images.map((img, idx) => (
+                  <div key={idx} className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded overflow-hidden border">
+                    <Image src={img} alt={`${product.title} ${idx}`} width={96} height={96} className="object-cover" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <div>
-          <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+          <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
           <p className="text-gray-700 mb-4">{product.description}</p>
-          <div className="text-2xl font-bold text-[#634bc1] mb-6">${product.price}</div>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="text-2xl font-bold text-[#634bc1]">{formatPrice(product.price)}</div>
+            {product.discountPercentage ? <div className="text-sm text-green-600">-{product.discountPercentage}%</div> : null}
+            <div className="text-sm text-gray-600">{product.availabilityStatus || (product.stock && product.stock > 0 ? 'In stock' : 'Out of stock')}</div>
+          </div>
+
+          <div className="mb-6">
+            <div className="text-sm text-gray-500">Brand: <strong>{product.brand}</strong></div>
+            <div className="text-sm text-gray-500">Category: <strong>{product.category}</strong></div>
+            {product.sku && <div className="text-sm text-gray-500">SKU: <strong>{product.sku}</strong></div>}
+            {product.weight && <div className="text-sm text-gray-500">Weight: <strong>{product.weight}</strong></div>}
+            {product.dimensions && (
+              <div className="text-sm text-gray-500">Dimensions: <strong>{`${product.dimensions.width} x ${product.dimensions.height} x ${product.dimensions.depth}`}</strong></div>
+            )}
+          </div>
+
           <div className="flex gap-3">
             <button className="px-6 py-3 bg-[#634bc1] text-white rounded-lg">Add to cart</button>
             <button className="px-6 py-3 border border-gray-300 rounded-lg">Buy now</button>
           </div>
+
+          {product.reviews && product.reviews.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-3">Reviews</h2>
+              <div className="space-y-4">
+                {product.reviews.map((r: any, i: number) => (
+                  <div key={i} className="bg-white p-4 rounded shadow-sm">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="font-medium">{r.reviewerName || r.reviewerEmail}</div>
+                      <div className="text-sm text-gray-600">{new Date(r.date).toLocaleDateString()}</div>
+                    </div>
+                    <div className="text-sm text-yellow-500">Rating: {r.rating}/5</div>
+                    <div className="mt-2 text-gray-700">{r.comment}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
 
-      <section className="max-w-6xl mx-auto mt-12">
-        <h2 className="text-xl font-bold mb-4">Related products</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sampleProducts.filter(p => p.id !== product.id).slice(0,6).map(r => (
-            <ProductCard key={r.id} image={r.images[0]||'/placeholder.png'} name={r.name} price={r.price} rating={4.5} reviews={120} />
-          ))}
-        </div>
-      </section>
+      {related.length > 0 && (
+        <section className="max-w-6xl mx-auto mt-12">
+          <h2 className="text-xl font-bold mb-4">Related products</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {related.map(r => (
+              <ProductCard key={r.id} image={r.images?.[0]||r.thumbnail||'/placeholder.png'} name={r.title} price={r.price} rating={r.rating||0} reviews={0} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

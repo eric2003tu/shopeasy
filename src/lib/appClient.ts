@@ -12,6 +12,18 @@ export interface ApiProduct {
   category?: string;
   thumbnail?: string;
   images?: string[];
+  // Extended/optional fields that may appear in some product documents
+  sku?: string;
+  weight?: number;
+  dimensions?: { width: number; height: number; depth: number };
+  warrantyInformation?: string;
+  shippingInformation?: string;
+  availabilityStatus?: string;
+  reviews?: Array<{ rating: number; comment: string; date: string; reviewerName?: string; reviewerEmail?: string }>;
+  returnPolicy?: string;
+  minimumOrderQuantity?: number;
+  tags?: string[];
+  meta?: Record<string, any>;
 }
 
 export interface ListProductsResponse {
