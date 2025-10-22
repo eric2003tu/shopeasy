@@ -113,6 +113,7 @@ export default function CartsTable() {
             value={search}
             onChange={(val) => { setSearch(val); setPage(1); }}
             placeholder={t('admin.placeholders.searchCheckouts')}
+            className="w-72"
           />
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allStatus')}</option>

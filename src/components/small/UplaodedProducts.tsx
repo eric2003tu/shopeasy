@@ -5,7 +5,7 @@ import { FiAlertCircle, FiInfo } from 'react-icons/fi';
 import VoiceSearchBar from '@/components/ui/VoiceSearchBar';
 import { OneProduct } from './OneProduct';
 import { useI18n } from '@/i18n/I18nProvider';
-import { sampleProducts } from '@/lib/sampleData';
+import { fetchProducts, ApiProduct } from '@/lib/appClient';
 
 
 export interface Product {
@@ -20,20 +20,9 @@ export interface Product {
 }
 
 const UploadedProducts: React.FC = () => {
-  // Use canonical sampleProducts from lib
-  const mappedProducts = React.useMemo(() => sampleProducts.map((p) => ({
-    _id: p.id,
-    name: p.name,
-    description: p.description || '',
-    price: p.price,
-    images: p.images,
-    category: p.category || '',
-    stock: p.stock || 0,
-    featured: !!p.funded,
-  })), []);
-
-  const [products, setProducts] = useState<Product[]>(mappedProducts);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(mappedProducts);
+  // Products will be loaded from the API (dummyjson)
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   // Remove searchTerm state, use local state in VoiceSearchBar
@@ -61,15 +50,29 @@ const UploadedProducts: React.FC = () => {
   };
 
   useEffect(() => {
-    // initialize local products (no network)
-    setProducts(mappedProducts);
-    setFilteredProducts(mappedProducts);
-    try {
-      // expose for admin seeding in the browser dev environment
-      (window as unknown as { __SHOPEASY_DEFAULT_PRODUCTS?: Product[] }).__SHOPEASY_DEFAULT_PRODUCTS = mappedProducts;
-    } catch {
-      // ignore
-    }
+    let mounted = true;
+    setIsLoading(true);
+    fetchProducts(30, 0).then((data) => {
+      if (!mounted) return;
+      const mapped = data.products.map((p: ApiProduct) => ({
+        _id: String(p.id),
+        name: p.title,
+        description: p.description || '',
+        price: p.price,
+        images: p.images && p.images.length ? p.images : (p.thumbnail ? [p.thumbnail] : ['/placeholder-product.jpg']),
+        category: p.category || '',
+        stock: p.stock ?? 0,
+        featured: false,
+      }));
+      setProducts(mapped);
+      setFilteredProducts(mapped);
+      setIsLoading(false);
+    }).catch((err) => {
+      if (!mounted) return;
+      setError(String(err.message || err));
+      setIsLoading(false);
+    });
+    return () => { mounted = false; };
   }, []);
 
   const formatPrice = (price: number) => {
