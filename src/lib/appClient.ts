@@ -48,7 +48,52 @@ export async function fetchProductById(id: number): Promise<ApiProduct> {
 }
 
 // Fetch current authenticated user using access token
-export async function fetchCurrentUser(accessToken: string): Promise<AuthUser> {
+export interface FullUser {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  maidenName?: string;
+  age?: number;
+  gender?: string;
+  email?: string;
+  username?: string;
+  password?: string;
+  birthDate?: string;
+  image?: string;
+  phone?: string;
+  bloodGroup?: string;
+  height?: number;
+  weight?: number;
+  eyeColor?: string;
+  hair?: { color?: string; type?: string };
+  address?: {
+    address?: string;
+    city?: string;
+    state?: string;
+    stateCode?: string;
+    postalCode?: string;
+    country?: string;
+    coordinates?: { lat: number; lng: number };
+  };
+  company?: {
+    name?: string;
+    department?: string;
+    title?: string;
+    address?: any;
+  };
+  bank?: { cardExpire?: string; cardNumber?: string; cardType?: string; currency?: string; iban?: string };
+  crypto?: { coin?: string; wallet?: string; network?: string };
+  ein?: string;
+  ssn?: string;
+  macAddress?: string;
+  ip?: string;
+  university?: string;
+  userAgent?: string;
+  role?: string;
+  [key: string]: any;
+}
+
+export async function fetchCurrentUser(accessToken: string): Promise<FullUser> {
   const res = await fetch(`${BASE}/auth/me`, {
     method: 'GET',
     headers: {

@@ -23,6 +23,8 @@ const UploadedProducts: React.FC = () => {
   // Products will be loaded from the API (dummyjson)
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Array<{ slug: string; name: string; url: string }>>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   // Remove searchTerm state, use local state in VoiceSearchBar
@@ -53,7 +55,9 @@ const UploadedProducts: React.FC = () => {
   useEffect(() => {
     let mounted = true;
     setIsLoading(true);
-    fetchProducts(30, 0).then((data) => {
+    const catsPromise = fetch('https://dummyjson.com/products/categories').then(r => r.json()).catch(() => []);
+    const prodsPromise = fetchProducts(1000, 0);
+    Promise.all([catsPromise, prodsPromise]).then(([cats, data]) => {
       if (!mounted) return;
       const mapped = data.products.map((p: ApiProduct) => ({
         _id: String(p.id),
@@ -65,6 +69,7 @@ const UploadedProducts: React.FC = () => {
         stock: p.stock ?? 0,
         featured: false,
       }));
+      setCategories(Array.isArray(cats) ? cats : []);
       setProducts(mapped);
       setFilteredProducts(mapped);
       setIsLoading(false);
@@ -122,17 +127,34 @@ const UploadedProducts: React.FC = () => {
     );
   }
 
-  const displayProducts = hasSearched ? filteredProducts : products;
-  const noSearchResults = hasSearched && filteredProducts.length === 0;
+  let displayProducts = hasSearched ? filteredProducts : products;
+  if (selectedCategory !== 'all') {
+    displayProducts = displayProducts.filter(p => p.category === selectedCategory);
+  }
+  const noSearchResults = hasSearched && displayProducts.length === 0;
+
+  // displayProducts already filtered by search + category; we'll render a single grid below
 
   return (
     <div className='w-full grid grid-cols-1 justify-items-center text-center' >
       <h1 className="text-[#634bc1] text-md text-start mt-2">{t('footer.findYourProduct')}</h1>
-      <div className="flex flex-row lg:w-1/2 w-full px-4 mb-4">
-        <VoiceSearchBar
-          onSearch={handleProductSearch}
-          placeholder={t('header.searchPlaceholder') || 'Find products by name, category, seller, price...'}
-        />
+      <div className="w-full px-4 mb-4 flex justify-center">
+        <div className="max-w-3xl w-full flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4">
+          <div className="flex-1">
+            <VoiceSearchBar
+              onSearch={handleProductSearch}
+              placeholder={t('header.searchPlaceholder') || 'Find products by name, category, seller, price...'}
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <label className="text-sm text-gray-600">Category</label>
+            <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="border rounded px-3 py-1">
+              <option value="all">All categories</option>
+              {categories.map(cat => (<option key={cat.slug} value={cat.slug}>{cat.name}</option>))}
+            </select>
+          </div>
+        </div>
       </div>
   {/* removed popup OneProduct; navigation will go directly to product page */}
 
@@ -159,57 +181,34 @@ const UploadedProducts: React.FC = () => {
           <p className="text-gray-600">Check back later or add new products</p>
         </div>
       ) : (
-        <div id="products" className="grid grid-cols-1 w-full sm:grid-cols-2 lg:grid-cols-5 gap-6 p-6">
-          {displayProducts.map((product) => {
-            const imageUrl = product.images[0] || '/placeholder-product.jpg';
-            
-            return (
-              <div 
-                key={product._id} 
-                className={`bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1 ${
-                  product.featured ? 'ring-2 ring-blue-500' : ''
-                }`}
-              >
-                <div className="relative w-full h-48">
-                  <Image src={imageUrl} alt={product.name} fill className="object-contain" sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" />
-                    {product.featured && (
-                    <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
-                      Featured
-                    </span>
-                  )}
-                </div>
-                
-                <div className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-lg text-gray-800 line-clamp-2">
-                      {product.name}
-                    </h3>
+        <div className="w-full p-6">
+          <div className="flex items-center justify-end mb-4">
+            <div className="text-sm text-gray-500">{displayProducts.length} products</div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {displayProducts.map(product => {
+              const imageUrl = product.images[0] || '/placeholder-product.jpg';
+              return (
+                <div key={product._id} className={`bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1 ${product.featured ? 'ring-2 ring-blue-500' : ''}`}>
+                  <div className="relative w-full h-48">
+                    <Image src={imageUrl} alt={product.name} fill className="object-contain" sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" />
+                    {product.featured && (<span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">Featured</span>)}
                   </div>
-                  
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="font-bold text-gray-900">
-                      {formatPrice(product.price)}
-                    </span>
-                    <span className={`text-sm ${
-                      product.stock > 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
-                    </span>
+                  <div className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold text-lg text-gray-800 line-clamp-2">{product.name}</h4>
+                    </div>
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="font-bold text-gray-900">{formatPrice(product.price)}</span>
+                      <span className={`text-sm ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</span>
+                    </div>
+                    <button onClick={() => router.push(`/products/${product._id}`)} className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-colors">{t('product.viewDetails')}</button>
                   </div>
-                  
-                  <button
-                    onClick={() => {
-                      // navigate to the public product detail page (not protected)
-                      router.push(`/products/${product._id}`);
-                    }}
-                    className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-colors"
-                  >
-                    {t('product.viewDetails')}
-                  </button>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

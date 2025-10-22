@@ -1,21 +1,22 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { login as apiLogin, signup as apiSignup, AuthUser, LoginResponse, logout as apiLogout, fetchCurrentUser } from '@/lib/appClient';
+import { login as apiLogin, signup as apiSignup, AuthUser, LoginResponse, logout as apiLogout, fetchCurrentUser, FullUser } from '@/lib/appClient';
 import { ToastProvider } from '@/context/ToastProvider';
 
 interface AuthContextValue {
-  user: AuthUser | null;
+  user: FullUser | null;
   token: string | null;
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   signup: (payload: { firstName?: string; lastName?: string; username: string; email?: string; password: string; }) => Promise<void>;
   logout: () => void;
+  updateUser: (patch: Partial<FullUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AuthUser | null>(() => {
+  const [user, setUser] = useState<FullUser | null>(() => {
     try {
       const raw = localStorage.getItem('shopeasy_user');
       return raw ? JSON.parse(raw) : null;
@@ -58,6 +59,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => { mounted = false; };
   }, [token]);
 
+  // allow updating the user locally (and persist)
+  const updateUser = (patch: Partial<FullUser>) => {
+    setUser(prev => {
+      const next = { ...(prev || {}), ...patch } as FullUser;
+      try {
+        localStorage.setItem('shopeasy_user', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
   const doLogin = async (username: string, password: string) => {
     setLoading(true);
     try {
@@ -70,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         username: res.username,
         email: res.email,
         image: res.image,
-      } : null;
+      } as FullUser : null;
       // set in state
       setToken(res.accessToken || null);
       setUser(mappedUser as any);
@@ -105,7 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login: doLogin, signup: doSignup, logout: doLogout }}>
+    <AuthContext.Provider value={{ user, token, loading, login: doLogin, signup: doSignup, logout: doLogout, updateUser }}>
       <ToastProvider>
         {children}
       </ToastProvider>
