@@ -199,8 +199,8 @@ const UploadedProducts: React.FC = () => {
                   
                   <button
                     onClick={() => {
-                      // navigate to the product detail page
-                      router.push(`/shop/product/${product._id}`);
+                      // navigate to the public product detail page (not protected)
+                      router.push(`/products/${product._id}`);
                     }}
                     className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition-colors"
                   >
