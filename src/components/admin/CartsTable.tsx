@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import VoiceSearchBar from './VoiceSearchBar';
 import { sampleCarts, SampleCart, sampleProducts, SampleCartItem } from '@/lib/sampleData';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useToast } from '@/context/ToastProvider';
 
 const STORAGE_KEY = 'shopeasy_admin_carts_v1';
 
@@ -28,6 +29,7 @@ export default function CartsTable() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(carts)); } catch {}
   }, [carts]);
   const { t } = useI18n();
+  const { toast } = useToast();
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -64,9 +66,9 @@ export default function CartsTable() {
       localStorage.setItem('shopeasy_admin_checkouts_v1', JSON.stringify(checkouts));
       // mark cart as converted
       setCarts((prev) => prev.map((c) => c.id === cart.id ? { ...c, status: 'converted' } : c));
-      alert('Checkout created from cart');
+        toast({ title: 'Checkout created', description: 'Checkout created from cart', type: 'success' });
     } catch {
-      alert('Failed to convert cart');
+      toast({ title: 'Error', description: 'Failed to convert cart', type: 'error' });
     }
   }
 
@@ -99,9 +101,9 @@ export default function CartsTable() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleCarts));
       setCarts(sampleCarts);
-      alert('Sample carts loaded');
+    toast({ title: 'Samples loaded', description: 'Sample carts loaded', type: 'success' });
     } catch {
-      alert('Failed to load sample carts');
+      toast({ title: 'Error', description: 'Failed to load sample carts', type: 'error' });
     }
   };
 
@@ -113,8 +115,8 @@ export default function CartsTable() {
             value={search}
             onChange={(val) => { setSearch(val); setPage(1); }}
             placeholder={t('admin.placeholders.searchCheckouts')}
-            className="w-72"
           />
+            // Removed className prop
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allStatus')}</option>
             <option value="active">{t('admin.carts.status.active', { defaultValue: 'Active' })}</option>

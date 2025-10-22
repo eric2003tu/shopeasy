@@ -1,13 +1,16 @@
 "use client";
 import React, { useRef, useState } from "react";
+import { useToast } from '@/context/ToastProvider';
 
 const VoiceRecognition: React.FC = () => {
   const [transcript, setTranscript] = useState("");
   const recognitionRef = useRef<any>(null);
 
+  const { toast } = useToast();
+
   const startListening = () => {
     if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
-      alert("Speech recognition not supported in this browser.");
+      toast({ title: 'Not supported', description: 'Speech recognition not supported in this browser.', type: 'error' });
       return;
     }
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -19,7 +22,7 @@ const VoiceRecognition: React.FC = () => {
       setTranscript(event.results[0][0].transcript);
     };
     recognition.onerror = (event: any) => {
-      alert("Error: " + event.error);
+      toast({ title: 'Voice error', description: String(event.error || 'Unknown'), type: 'error' });
     };
     recognitionRef.current = recognition;
     recognition.start();

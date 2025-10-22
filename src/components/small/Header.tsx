@@ -8,6 +8,7 @@ import { MdLogin } from "react-icons/md";
 import { HiOutlineGlobeAlt } from 'react-icons/hi';
 import { useI18n } from '@/i18n/I18nProvider';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthProvider';
 
 
 const Header: React.FC = () => {
@@ -15,6 +16,7 @@ const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [langOpen, setLangOpen] = useState(false);
   const { t, locale, setLocale } = useI18n();
+  const auth = useAuth();
   const langRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -77,13 +79,22 @@ const Header: React.FC = () => {
               <BsCart2 className="text-lg" />
               {t('header.cart')}
             </Link> */}
-            <Link 
-              href="/login" 
-              className="px-3 py-2 rounded-md text-sm lg:text-base font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
-            >
-              <MdLogin className="text-lg" />
-              {t('header.login')}
-            </Link>
+            {auth.user ? (
+              <Link href="/profile" className="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-white/10">
+                <div className="h-8 w-8 relative rounded-full overflow-hidden bg-gray-100">
+                  <Image src={auth.user.image || '/avatar-placeholder.png'} alt={auth.user.firstName + ' ' + auth.user.lastName} fill className="object-cover" sizes="32px" />
+                </div>
+                <span className="text-white">{(auth.user.firstName || '') + ' ' + (auth.user.lastName || auth.user.username || '')}</span>
+              </Link>
+            ) : (
+              <Link 
+                href="/login" 
+                className="px-3 py-2 rounded-md text-sm lg:text-base font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
+              >
+                <MdLogin className="text-lg" />
+                {t('header.login')}
+              </Link>
+            )}
             {/* Language selector */}
             <div className="relative" ref={langRef}>
               <button

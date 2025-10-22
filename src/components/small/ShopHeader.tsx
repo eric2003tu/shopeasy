@@ -11,6 +11,7 @@ import { HiOutlineGlobeAlt } from 'react-icons/hi';
 import { BiUser } from 'react-icons/bi';
 import { FiSettings, FiLogOut } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthProvider';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export default function ShopHeader() {
@@ -18,7 +19,7 @@ export default function ShopHeader() {
 	const [langOpen, setLangOpen] = useState(false);
 	const { t, locale, setLocale } = useI18n();
 	const langRef = useRef<HTMLDivElement | null>(null);
-		const [user, setUser] = useState<Partial<SampleUser> & { image?: string }>({ name: sampleUsers[0].name });
+		const auth = useAuth();
 		const [userMenuOpen, setUserMenuOpen] = useState(false);
 		const userMenuRef = useRef<HTMLDivElement | null>(null);
 		const router = useRouter();
@@ -52,22 +53,7 @@ export default function ShopHeader() {
 			return () => window.removeEventListener('click', onClick);
 		}, []);
 
-	useEffect(() => {
-		// Try to read user from localStorage, fallback to sampleUsers[0]
-		if (typeof window !== 'undefined') {
-			const raw = localStorage.getItem('user');
-			if (raw) {
-				try {
-					const parsed = JSON.parse(raw);
-					setUser({ ...sampleUsers[0], name: parsed.name || sampleUsers[0].name, image: parsed.image });
-				} catch {
-					setUser(sampleUsers[0]);
-				}
-			} else {
-				setUser(sampleUsers[0]);
-			}
-		}
-	}, []);
+	// No local state for user here; use auth.user and fall back to sample user if not set
 
 	return (
 		<header className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#634bc1] shadow-md' : 'bg-[#634bc1]/90 backdrop-blur-sm'} shadow-lg`}>
@@ -116,8 +102,42 @@ export default function ShopHeader() {
 							)}
 						</div>
 
-																		{/* User menu (reusable) */}
-																		<UserMenu />
+																		{/* User menu (reusable) - show avatar/name from auth if present */}
+																		<div className="ml-6 relative">
+																			<button onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }} className="flex items-center gap-2 focus:outline-none">
+																				<div className="relative h-10 w-10 bg-gray-200 rounded-full overflow-hidden border border-white/30">
+																					{auth.user?.image ? (
+																						<Image src={auth.user.image} alt={(auth.user.firstName || auth.user.username) as string} fill className="rounded-full object-cover" sizes="40px" />
+																					) : (
+																						<Image src={makeInitialsAvatar(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() : sampleUsers[0].name)} alt={(auth.user?.firstName || auth.user?.username || sampleUsers[0].name) as string} fill className="rounded-full object-cover" sizes="40px" />
+																					)}
+																				</div>
+																				<span className="text-white font-medium text-base">{(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() || auth.user.username : sampleUsers[0].name)}</span>
+																			</button>
+																			{userMenuOpen && (
+																				<div className="absolute right-0 mt-2 w-44 bg-white rounded shadow-lg text-gray-800 py-2 z-50">
+																					<Link href="/shop/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+																						<BiUser className="text-lg" />
+																						<span>My profile</span>
+																					</Link>
+																					<Link href="/shop/settings" className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+																						<FiSettings className="text-lg" />
+																						<span>Settings</span>
+																					</Link>
+																					<button
+																						onClick={() => {
+																							auth.logout();
+																							setUserMenuOpen(false);
+																							router.push('/login');
+																						}}
+																						className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+																					>
+																						<FiLogOut className="text-lg" />
+																						<span>Logout</span>
+																					</button>
+																				</div>
+																			)}
+																		</div>
 					</nav>
 				</div>
 			</div>

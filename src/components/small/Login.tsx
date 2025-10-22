@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebookF, FaTwitter } from 'react-icons/fa';
 import { HiOutlineMail, HiOutlineLockClosed } from 'react-icons/hi';
 import Otp from './Otp';
+import { useAuth } from '@/context/AuthProvider';
+import { useToast } from '@/context/ToastProvider';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -10,9 +12,17 @@ import { useI18n } from '@/i18n/I18nProvider';
 const Login: React.FC = () => {
   const router = useRouter();
   const { t } = useI18n();
+  const auth = useAuth();
+  const { toast } = useToast();
+  useEffect(() => {
+    if (auth.user) {
+      // already signed in -> go to shop
+      router.replace('/shop');
+    }
+  }, [auth.user, router]);
 
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState<{ email: string; password: string; form: string }>({ email: '', password: '', form: '' });
+  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [errors, setErrors] = useState<{ username: string; password: string; form: string }>({ username: '', password: '', form: '' });
   const [successMessage, setSuccessMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,19 +30,19 @@ const Login: React.FC = () => {
   const [otp, setOtp] = useState<boolean>(false);
   const who = 'user';
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+  // username & password validation
+  // keep validation simple: username required, password >= 4 chars
+  const passwordRegex = /.{4,}/;
 
   const validateField = (name: string, value: string) => {
     let error = '';
-    if (name === 'email') {
-      if (!value.trim()) error = t('auth.emailRequired');
-      else if (!emailRegex.test(value)) error = t('auth.invalidEmail');
+    if (name === 'username') {
+      if (!value.trim()) error = t('auth.usernameRequired') || 'Username is required';
     }
     if (name === 'password') {
       if (!value) error = t('auth.passwordRequired');
-      else if (value.length < 8) error = t('auth.passwordMin');
-      else if (!passwordRegex.test(value)) error = t('auth.invalidPassword');
+      else if (value.length < 4) error = t('auth.passwordMin');
+      // no complex password pattern enforced here — only minimum length
     }
     return error;
   };
@@ -45,15 +55,15 @@ const Login: React.FC = () => {
   };
 
   useEffect(() => {
-    const isEmailValid = emailRegex.test(formData.email);
-    const isPasswordValid = formData.password.length >= 8;
-    setIsFormValid(isEmailValid && isPasswordValid);
+    const isUsernameValid = formData.username.trim().length > 0;
+    const isPasswordValid = formData.password.length >= 4;
+    setIsFormValid(isUsernameValid && isPasswordValid);
   }, [formData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors = {
-      email: validateField('email', formData.email),
+      username: validateField('username', formData.username),
       password: validateField('password', formData.password),
       form: ''
     };
@@ -64,35 +74,16 @@ const Login: React.FC = () => {
       return;
     }
 
-    const isLocal = typeof window !== 'undefined' && window.location.hostname === 'localhost';
-    const apiBase = isLocal ? 'http://localhost:5000/api/v1/users' : 'https://e-commerce-back-xy6s.onrender.com/api/v1/users';
-    const api = `${apiBase}/${who === 'user' ? 'login' : 'admin-login'}`;
-
     setIsLoading(true);
     try {
-      const response = await fetch(api, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email: formData.email, password: formData.password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as Record<string, unknown>));
-        const message = typeof (errorData as Record<string, unknown>).message === 'string' ? (errorData as Record<string, unknown>).message : '';
-        const finalMessage = message || t('auth.loginFailed');
-        throw new Error(String(finalMessage));
-      }
-
-      const data = await response.json();
-      localStorage.setItem('user', JSON.stringify(data));
+  await auth.login(formData.username, formData.password);
       setSuccessMessage(t('auth.loggedIn'));
-      setTimeout(() => { 
-        router.push('/'); 
-        setSuccessMessage(''); 
-      }, 1200);
+      toast({ title: 'Signed in', description: t('auth.loggedIn'), type: 'success' });
+  setTimeout(() => { router.push('/shop'); setSuccessMessage(''); }, 900);
     } catch (err) {
-      setErrors(prev => ({ ...prev, form: err instanceof Error ? err.message : t('auth.invalidCredentials') }));
+      const msg = err instanceof Error ? err.message : t('auth.invalidCredentials');
+      setErrors(prev => ({ ...prev, form: msg }));
+      toast({ title: 'Sign in failed', description: String(msg), type: 'error' });
     } finally {
       setIsLoading(false);
     }
@@ -127,12 +118,12 @@ const Login: React.FC = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t('auth.emailAddress')}</label>
+                    <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">{t('auth.username') || 'Username'}</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><HiOutlineMail className="h-5 w-5 text-gray-400" /></div>
-                      <input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleChange} onBlur={(e) => setErrors(prev => ({ ...prev, email: validateField('email', e.target.value) }))} className={`block w-full text-gray-700 pl-10 pr-3 py-3 border ${errors.email ? 'border-red-300' : 'border-gray-300'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#634bc1] focus:border-[#634bc1] placeholder-gray-400`} placeholder={t('auth.emailPlaceholder')} />
+                      <input id="username" name="username" type="text" autoComplete="username" required value={formData.username} onChange={handleChange} onBlur={(e) => setErrors(prev => ({ ...prev, username: validateField('username', e.target.value) }))} className={`block w-full text-gray-700 pl-10 pr-3 py-3 border ${errors.username ? 'border-red-300' : 'border-gray-300'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#634bc1] focus:border-[#634bc1] placeholder-gray-400`} placeholder={t('auth.usernamePlaceholder') || 'Username'} />
                     </div>
-                    {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                    {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
                   </div>
 
                   <div>

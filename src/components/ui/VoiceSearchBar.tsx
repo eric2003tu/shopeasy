@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef, useState } from "react";
+import { useToast } from '@/context/ToastProvider';
 import { IoMdSearch } from 'react-icons/io';
 import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 
@@ -23,9 +24,11 @@ const VoiceSearchBar: React.FC<VoiceSearchBarProps> = ({ onSearch, placeholder }
     onSearch(searchQuery.trim() || transcript.trim());
   };
 
+  const { toast } = useToast();
+
   const startListening = () => {
     if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
-      alert("Speech recognition not supported in this browser.");
+      toast({ title: 'Not supported', description: 'Speech recognition not supported in this browser.', type: 'error' });
       return;
     }
     setListening(true);
@@ -44,7 +47,7 @@ const VoiceSearchBar: React.FC<VoiceSearchBarProps> = ({ onSearch, placeholder }
     };
     recognition.onerror = (event: any) => {
       setListening(false);
-      alert("Error: " + event.error);
+      toast({ title: 'Voice error', description: String(event.error || 'Unknown'), type: 'error' });
     };
     recognition.onend = () => setListening(false);
     recognitionRef.current = recognition;

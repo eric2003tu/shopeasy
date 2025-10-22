@@ -6,6 +6,7 @@ import { HiOutlineMail, HiOutlineLockClosed, HiOutlinePhone, HiOutlineLocationMa
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
 import Otp from './Otp';
+import { useAuth } from '@/context/AuthProvider';
 import { useI18n } from '@/i18n/I18nProvider';
 
 interface FormData {
@@ -40,6 +41,10 @@ interface FormErrors {
 const Signup: React.FC = () => {
   const navigate = useRouter();
   const { t } = useI18n();
+  const auth = useAuth();
+  useEffect(() => {
+    if (auth.user) navigate.replace('/shop');
+  }, [auth.user, navigate]);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -196,63 +201,19 @@ const handleSubmit = (e: React.FormEvent) => {
     window.scrollTo(0, 0);
     return;
   }
-  const isLocal = window.location.hostname === 'localhost';
-const api = isLocal
-  ? 'http://localhost:5000/api/v1/users/signup'
-  : 'https://e-commerce-back-xy6s.onrender.com/api/v1/users/signup';
 
-  // Final submission
+  // Final submission via AuthProvider (dummyjson)
   setIsLoading(true);
-
-  fetch(`${api}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-body: JSON.stringify({
-  name: formData.name,  // Changed from username to name
-  email: formData.email,
-  phone: formData.phone || undefined,
-  password: formData.password,
-  address: {
-    line1: formData.line1,
-    street: formData.street,
-    city: formData.city,
-    state: formData.state,
-    zipCode: formData.zipcode,  // Changed from postalCode to zipCode
-    country: formData.country
-  }
-})
-  })
-.then((response) => {
-  if (!response.ok) {
-    // Try to get error details from response
-    return response.json().then(errData => {
-      throw new Error(errData.message || 'Registration failed');
-    }).catch(() => {
-      throw new Error(`Request failed with status ${response.status}`);
-    });
-  }
-  return response.json();
-})
-.then(data => {
-  console.log('Signup successful:', data);
-  // Store user token if returned
-  if (data.token) {
-    localStorage.setItem('authToken', data.token);
-  }
-  setOtp(true);
-})
-  .catch(error => {
-    console.error('Signup error:', error);
-    setErrors(prev => ({
-      ...prev,
-      form: error.message || 'An unexpected error occurred'
-    }));
-  })
-  .finally(() => {
-    setIsLoading(false);
-  });
+  auth.signup({
+    firstName: formData.name,
+    username: formData.name.replace(/\s+/g, '').toLowerCase(),
+    email: formData.email,
+    password: formData.password,
+  }).then(() => {
+    setOtp(true);
+  }).catch((err) => {
+    setErrors(prev => ({ ...prev, form: err instanceof Error ? err.message : String(err) }));
+  }).finally(() => setIsLoading(false));
 };
 
 

@@ -4,6 +4,8 @@ import VoiceSearchBar from './VoiceSearchBar';
 import { sampleCheckouts, SampleCheckout, sampleProducts } from '@/lib/sampleData';
 import { useI18n } from '@/i18n/I18nProvider';
 
+import { useToast } from '@/context/ToastProvider';
+
 const STORAGE_KEY = 'shopeasy_admin_checkouts_v1';
 
 export default function CheckoutsTable() {
@@ -29,15 +31,16 @@ export default function CheckoutsTable() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkouts)); } catch {}
   }, [checkouts]);
 
+  const { toast } = useToast();
   const { t } = useI18n();
 
   const resetSamples = () => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleCheckouts));
       setCheckouts(sampleCheckouts);
-      alert('Sample checkouts loaded');
+        toast({ title: 'Samples loaded', description: 'Sample checkouts loaded', type: 'success' });
     } catch {
-      alert('Failed to load sample checkouts');
+        toast({ title: 'Error', description: 'Failed to load sample checkouts', type: 'error' });
     }
   };
 

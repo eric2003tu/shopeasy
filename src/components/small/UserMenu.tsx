@@ -6,6 +6,7 @@ import { BiUser } from 'react-icons/bi';
 import { FiSettings, FiLogOut } from 'react-icons/fi';
 import { sampleUsers, SampleUser } from '@/lib/sampleData';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthProvider';
 
 // Creates a small SVG avatar with initials as a data URL
 function makeInitialsAvatar(fullName?: string) {
@@ -22,27 +23,10 @@ function makeInitialsAvatar(fullName?: string) {
 }
 
 export default function UserMenu() {
-  const [user, setUser] = useState<Partial<SampleUser> & { image?: string }>({ name: sampleUsers[0].name });
+  const auth = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    // Try to read user from localStorage, fallback to sampleUsers[0]
-    if (typeof window !== 'undefined') {
-      const raw = localStorage.getItem('user');
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          setUser({ ...sampleUsers[0], name: parsed.name || sampleUsers[0].name, image: parsed.image });
-        } catch {
-          setUser(sampleUsers[0]);
-        }
-      } else {
-        setUser(sampleUsers[0]);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -59,9 +43,13 @@ export default function UserMenu() {
         className="flex items-center gap-2 focus:outline-none"
       >
         <div className="relative h-10 w-10 bg-gray-200 rounded-full overflow-hidden border border-white/30">
-          <Image src={(user.image && typeof user.image === 'string') ? user.image : makeInitialsAvatar(user.name)} alt={user.name || 'User'} fill className="rounded-full object-cover" sizes="40px" />
+          {auth.user?.image ? (
+            <Image src={auth.user.image} alt={(auth.user.firstName || auth.user.username) as string} fill className="rounded-full object-cover" sizes="40px" />
+          ) : (
+            <Image src={makeInitialsAvatar(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() : sampleUsers[0].name)} alt={(auth.user?.firstName || auth.user?.username || sampleUsers[0].name) as string} fill className="rounded-full object-cover" sizes="40px" />
+          )}
         </div>
-        <span className="text-white font-medium text-base">{user.name}</span>
+        <span className="text-white font-medium text-base">{auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() || auth.user.username : sampleUsers[0].name}</span>
       </button>
       {menuOpen && (
         <div className="absolute right-0 mt-2 w-44 bg-white rounded shadow-lg text-gray-800 py-2 z-50">
@@ -75,8 +63,7 @@ export default function UserMenu() {
           </Link>
           <button
             onClick={() => {
-              localStorage.removeItem('user');
-              setUser(sampleUsers[0]);
+              auth.logout();
               setMenuOpen(false);
               router.push('/login');
             }}

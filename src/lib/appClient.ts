@@ -34,3 +34,64 @@ export async function fetchProductById(id: number): Promise<ApiProduct> {
   if (!res.ok) throw new Error(`Failed to fetch product ${id}: ${res.status}`);
   return res.json();
 }
+
+// --- Auth helpers using dummyjson's auth endpoints ---
+export interface AuthUser {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+  image?: string;
+}
+export interface LoginResponse {
+  id?: number;
+  username?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  gender?: string;
+  image?: string;
+  accessToken?: string; // JWT
+  refreshToken?: string;
+}
+
+export async function login(username: string, password: string, expiresInMins = 30): Promise<LoginResponse> {
+  const res = await fetch(`${BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password, expiresInMins }),
+    // include cookies in response (dummyjson sets cookies)
+    // credentials: 'include',
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Login failed: ${res.status} ${text}`);
+  }
+  // Response shape from dummyjson includes user fields + accessToken/refreshToken
+  return res.json();
+}
+
+export async function signup(payload: { firstName?: string; lastName?: string; username: string; email?: string; password: string; }): Promise<AuthUser> {
+  // dummyjson supports creating users via /users/add
+  const res = await fetch(`${BASE}/users/add`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Signup failed: ${res.status} ${text}`);
+  }
+  return res.json();
+}
+
+export function logout(): void {
+  // client-side cleanup only; dummyjson has no server logout endpoint
+  try {
+    localStorage.removeItem('shopeasy_token');
+    localStorage.removeItem('shopeasy_user');
+  } catch (e) {
+    // ignore
+  }
+}
