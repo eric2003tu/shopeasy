@@ -116,7 +116,7 @@ export default function CartsTable() {
             onChange={(val) => { setSearch(val); setPage(1); }}
             placeholder={t('admin.placeholders.searchCheckouts')}
           />
-            // Removed className prop
+          {/* Removed className prop */}
           <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
             <option value="">{t('admin.labels.allStatus')}</option>
             <option value="active">{t('admin.carts.status.active', { defaultValue: 'Active' })}</option>

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
 
-const page: React.FC = () => {
+const Page: React.FC = () => {
   const auth = useAuth();
   const router = useRouter();
   useEffect(() => {
@@ -18,4 +18,4 @@ const page: React.FC = () => {
   );
 };
 
-export default page;
+export default Page;

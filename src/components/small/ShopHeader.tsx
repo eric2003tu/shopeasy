@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import { sampleUsers, SampleUser } from '@/lib/sampleData';
 import UserMenu from './UserMenu';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,6 +11,7 @@ import { BiUser } from 'react-icons/bi';
 import { FiSettings, FiLogOut } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthProvider';
+import { subscribeCart, getCartCount } from '@/lib/cart';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export default function ShopHeader() {
@@ -20,6 +20,7 @@ export default function ShopHeader() {
 	const { t, locale, setLocale } = useI18n();
 	const langRef = useRef<HTMLDivElement | null>(null);
 		const auth = useAuth();
+		const [cartCount, setCartCount] = useState<number>(0);
 		const [userMenuOpen, setUserMenuOpen] = useState(false);
 		const userMenuRef = useRef<HTMLDivElement | null>(null);
 		const router = useRouter();
@@ -53,6 +54,16 @@ export default function ShopHeader() {
 			return () => window.removeEventListener('click', onClick);
 		}, []);
 
+		useEffect(() => {
+			// subscribe to cart changes for live badge updates
+			const unsub = subscribeCart((cart) => {
+				setCartCount(cart.reduce((s, it) => s + (it.quantity || 0), 0));
+			});
+			// also seed from localStorage
+			try { setCartCount(getCartCount()); } catch {}
+			return () => unsub();
+		}, []);
+
 	// No local state for user here; use auth.user and fall back to sample user if not set
 
 	return (
@@ -76,6 +87,9 @@ export default function ShopHeader() {
 						<Link href="/shop/carts" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
 							<BsCart2 className="text-lg" />
 							{t('header.carts')}
+							{cartCount > 0 && (
+								<span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white bg-red-500 rounded-full">{cartCount}</span>
+							)}
 						</Link>
 						<Link href="/shop/checkouts" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
 							<AiOutlineCheckCircle className="text-lg" />
@@ -109,10 +123,10 @@ export default function ShopHeader() {
 																					{auth.user?.image ? (
 																						<Image src={auth.user.image} alt={(auth.user.firstName || auth.user.username) as string} fill className="rounded-full object-cover" sizes="40px" />
 																					) : (
-																						<Image src={makeInitialsAvatar(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() : sampleUsers[0].name)} alt={(auth.user?.firstName || auth.user?.username || sampleUsers[0].name) as string} fill className="rounded-full object-cover" sizes="40px" />
+																						<Image src={makeInitialsAvatar(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() : 'Guest')} alt={(auth.user?.firstName || auth.user?.username || 'Guest') as string} fill className="rounded-full object-cover" sizes="40px" />
 																					)}
 																				</div>
-																				<span className="text-white font-medium text-base">{(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() || auth.user.username : sampleUsers[0].name)}</span>
+																				<span className="text-white font-medium text-base">{(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() || auth.user.username : 'Guest')}</span>
 																			</button>
 																			{userMenuOpen && (
 																				<div className="absolute right-0 mt-2 w-44 bg-white rounded shadow-lg text-gray-800 py-2 z-50">

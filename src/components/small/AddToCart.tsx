@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { sampleProducts } from '@/lib/sampleData';
-import { CartItem, getCart, saveCart } from '@/lib/cart';
+// no sample data used in shop UI
+import { CartItem, getCart, saveCart, addToCart } from '@/lib/cart';
+import { useToast } from '@/context/ToastProvider';
 
 interface Product {
   id: string;
@@ -15,13 +16,20 @@ interface Product {
 export default function AddToCart() {
   const [product, setProduct] = useState<Product | null>(null);
   const [warning, setWarning] = useState<string>('');
+  const { toast } = useToast();
 
   useEffect(() => {
     const currentProduct = localStorage.getItem('id');
     if (currentProduct) {
-      const found = sampleProducts.find(p => p.id === currentProduct);
-      if (found) {
-        setProduct({ id: found.id, name: found.name, price: found.price, images: found.images, description: found.description });
+      // try to read a serialized product snapshot, otherwise show warning
+      const raw = localStorage.getItem(`product_snapshot_${currentProduct}`) || null;
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          setProduct({ id: parsed.id, name: parsed.name, price: parsed.price, images: parsed.images || [], description: parsed.description });
+        } catch {
+          setWarning('Product data malformed');
+        }
       } else {
         setWarning('Product not found');
       }
@@ -44,18 +52,10 @@ export default function AddToCart() {
     }
 
     try {
-      const cart: CartItem[] = getCart();
-      const existing = cart.find((c: CartItem) => c.id === product.id);
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        const newItem: CartItem = { id: product.id, name: product.name, price: product.price, image: product.images[0], quantity: 1 };
-        cart.push(newItem);
-      }
-      saveCart(cart);
-      setWarning('Product added to cart');
-    } catch {
-      setWarning('Failed to add product to cart');
+      addToCart({ id: product.id, name: product.name, price: product.price, image: product.images[0], quantity: 1 });
+      toast({ type: 'success', title: 'Added', description: `${product.name} added to cart` });
+    } catch (e) {
+      toast({ type: 'error', title: 'Error', description: 'Failed to add product to cart' });
     }
   };
 

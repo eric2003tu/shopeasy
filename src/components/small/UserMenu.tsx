@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { BiUser } from 'react-icons/bi';
 import { FiSettings, FiLogOut } from 'react-icons/fi';
-import { sampleUsers, SampleUser } from '@/lib/sampleData';
+// no sampleData imports here — use auth or generic placeholder
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthProvider';
 
@@ -46,10 +46,10 @@ export default function UserMenu() {
           {auth.user?.image ? (
             <Image src={auth.user.image} alt={(auth.user.firstName || auth.user.username) as string} fill className="rounded-full object-cover" sizes="40px" />
           ) : (
-            <Image src={makeInitialsAvatar(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() : sampleUsers[0].name)} alt={(auth.user?.firstName || auth.user?.username || sampleUsers[0].name) as string} fill className="rounded-full object-cover" sizes="40px" />
+            <Image src={makeInitialsAvatar(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() : 'Guest')} alt={(auth.user?.firstName || auth.user?.username || 'Guest') as string} fill className="rounded-full object-cover" sizes="40px" />
           )}
         </div>
-        <span className="text-white font-medium text-base">{auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() || auth.user.username : sampleUsers[0].name}</span>
+        <span className="text-white font-medium text-base">{auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() || auth.user.username : 'Guest'}</span>
       </button>
       {menuOpen && (
         <div className="absolute right-0 mt-2 w-44 bg-white rounded shadow-lg text-gray-800 py-2 z-50">

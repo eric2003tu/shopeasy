@@ -84,8 +84,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         image: res.image,
       } as FullUser : null;
       // set in state
-      setToken(res.accessToken || null);
-      setUser(mappedUser as any);
+  setToken(res.accessToken || null);
+  setUser(mappedUser);
+      // try to merge any existing local cart with server cart for this user
+      try {
+        if (mappedUser?.id) {
+          // lazy import to avoid cycles
+          const cartModule = await import('@/lib/cart');
+          await cartModule.mergeServerCartFromUser(mappedUser.id as number);
+        }
+      } catch (e) {
+        console.debug('[AuthProvider] merge server cart failed', e);
+      }
       // also persist immediately to localStorage for visibility/debugging
       try {
         if (res.accessToken) localStorage.setItem('shopeasy_token', res.accessToken);

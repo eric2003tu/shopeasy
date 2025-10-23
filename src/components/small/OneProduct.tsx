@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image'
 import { useI18n } from '@/i18n/I18nProvider';
-import { sampleProducts, SampleProduct } from '@/lib/sampleData';
+// no sample data fallback; prefer remote API
 import { IoClose } from "react-icons/io5";
-import { addToCart } from '@/lib/cart';
+import { addToCart, syncCartToServer } from '@/lib/cart';
+import { useToast } from '@/context/ToastProvider';
 
 interface Product {
   _id: string;
@@ -25,6 +26,7 @@ interface OneProductProps {
 
 export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) => {
   const { t } = useI18n();
+  const { toast } = useToast();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -33,22 +35,6 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
   useEffect(() => {
     const fetchProduct = async () => {
       if (!productId) return; // Don't fetch if no productId
-      // Try to resolve from local sample data first to avoid failing when backend isn't available
-      const local = sampleProducts.find((p) => p.id === productId || p.id === String(productId));
-      if (local) {
-        setProduct({
-          _id: local.id,
-          images: local.images || [],
-          name: local.name,
-          price: local.price,
-          description: local.description || '',
-          seller: (local as SampleProduct & { seller?: string }).seller || 'ShopEasy',
-          stock: local.stock || 0,
-          category: local.category || ''
-        });
-        setLoading(false);
-        return;
-      }
 
       try {
         const isLocal = window.location.hostname === 'localhost';
@@ -73,23 +59,8 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
         });
       } catch (err) {
         console.error("Failed to view the product", err);
-        // Final fallback: try sampleProducts once more (in case id formats differ)
-        const fallback = sampleProducts.find((p) => p.id === String(productId));
-        if (fallback) {
-          setProduct({
-            _id: fallback.id,
-            images: fallback.images || [],
-            name: fallback.name,
-            price: fallback.price,
-            description: fallback.description || '',
-            seller: (fallback as SampleProduct & { seller?: string }).seller || 'ShopEasy',
-            stock: fallback.stock || 0,
-            category: fallback.category || ''
-          });
-          setError('');
-        } else {
-          setError('Failed to load product details');
-        }
+        // No sample fallback: surface a friendly error
+        setError('Failed to load product details');
       } finally {
         setLoading(false);
       }
@@ -186,9 +157,28 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
                 <button
                   className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                   onClick={() => {
-                    addToCart({ id: product._id, name: product.name, price: product.price, image: product.images[0], quantity: 1 });
-                    setAdded(true);
-                    setTimeout(() => setAdded(false), 2500);
+                    try {
+                      addToCart({ id: product._id, name: product.name, price: product.price, image: product.images[0], quantity: 1 });
+                      setAdded(true);
+                      setTimeout(() => setAdded(false), 2500);
+
+                      // attempt to sync to server if user is logged in
+                      const token = localStorage.getItem('shopeasy_token');
+                      const rawUser = localStorage.getItem('shopeasy_user');
+                      const parsed = rawUser ? JSON.parse(rawUser) : null;
+                      const userId = parsed?.id || parsed?.userId || null;
+                      if (token && userId) {
+                        syncCartToServer(Number(userId), token).then(remote => {
+                          toast({ type: 'success', title: 'Cart synced', description: `Server cart total: ${remote?.total || 'n/a'}` });
+                        }).catch(err => {
+                          console.debug('cart sync failed', err);
+                          toast({ type: 'error', title: 'Sync failed', description: 'Could not sync cart to server' });
+                        });
+                      }
+                      } catch (err) {
+                        console.error('Failed to add to cart', err);
+                        toast({ type: 'error', title: 'Add to cart failed', description: 'Could not add item to cart' });
+                      }
                   }}
                 >
                   {t('product.addToCart')}

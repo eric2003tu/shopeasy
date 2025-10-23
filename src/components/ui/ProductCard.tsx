@@ -3,7 +3,11 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { addToCart } from '@/lib/cart';
+import { useToast } from '@/context/ToastProvider';
+
 interface ProductCardProps {
+  id?: string;
   image: string;
   name: string;
   price: number;
@@ -13,7 +17,8 @@ interface ProductCardProps {
   isNew?: boolean;
 }
 
-export default function ProductCard({ image, name, price, originalPrice, rating, reviews, isNew }: ProductCardProps) {
+export default function ProductCard({ id, image, name, price, originalPrice, rating, reviews, isNew }: ProductCardProps) {
+  const { toast } = useToast();
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all group">
       <div className="relative h-64 overflow-hidden">
@@ -39,7 +44,14 @@ export default function ProductCard({ image, name, price, originalPrice, rating,
           <Link href="/products" className="py-2 text-center bg-[#634bc1] text-white rounded-lg hover:bg-[#756a9f] transition-colors">
             View
           </Link>
-          <button className="py-2 text-center border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+          <button className="py-2 text-center border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" onClick={() => {
+            try {
+              addToCart({ id: id || name, name, price, image, quantity: 1 });
+              toast({ type: 'success', title: 'Added', description: `${name} added to cart` });
+            } catch (e) {
+              toast({ type: 'error', title: 'Error', description: 'Could not add to cart' });
+            }
+          }}>
             Add to cart
           </button>
         </div>

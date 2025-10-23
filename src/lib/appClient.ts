@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Minimal API client for dummyjson.com products
 
 export interface ApiProduct {

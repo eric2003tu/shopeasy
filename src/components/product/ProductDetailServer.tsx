@@ -1,6 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import ProductCard from '@/components/ui/ProductCard';
+import ProductActionsClient from '@/components/product/ProductActionsClient';
+import ProductCommentsClientWrapper from '@/components/product/ProductCommentsClientWrapper';
 import ReviewCarousel from '@/components/ui/ReviewCarousel';
 import { fetchProductById, fetchProducts, ApiProduct } from '@/lib/appClient';
 import { notFound } from 'next/navigation';
@@ -70,15 +72,19 @@ export default async function ProductDetailServer({ id }: Props) {
             )}
           </div>
 
-          <div className="flex gap-3">
-            <button className="px-6 py-3 bg-[#634bc1] text-white rounded-lg">Add to cart</button>
-            <button className="px-6 py-3 border border-gray-300 rounded-lg">Buy now</button>
+          <div className="mb-6">
+            {/* client actions (add to cart with loading) */}
+            <ProductActionsClient id={product!.id} title={product!.title} price={product!.price} image={product!.thumbnail || product!.images?.[0]} />
+            <div className="mt-3">
+              {/* comment popup for logged-in users (rendered by a client wrapper) */}
+              <ProductCommentsClientWrapper postId={product!.id} />
+            </div>
           </div>
 
-          {product!.reviews && product!.reviews.length > 0 && (
+          {product!.reviews && Array.isArray(product!.reviews) && product!.reviews.length > 0 && (
             <div className="mt-8">
               <h2 className="text-xl font-semibold mb-3">Reviews</h2>
-              <ReviewCarousel reviews={product!.reviews as any} />
+              <ReviewCarousel reviews={product!.reviews as { rating: number; comment: string; date?: string; reviewerName?: string; reviewerEmail?: string }[]} />
             </div>
           )}
         </div>

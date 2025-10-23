@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthProvider';
 import { FullUser } from '@/lib/appClient';
+import UserCarts from './UserCarts';
 
 type EditFields = Pick<FullUser, 'firstName' | 'lastName' | 'email' | 'phone' | 'address'>;
 
@@ -49,6 +50,7 @@ export default function ProfileClient() {
                 </>
               )}
             </div>
+              <UserCarts />
           </div>
 
           <div className="sm:col-span-2">
