@@ -30,6 +30,18 @@ type AdminUser = {
 
 const defaultOrganizations = ['Engineering','Sales','Support','Marketing'];
 
+function isValidImageSrc(v?: string) {
+  if (!v) return false;
+  // absolute http(s) URLs or leading-slash relative paths are valid for next/image
+  try {
+    if (v.startsWith('/')) return true;
+    const url = new URL(v);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 function UserForm({ initial, onSave, onCancel }: { initial?: Partial<AdminUser>; onSave: (u: AdminUser) => void; onCancel: () => void }) {
   const { t } = useI18n();
   const { toast } = useToast();
@@ -369,6 +381,7 @@ export default function UsersTable() {
                 <div className="fixed inset-0 bg-black/40" />
                 <Dialog.Content className="w-full max-w-lg bg-card rounded shadow-lg z-50">
                   <div className="p-4">
+                    <Dialog.Title className="sr-only">{editing ? t('admin.buttons.editUser') : t('admin.buttons.addUser')}</Dialog.Title>
                     <h3 className="text-lg font-semibold mb-2">{editing ? t('admin.buttons.editUser') : t('admin.buttons.addUser')}</h3>
                     <UserForm initial={editing ?? undefined} onSave={handleSave} onCancel={() => { setEditing(null); setSheetOpen(false); }} />
                   </div>
@@ -421,8 +434,8 @@ export default function UsersTable() {
                 <td className="px-4 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
                     <div className="relative h-10 w-10 rounded-full overflow-hidden bg-gray-100">
-                      {u.image ? (
-                        <Image src={u.image} alt={u.name} fill className="object-cover" />
+                      {isValidImageSrc(u.image) ? (
+                        <Image src={u.image!} alt={u.name} fill className="object-cover" />
                       ) : (
                         <div className="h-10 w-10 flex items-center justify-center text-sm text-gray-700">{(u.name || 'U').split(' ').map(n=>n[0]).slice(0,2).join('')}</div>
                       )}
