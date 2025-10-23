@@ -1,9 +1,10 @@
 "use client";
 import React from 'react';
-import { sampleTestimonials, SampleTestimonial } from '@/lib/sampleData';
+// testimonials removed from sampleData; this component will render nothing if none are provided
+type SampleTestimonial = { id: string; quote: string; author: string; role?: string };
 
 const TestimonialsCarousel: React.FC = () => {
-  const items: SampleTestimonial[] = sampleTestimonials.slice(0, 15);
+  const items: SampleTestimonial[] = [];
   const frameSize = 3;
   const frames: SampleTestimonial[][] = [];
   for (let i = 0; i < items.length; i += frameSize) {

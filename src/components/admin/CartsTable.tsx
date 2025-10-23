@@ -72,28 +72,20 @@ export default function CartsTable() {
   const to = Math.min(currentPage * pageSize, total);
 
   function convertToCheckout(cart: Cart) {
-    // create a checkout object and persist to localStorage checkouts list
-    try {
-      const raw = localStorage.getItem('shopeasy_admin_checkouts_v1');
-      const checkouts = raw ? JSON.parse(raw) : [];
-      const checkout = {
-        id: `co_${Date.now().toString(36)}`,
-        cartId: cart.id,
-        userId: cart.userId,
-        email: undefined,
-        items: cart.products,
-        total: cart.total,
-        paymentStatus: 'pending',
-        createdAt: new Date().toISOString().slice(0,10),
-      };
-      checkouts.unshift(checkout);
-      localStorage.setItem('shopeasy_admin_checkouts_v1', JSON.stringify(checkouts));
-      // mark cart as converted
-      setCarts((prev) => prev.map((c) => c.id === cart.id ? { ...c, status: 'converted' } : c));
-        toast({ title: 'Checkout created', description: 'Checkout created from cart', type: 'success' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to convert cart', type: 'error' });
-    }
+    // create a checkout object (in-memory only, no localStorage persistence)
+    const checkout = {
+      id: `co_${Date.now().toString(36)}`,
+      cartId: cart.id,
+      userId: cart.userId,
+      email: undefined,
+      items: cart.products,
+      total: cart.total,
+      paymentStatus: 'pending',
+      createdAt: new Date().toISOString().slice(0,10),
+    };
+    // mark cart as converted in-memory
+    setCarts((prev) => prev.map((c) => c.id === cart.id ? { ...c, status: 'converted' } : c));
+    toast({ title: 'Checkout created', description: 'Checkout created from cart (in-memory)', type: 'success' });
   }
 
   function openDelete(id: string | number) {
