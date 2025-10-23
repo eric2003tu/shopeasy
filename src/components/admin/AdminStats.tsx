@@ -3,7 +3,8 @@ import React from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
 
-import { sampleProducts, sampleUsers, samplePayments, sampleRefunds, sampleComments } from '@/lib/sampleData';
+import { sampleProducts, samplePayments, sampleRefunds, sampleComments } from '@/lib/sampleData';
+import { useEffect, useState } from 'react';
 
 function StatCard({ title, value, href }: { title: string; value: number | string; href?: string }) {
   const card = (
@@ -26,12 +27,50 @@ function StatCard({ title, value, href }: { title: string; value: number | strin
 
 export default function AdminStats() {
   const { t } = useI18n();
-  // Use canonical sample data as the authoritative source for dashboard stats
-  const totalProducts = sampleProducts.length;
-  const totalUsers = sampleUsers.length;
+  const [totalProducts, setTotalProducts] = useState<number>(sampleProducts.length);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
   const totalRevenue = samplePayments.filter((p) => p.status === 'completed').reduce((sum, p) => sum + (p.amount || 0), 0);
   const totalRefunds = sampleRefunds.length;
-  const totalFeedbacks = sampleComments.length;
+  const [totalFeedbacks, setTotalFeedbacks] = useState<number>(sampleComments.length);
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadStats() {
+      try {
+        const [prodRes, usersRes, commentsRes] = await Promise.all([
+          fetch('https://dummyjson.com/products'),
+          fetch('https://dummyjson.com/users'),
+          fetch('https://dummyjson.com/comments')
+        ]);
+
+        if (!mounted) return;
+
+        if (prodRes.ok) {
+          const pd = await prodRes.json();
+          if (Number.isFinite(pd.total)) setTotalProducts(Number(pd.total));
+          else if (Array.isArray(pd.products)) setTotalProducts(pd.products.length);
+        }
+
+        if (usersRes.ok) {
+          const ud = await usersRes.json();
+          if (Number.isFinite(ud.total)) setTotalUsers(Number(ud.total));
+          else if (Array.isArray(ud.users)) setTotalUsers(ud.users.length);
+        }
+
+        if (commentsRes.ok) {
+          const cd = await commentsRes.json();
+          if (Number.isFinite(cd.total)) setTotalFeedbacks(Number(cd.total));
+          else if (Array.isArray(cd.comments)) setTotalFeedbacks(cd.comments.length);
+        }
+
+        // dummyjson doesn't expose payments/refunds; keep sample data for revenue/refunds
+      } catch (e) {
+        console.debug('Failed to fetch admin stats from dummyjson, keeping sample values', e);
+      }
+    }
+    loadStats();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">

@@ -8,7 +8,6 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { useToast } from '@/context/ToastProvider';
 import { useI18n } from '@/i18n/I18nProvider';
 
-const STORAGE_KEY = 'shopeasy_admin_users_v1';
 
 type AdminUser = {
   id: string;
@@ -233,19 +232,13 @@ function DeleteDialogUser({ open, onOpenChange, target, value, setValue, onConfi
 
 export default function UsersTable() {
   const { t } = useI18n();
-      const [users, setUsers] = useState<AdminUser[]>(() => {
-        try {
-          const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-      if (raw) return JSON.parse(raw) as AdminUser[];
-        } catch {}
-        return [];
-      });
+  const [users, setUsers] = useState<AdminUser[]>([]);
 
   useEffect(() => {
     let mounted = true;
     const load = async () => {
       try {
-        const res = await fetch('https://dummyjson.com/users');
+        const res = await fetch('https://dummyjson.com/users?limit=1000');
         if (!res.ok) throw new Error('Failed to fetch users');
         const data = await res.json();
         const list = Array.isArray(data?.users) ? data.users : [];
@@ -267,10 +260,7 @@ export default function UsersTable() {
           age: u.age || undefined,
           image: u.image || u.avatar || '',
         }));
-        if (mounted) {
-          setUsers(mapped);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped)); } catch {}
-        }
+        if (mounted) setUsers(mapped);
       } catch (e) {
         console.debug('Failed to load users from dummyjson, falling back to localStorage', e);
       }
@@ -292,11 +282,7 @@ export default function UsersTable() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    } catch {}
-  }, [users]);
+  // no localStorage persistence for users; admin users are sourced from dummyjson
 
   const orgs = useMemo(() => Array.from(new Set(users.map((u) => u.organisation || '').filter(Boolean))), [users]);
 

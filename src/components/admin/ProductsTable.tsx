@@ -19,18 +19,48 @@ function DialogOverlay() {
   return <div className="fixed inset-0 bg-black/40 z-50" />;
 }
 
-const STORAGE_KEY = 'shopeasy_admin_products_v1';
-
 export default function ProductsTable() {
-  const [products, setProducts] = useState<SampleProduct[]>(() => {
-    try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-      if (raw) return JSON.parse(raw) as SampleProduct[];
-    } catch {
-      // ignore
-    }
-    return sampleProducts;
-  });
+  const [products, setProducts] = useState<SampleProduct[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        // request many products so the admin table can show the full catalog (dummyjson default page is 30)
+        const res = await fetch('https://dummyjson.com/products?limit=10000');
+        if (!res.ok) throw new Error('Failed to fetch products');
+        const data = await res.json();
+        const list = Array.isArray(data?.products) ? data.products : [];
+        const mapped = list.map((p: unknown) => {
+          const obj = p as Record<string, unknown>;
+          const id = String(obj.id ?? '');
+          const name = typeof obj.title === 'string' ? obj.title : (typeof obj.name === 'string' ? obj.name : `Product ${id}`);
+          const description = typeof obj.description === 'string' ? obj.description : '';
+          const price = typeof obj.price === 'number' ? obj.price : Number(obj.price ?? 0);
+          const images = Array.isArray(obj.images) ? (obj.images.filter((i: unknown) => typeof i === 'string') as string[]) : (typeof obj.thumbnail === 'string' ? [obj.thumbnail] : ['/placeholder-product.jpg']);
+          const category = typeof obj.category === 'string' ? obj.category : '';
+          const stock = typeof obj.stock === 'number' ? obj.stock : Number(obj.stock ?? 0);
+          return {
+            id,
+            name,
+            description,
+            price,
+            images,
+            category,
+            stock,
+            funded: false,
+            completed: false,
+          } as SampleProduct;
+        });
+        if (mounted) setProducts(mapped);
+      } catch (e) {
+        console.debug('Failed to load products from dummyjson, falling back to sampleProducts', e);
+        if (mounted) setProducts(sampleProducts);
+      }
+    };
+    if (products.length === 0) load();
+    return () => { mounted = false; };
+  }, [products.length]);
 
   const [editing, setEditing] = useState<SampleProduct | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -46,13 +76,7 @@ export default function ProductsTable() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-    } catch {
-      // ignore
-    }
-  }, [products]);
+  // no localStorage persistence for admin products; source of truth is dummyjson
 
   const categories = useMemo(() => {
     const set = new Set<string>();

@@ -89,24 +89,7 @@ export const sampleHeroSlides = sampleProducts.slice(0, 10).map(p => ({
   subtitle: p.description || ''
 }));
 
-export const sampleUsers: SampleUser[] = [
-  { id: 'u1', name: 'Alice Johnson', email: 'alice@example.com', role: 'admin', organisation: organizations[0] },
-  { id: 'u2', name: 'Bob Mwangi', email: 'bob@example.com', role: 'manager', organisation: organizations[1] },
-  { id: 'u3', name: 'Clara Nshimiyimana', email: 'clara@example.com', role: 'user', organisation: organizations[2] },
-  { id: 'u4', name: 'David Uwimana', email: 'david@example.com', role: 'user', organisation: organizations[3] },
-  { id: 'u5', name: 'Eve Mukasa', email: 'eve@example.com', role: 'user', organisation: organizations[4] },
-  { id: 'u6', name: 'Frank Ntege', email: 'frank@example.com', role: 'manager', organisation: organizations[5] },
-  { id: 'u7', name: 'Grace Karungi', email: 'grace@example.com', role: 'user', organisation: organizations[6] },
-  { id: 'u8', name: 'Harrison Kamanzi', email: 'harrison@example.com', role: 'user', organisation: organizations[0] },
-];
-
-const data = {
-  organizations,
-  sampleProducts,
-  sampleUsers,
-};
-
-export default data;
+// Sample users removed: admin UI now relies on live dummyjson users (no local sample users)
 
 // Additional sample sets for admin pages
 export const sampleRefunds: SampleRefund[] = [
