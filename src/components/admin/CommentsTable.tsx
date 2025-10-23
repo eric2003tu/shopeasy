@@ -1,20 +1,66 @@
 "use client";
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import VoiceSearchBar from './VoiceSearchBar';
 import * as Dialog from '@radix-ui/react-dialog';
-import { sampleComments, SampleComment } from '@/lib/sampleData';
 import { useI18n } from '@/i18n/I18nProvider';
+// comments will be sourced from https://dummyjson.com/comments
+// map the dummyjson shape to the table's expected Comment shape below
+
+type AdminComment = {
+  id: number | string;
+  productName: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  status: 'published' | 'pending' | 'hidden' | string;
+  createdAt?: string;
+};
+
+type DummyComment = {
+  id: number;
+  body?: string;
+  postId?: number;
+  likes?: number;
+  user?: { id?: number; username?: string; fullName?: string };
+};
 
 export default function CommentsTable() {
   const { t } = useI18n();
+  // avoid colliding with the DOM `Comment` type
+  const [comments, setComments] = useState<AdminComment[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
 
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('https://dummyjson.com/comments?limit=1000');
+        if (!res.ok) return;
+        const data = await res.json();
+        const list = Array.isArray(data?.comments) ? data.comments : [];
+        const mapped = list.map((c: DummyComment) => ({
+          id: c.id,
+          productName: `Post ${c.postId}`,
+          userName: (c.user && (c.user.fullName || c.user.username)) || `User ${c.user?.id || ''}`,
+          rating: Math.min(5, Math.max(1, Math.round((c.likes || 0) / 2))) || 3,
+          comment: c.body || '',
+          status: 'published',
+          createdAt: new Date().toISOString().slice(0, 10),
+        } as AdminComment));
+        if (mounted) setComments(mapped);
+      } catch {
+        // ignore
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
   const filtered = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    return sampleComments.filter((c) => {
+    return comments.filter((c) => {
       if (term) {
         const hay = `${c.productName || ''} ${c.userName} ${c.comment}`.toLowerCase();
         if (!hay.includes(term)) return false;
@@ -22,7 +68,7 @@ export default function CommentsTable() {
       if (statusFilter && c.status !== statusFilter) return false;
       return true;
     });
-  }, [searchTerm, statusFilter]);
+  }, [comments, searchTerm, statusFilter]);
 
   const total = filtered.length;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
@@ -77,7 +123,7 @@ export default function CommentsTable() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {paged.map((c: SampleComment) => (
+            {paged.map((c) => (
               <tr key={c.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{c.productName}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{c.userName}</td>
@@ -105,7 +151,7 @@ function CommentDialogOverlay() {
   return <div className="fixed inset-0 bg-black/40 z-40" />;
 }
 
-function CommentViewButton({ comment }: { comment: SampleComment }) {
+function CommentViewButton({ comment }: { comment: AdminComment }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
 

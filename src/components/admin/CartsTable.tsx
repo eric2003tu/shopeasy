@@ -1,44 +1,68 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react';
 import VoiceSearchBar from './VoiceSearchBar';
-import { sampleCarts, SampleCart, SampleCartItem } from '@/lib/sampleData';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useToast } from '@/context/ToastProvider';
 
-const STORAGE_KEY = 'shopeasy_admin_carts_v1';
-
 export default function CartsTable() {
-  const [carts, setCarts] = useState<SampleCart[]>(() => {
-    try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-      if (raw) return JSON.parse(raw) as SampleCart[];
-    } catch {}
-    return sampleCarts;
-  });
+  type CartProduct = {
+    id: number | string;
+    title?: string;
+    price?: number;
+    quantity?: number;
+    total?: number;
+    thumbnail?: string;
+  };
+
+  type Cart = {
+    id: number | string;
+    products: CartProduct[];
+    total?: number;
+    discountedTotal?: number;
+    userId?: number | string;
+    totalProducts?: number;
+    totalQuantity?: number;
+  };
+
+  const [carts, setCarts] = useState<Cart[]>([]);
 
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
-  const [view, setView] = useState<SampleCart | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<SampleCart | null>(null);
+  const [view, setView] = useState<Cart | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Cart | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
 
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(carts)); } catch {}
-  }, [carts]);
+    // fetch carts from dummyjson
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('https://dummyjson.com/carts?limit=100');
+        if (!res.ok) return;
+        const data = await res.json();
+        const list = Array.isArray(data?.carts) ? data.carts : [];
+        if (mounted) setCarts(list as Cart[]);
+      } catch {
+        // ignore fetch errors for now
+        // console.debug('Failed to fetch carts');
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
   const { t } = useI18n();
   const { toast } = useToast();
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return carts.filter((c) => {
-      if (statusFilter && c.status !== statusFilter) return false;
+      // dummyjson carts don't include a 'status' field; keep simple filters
       if (!q) return true;
-      return (c.userId || c.guestEmail || '').toLowerCase().includes(q) || c.id.toLowerCase().includes(q);
+      const owner = String(c.userId || '');
+      return owner.toLowerCase().includes(q) || String(c.id).toLowerCase().includes(q);
     });
-  }, [carts, search, statusFilter]);
+  }, [carts, search]);
 
   const total = filtered.length;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
@@ -47,7 +71,7 @@ export default function CartsTable() {
   const from = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const to = Math.min(currentPage * pageSize, total);
 
-  function convertToCheckout(cart: SampleCart) {
+  function convertToCheckout(cart: Cart) {
     // create a checkout object and persist to localStorage checkouts list
     try {
       const raw = localStorage.getItem('shopeasy_admin_checkouts_v1');
@@ -56,8 +80,8 @@ export default function CartsTable() {
         id: `co_${Date.now().toString(36)}`,
         cartId: cart.id,
         userId: cart.userId,
-        email: cart.guestEmail,
-        items: cart.items,
+        email: undefined,
+        items: cart.products,
         total: cart.total,
         paymentStatus: 'pending',
         createdAt: new Date().toISOString().slice(0,10),
@@ -72,8 +96,8 @@ export default function CartsTable() {
     }
   }
 
-  function openDelete(id: string) {
-    const t = carts.find((c) => c.id === id) || null;
+  function openDelete(id: string | number) {
+    const t = carts.find((c) => String(c.id) === String(id)) || null;
     setDeleteTarget(t);
     setDeleteConfirmInput('');
     setDeleteOpen(true);
@@ -81,27 +105,22 @@ export default function CartsTable() {
 
   function handleConfirmDelete() {
     if (!deleteTarget) return;
-    const expected = (deleteTarget.id || '').trim().toLowerCase();
+    const expected = String(deleteTarget.id).trim().toLowerCase();
     if (deleteConfirmInput.trim().toLowerCase() !== expected) return;
-    setCarts((prev) => prev.filter((c) => c.id !== deleteTarget.id));
+    setCarts((prev) => prev.filter((c) => String(c.id) !== String(deleteTarget.id)));
     setDeleteTarget(null);
     setDeleteOpen(false);
     setDeleteConfirmInput('');
   }
 
-  function productName(item: SampleCartItem) {
-    return item.productName || String(item.productId || '');
+  function productName(item: CartProduct | { productName?: string }) {
+    if ('productName' in item && typeof item.productName === 'string' && item.productName) return item.productName;
+    if ('title' in item && typeof item.title === 'string' && item.title) return item.title;
+  if ('id' in item) return String((item as CartProduct).id || '');
+    return '';
   }
 
-  const resetSamples = () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleCarts));
-      setCarts(sampleCarts);
-    toast({ title: 'Samples loaded', description: 'Sample carts loaded', type: 'success' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to load sample carts', type: 'error' });
-    }
-  };
+  // Removed resetSamples/localStorage persistence for carts; carts are fetched from dummyjson
 
   return (
     <div className="bg-white rounded-lg shadow p-4">
@@ -113,13 +132,7 @@ export default function CartsTable() {
             placeholder={t('admin.placeholders.searchCheckouts')}
           />
           {/* Removed className prop */}
-          <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="p-2 border rounded">
-            <option value="">{t('admin.labels.allStatus')}</option>
-            <option value="active">{t('admin.carts.status.active', { defaultValue: 'Active' })}</option>
-            <option value="abandoned">{t('admin.carts.status.abandoned', { defaultValue: 'Abandoned' })}</option>
-            <option value="converted">{t('admin.carts.status.converted', { defaultValue: 'Converted' })}</option>
-          </select>
-          <button onClick={resetSamples} className="px-3 py-2 bg-muted rounded text-sm">{t('admin.buttons.resetSampleCarts')}</button>
+          {/* status filter removed (dummyjson carts have no status) */}
         </div>
 
         <div className="flex items-center gap-3">
@@ -157,10 +170,10 @@ export default function CartsTable() {
             {paged.map((c) => (
               <tr key={c.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-sm font-medium">{c.id}</td>
-                <td className="px-4 py-3 text-sm">{c.userId || c.guestEmail || t('admin.guest', { defaultValue: 'Guest' })}</td>
-                <td className="px-4 py-3 text-sm">{c.items.length}</td>
-                <td className="px-4 py-3 text-sm font-semibold">${c.total.toFixed(2)}</td>
-                <td className="px-4 py-3 text-sm capitalize">{t(`admin.carts.status.${c.status}`, { defaultValue: c.status })}</td>
+                <td className="px-4 py-3 text-sm">{c.userId ?? t('admin.guest', { defaultValue: 'Guest' })}</td>
+                <td className="px-4 py-3 text-sm">{(c.products || []).length}</td>
+                <td className="px-4 py-3 text-sm font-semibold">${Number(c.total || 0).toFixed(2)}</td>
+                <td className="px-4 py-3 text-sm capitalize">-</td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex gap-2">
                     <button onClick={() => setView(c)} className="px-3 py-1 bg-[#634bc1] text-white rounded text-sm">{t('admin.buttons.view')}</button>
@@ -181,15 +194,15 @@ export default function CartsTable() {
           <div className="fixed inset-0 bg-black/50" onClick={() => setView(null)} />
           <div className="relative z-60 w-full max-w-2xl bg-card rounded shadow-lg p-6">
             <h3 className="text-lg font-semibold mb-2">{t('admin.tables.carts.cart')} {view!.id}</h3>
-            <div className="mb-4 text-sm text-muted-foreground">{t('admin.tables.carts.owner')}: {view!.userId || view!.guestEmail || t('admin.guest', { defaultValue: 'Guest' })}</div>
+            <div className="mb-4 text-sm text-muted-foreground">{t('admin.tables.carts.owner')}: {view!.userId ?? t('admin.guest', { defaultValue: 'Guest' })}</div>
             <div className="divide-y">
-              {view!.items.map((it, idx) => (
+              {(view!.products || []).map((it, idx) => (
                 <div key={idx} className="py-2 flex justify-between">
                   <div>
                     <div className="font-medium">{productName(it)}</div>
                     <div className="text-sm text-muted-foreground">Qty: {it.quantity}</div>
                   </div>
-                  <div className="text-sm font-semibold">${((it.price || 0) * it.quantity).toFixed(2)}</div>
+                  <div className="text-sm font-semibold">${((it.price || 0) * (it.quantity || 0)).toFixed(2)}</div>
                 </div>
               ))}
             </div>
@@ -211,7 +224,7 @@ export default function CartsTable() {
             <input className="w-full mt-4 p-2 border rounded" value={deleteConfirmInput} onChange={(e) => setDeleteConfirmInput(e.target.value)} placeholder={t('admin.placeholders.typeCartConfirm')} />
             <div className="mt-4 flex justify-end gap-2">
               <button onClick={() => setDeleteOpen(false)} className="px-3 py-1 bg-muted rounded">{t('admin.deleteDialog.cancel')}</button>
-              <button disabled={deleteTarget ? deleteConfirmInput.trim().toLowerCase() !== deleteTarget.id.trim().toLowerCase() : true} onClick={handleConfirmDelete} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">{t('admin.deleteDialog.confirm')}</button>
+              <button disabled={deleteTarget ? deleteConfirmInput.trim().toLowerCase() !== String(deleteTarget.id).trim().toLowerCase() : true} onClick={handleConfirmDelete} className="px-3 py-1 bg-red-600 text-white rounded disabled:opacity-50">{t('admin.deleteDialog.confirm')}</button>
             </div>
           </div>
         </div>
