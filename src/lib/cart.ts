@@ -13,7 +13,7 @@ export function getCart(): CartItem[] {
   try {
     const raw = localStorage.getItem(CART_KEY) || '[]';
     return JSON.parse(raw) as CartItem[];
-  } catch (err) {
+  } catch (_err) {
     return [];
   }
 }
@@ -106,7 +106,7 @@ export async function mergeServerCartFromUser(userId: number) {
       mergeServerCart(cart);
       return cart;
     }
-  } catch (e) {
+  } catch (_e) {
     // ignore errors
   }
   return null;

@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { login as apiLogin, signup as apiSignup, AuthUser, LoginResponse, logout as apiLogout, fetchCurrentUser, FullUser } from '@/lib/appClient';
+import { login as apiLogin, signup as apiSignup, LoginResponse, logout as apiLogout, fetchCurrentUser, FullUser } from '@/lib/appClient';
 import { ToastProvider } from '@/context/ToastProvider';
 
 interface AuthContextValue {
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const u = await fetchCurrentUser(token);
         if (mounted) setUser(u);
-      } catch (e) {
+      } catch (_err) {
         // If token invalid or fetch fails, clear stored auth
         if (mounted) {
           setToken(null);

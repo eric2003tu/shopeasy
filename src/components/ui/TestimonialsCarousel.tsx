@@ -34,7 +34,7 @@ const TestimonialsCarousel: React.FC = () => {
     }, delay);
     intervalRef.current = id as unknown as number;
     return () => { if (intervalRef.current) window.clearInterval(intervalRef.current); };
-  }, [isPaused]);
+  }, [isPaused, slides.length]);
 
   React.useEffect(() => {
     const el = innerRef.current;
