@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { sampleHeroSlides, sampleProducts } from '@/lib/sampleData';
 
@@ -101,8 +102,8 @@ const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ delay = 5000, className =
             </div>
           )}
           <div className="flex flex-wrap gap-4">
-            <a href="/signup" className="px-8 py-3 bg-[#ffdc89] text-[#634bc1] font-semibold rounded-lg hover:bg-[#ffe8a8] transition-colors shadow-lg">Sign up</a>
-            <a href="/products" className="px-8 py-3 border-2 border-white font-semibold rounded-lg hover:bg-white hover:text-[#634bc1] transition-colors">Start shopping</a>
+            <Link href="/signup" className="px-8 py-3 bg-[#ffdc89] text-[#634bc1] font-semibold rounded-lg hover:bg-[#ffe8a8] transition-colors shadow-lg">Sign up</Link>
+            <Link href="/products" className="px-8 py-3 border-2 border-white font-semibold rounded-lg hover:bg-white hover:text-[#634bc1] transition-colors">Start shopping</Link>
           </div>
         </div>
 

@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const _u = await fetchCurrentUser(token);
         if (mounted) setUser(_u);
-      } catch (_err) {
+      } catch {
         // If token invalid or fetch fails, clear stored auth
         if (mounted) {
           setToken(null);
@@ -93,16 +93,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const cartModule = await import('@/lib/cart');
           await cartModule.mergeServerCartFromUser(mappedUser.id as number);
         }
-      } catch (e) {
-        console.debug('[AuthProvider] merge server cart failed', e);
+      } catch {
+        console.debug('[AuthProvider] merge server cart failed');
       }
       // also persist immediately to localStorage for visibility/debugging
       try {
         if (res.accessToken) localStorage.setItem('shopeasy_token', res.accessToken);
         if (mappedUser) localStorage.setItem('shopeasy_user', JSON.stringify(mappedUser));
         console.debug('[AuthProvider] persisted login to localStorage', { token: res.accessToken, user: mappedUser });
-      } catch (e) {
-        console.debug('[AuthProvider] failed to persist login to localStorage', e);
+      } catch {
+        console.debug('[AuthProvider] failed to persist login to localStorage');
       }
     } finally {
       setLoading(false);

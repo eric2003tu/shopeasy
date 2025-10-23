@@ -41,10 +41,10 @@ export default function ProductsTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>(''); // active | funded | completed
-  const [priceMin, setPriceMin] = useState<string>('');
-  const [priceMax, setPriceMax] = useState<string>('');
-  const [stockMin, setStockMin] = useState<string>('');
-  const [stockMax, setStockMax] = useState<string>('');
+  const [priceMin, _setPriceMin] = useState<string>('');
+  const [priceMax, _setPriceMax] = useState<string>('');
+  const [stockMin, _setStockMin] = useState<string>('');
+  const [stockMax, _setStockMax] = useState<string>('');
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);

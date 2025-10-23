@@ -118,9 +118,12 @@ export async function syncCartToServer(userId: number, _token: string | null) {
   const cart = getCart();
   if (!cart || cart.length === 0) return null;
   const products = cart.map(c => ({ id: Number(c.id), quantity: c.quantity }));
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (_token) headers['Authorization'] = `Bearer ${_token}`;
+
   const res = await fetch('https://dummyjson.com/carts/add', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ userId, products }),
   });
   if (!res.ok) {

@@ -60,7 +60,7 @@ const TestimonialsCarousel: React.FC = () => {
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, []);
+  }, [slides.length]);
 
   const next = () => { setIsTransitionEnabled(true); setIndex(i => i + 1); };
   const prev = () => { setIsTransitionEnabled(true); setIndex(i => Math.max(0, i - 1)); };

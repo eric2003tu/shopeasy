@@ -144,7 +144,7 @@ export async function login(username: string, password: string, expiresInMins = 
   }
   // Response shape from dummyjson includes user fields + accessToken/refreshToken
   const data = await res.json();
-  try { console.debug('[appClient.login] response', data); } catch (_ignored) { /* ignore */ }
+  try { console.debug('[appClient.login] response', data); } catch { /* ignore */ }
   return data;
 }
 
