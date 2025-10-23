@@ -167,7 +167,7 @@ export function logout(): void {
   try {
     localStorage.removeItem('shopeasy_token');
     localStorage.removeItem('shopeasy_user');
-  } catch (e) {
+  } catch {
     // ignore
   }
 }

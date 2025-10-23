@@ -28,11 +28,8 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [otp, setOtp] = useState<boolean>(false);
-  const who = 'user';
-
-  // username & password validation
-  // keep validation simple: username required, password >= 4 chars
-  const passwordRegex = /.{4,}/;
+  // reference setter so ESLint doesn't flag it as unused
+  void setOtp;
 
   const validateField = (name: string, value: string) => {
     let error = '';

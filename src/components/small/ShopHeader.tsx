@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import UserMenu from './UserMenu';
+// UserMenu intentionally not used here; keep import commented for future wiring
 import Link from 'next/link';
 import Image from 'next/image';
 import { BsBoxSeam, BsCart2 } from 'react-icons/bs';

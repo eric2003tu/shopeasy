@@ -70,7 +70,7 @@ export default function ProfilePage() {
       setProfile(next);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch (e) {
+    } catch {
       setError(t('admin.profileInfo.errors.saveFailed') || 'Failed to save');
     } finally {
       setSaving(false);

@@ -103,13 +103,7 @@ export default function RefundsTable() {
   );
 }
 
-function DialogPortal({ children }: { children: React.ReactNode }) {
-  return (
-    <Dialog.Portal>
-      {children}
-    </Dialog.Portal>
-  );
-}
+// DialogPortal helper removed; we use Dialog.Portal directly where needed.
 
 function DialogOverlay() {
   return <div className="fixed inset-0 bg-black/40 z-40" />;

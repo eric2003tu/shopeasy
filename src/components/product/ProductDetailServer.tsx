@@ -22,7 +22,7 @@ export default async function ProductDetailServer({ id }: Props) {
   let product: ApiProduct | null = null;
   try {
     product = await fetchProductById(pid);
-  } catch (e) {
+  } catch {
     return notFound();
   }
 
@@ -30,7 +30,7 @@ export default async function ProductDetailServer({ id }: Props) {
   try {
     const list = await fetchProducts(30, 0);
     related = list.products.filter(p => p.id !== product!.id && p.category === product!.category).slice(0,6);
-  } catch (e) {
+  } catch {
     related = [];
   }
 

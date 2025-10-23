@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 // no sample data used in shop UI
-import { CartItem, getCart, saveCart, addToCart } from '@/lib/cart';
+import { addToCart } from '@/lib/cart';
 import { useToast } from '@/context/ToastProvider';
 
 interface Product {
@@ -54,7 +54,7 @@ export default function AddToCart() {
     try {
       addToCart({ id: product.id, name: product.name, price: product.price, image: product.images[0], quantity: 1 });
       toast({ type: 'success', title: 'Added', description: `${product.name} added to cart` });
-    } catch (e) {
+    } catch {
       toast({ type: 'error', title: 'Error', description: 'Failed to add product to cart' });
     }
   };

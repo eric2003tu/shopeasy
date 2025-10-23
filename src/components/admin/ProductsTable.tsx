@@ -41,10 +41,7 @@ export default function ProductsTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>(''); // active | funded | completed
-  const [priceMin, _setPriceMin] = useState<string>('');
-  const [priceMax, _setPriceMax] = useState<string>('');
-  const [stockMin, _setStockMin] = useState<string>('');
-  const [stockMax, _setStockMax] = useState<string>('');
+  // price/stock filters not yet wired in UI; remove to avoid unused-state warnings
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
@@ -76,13 +73,9 @@ export default function ProductsTable() {
         if (statusFilter === 'funded' && !p.funded) return false;
         if (statusFilter === 'completed' && !p.completed) return false;
       }
-      if (priceMin && Number(priceMin) > p.price) return false;
-      if (priceMax && Number(priceMax) < p.price) return false;
-      if (stockMin && Number(stockMin) > (p.stock || 0)) return false;
-      if (stockMax && Number(stockMax) < (p.stock || 0)) return false;
       return true;
     });
-  }, [products, searchTerm, categoryFilter, statusFilter, priceMin, priceMax, stockMin, stockMax]);
+  }, [products, searchTerm, categoryFilter, statusFilter]);
 
   const total = filtered.length;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));

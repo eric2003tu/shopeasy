@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { CiMenuBurger} from "react-icons/ci";
-import { BsCart2, BsBoxSeam } from "react-icons/bs";
-import VoiceRecognition from '@/components/ui/VoiceRecognition';
+import { BsBoxSeam } from "react-icons/bs";
 import { MdLogin } from "react-icons/md";
 import { HiOutlineGlobeAlt } from 'react-icons/hi';
 import { useI18n } from '@/i18n/I18nProvider';

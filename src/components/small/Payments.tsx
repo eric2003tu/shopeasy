@@ -1,11 +1,10 @@
 "use client";
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCart, clearCart } from '@/lib/cart';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   CardElement,
   Elements,
-  ElementsConsumer,
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';

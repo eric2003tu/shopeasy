@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface Review {
@@ -22,19 +22,22 @@ export default function ReviewCarousel({ reviews }: Props) {
     setIndex(0);
   }, [reviews]);
 
+  const nextCb = useCallback(() => setIndex((i) => (i + 1) % reviews.length), [reviews.length]);
+  const prevCb = useCallback(() => setIndex((i) => (i - 1 + reviews.length) % reviews.length), [reviews.length]);
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') next();
-      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') nextCb();
+      if (e.key === 'ArrowLeft') prevCb();
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [index, reviews]);
+  }, [nextCb, prevCb]);
 
   if (!reviews || reviews.length === 0) return null;
 
-  const next = () => setIndex((i) => (i + 1) % reviews.length);
-  const prev = () => setIndex((i) => (i - 1 + reviews.length) % reviews.length);
+  const next = nextCb;
+  const prev = prevCb;
 
   const r = reviews[index];
 

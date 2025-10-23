@@ -2,8 +2,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { FiTruck, FiShield, FiShoppingBag, FiTag, FiHeadphones } from 'react-icons/fi'
-import { FaStar, FaRegUser, FaRegCreditCard } from 'react-icons/fa'
-import { BsBoxSeam } from 'react-icons/bs'
+import { FaRegCreditCard } from 'react-icons/fa'
 import Link from 'next/link';
 import Search from './Search';
 import ProductCard from '@/components/ui/ProductCard';
@@ -79,23 +78,7 @@ const Home: React.FC = () => {
     }
   ]
 
-  const testimonials = [
-    {
-      quote: "ShopEasy has completely transformed my shopping experience. The delivery is always on time and the quality is exceptional!",
-      author: "Sarah Johnson",
-      role: "Loyal Customer"
-    },
-    {
-      quote: "As a busy professional, I appreciate how easy it is to find exactly what I need. Their customer service is outstanding.",
-      author: "Michael Chen",
-      role: "Verified Buyer"
-    },
-    {
-      quote: "The prices are unbeatable and the selection is vast. I've recommended ShopEasy to all my friends and family.",
-      author: "Emily Rodriguez",
-      role: "Premium Member"
-    }
-  ]
+  // testimonials sample-literals removed (not used here); component `TestimonialsCarousel` renders actual content
 
   const { t } = useI18n();
 

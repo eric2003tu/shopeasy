@@ -8,8 +8,7 @@ import { usePathname } from 'next/navigation';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, Bell, Globe, LogOut, LogOutIcon } from 'lucide-react';
-import VoiceRecognition from '@/components/ui/VoiceRecognition';
+import { Moon, Sun, Bell, Globe, LogOutIcon } from 'lucide-react';
 
 export interface SidebarSubItem {
   title: string;

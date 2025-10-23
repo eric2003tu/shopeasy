@@ -112,10 +112,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const doSignup = async (payload: { firstName?: string; lastName?: string; username: string; email?: string; password: string; }) => {
     setLoading(true);
     try {
-      const u = await apiSignup(payload);
-      // Note: dummyjson returns created user; no token. We'll auto-login using username/password to obtain token.
-      await doLogin(payload.username, payload.password);
-    } finally {
+        await apiSignup(payload);
+        // Note: dummyjson returns created user; no token. We'll auto-login using username/password to obtain token.
+        await doLogin(payload.username, payload.password);
+      } finally {
       setLoading(false);
     }
   };

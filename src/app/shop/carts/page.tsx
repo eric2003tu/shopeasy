@@ -19,7 +19,7 @@ export default function CartsPage() {
     try {
       const stored = JSON.parse(localStorage.getItem('cart') || '[]');
       setCartItems(stored);
-    } catch (err) {
+    } catch {
       setWarning('Failed to load cart');
       setCartItems([]);
     }

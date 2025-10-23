@@ -5,9 +5,16 @@ import { FaEye, FaEyeSlash, FaGoogle, FaFacebookF, FaTwitter, FaUser } from 'rea
 import { HiOutlineMail, HiOutlineLockClosed, HiOutlinePhone, HiOutlineLocationMarker, HiOutlineHome, HiOutlineMap, HiOutlineOfficeBuilding, HiOutlineGlobe } from 'react-icons/hi';
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
-import Otp from './Otp';
+// Otp not used here currently
 import { useAuth } from '@/context/AuthProvider';
 import { useI18n } from '@/i18n/I18nProvider';
+
+// Validation regex patterns at module scope to keep them stable across renders
+const nameRegex = /^[a-zA-Z\s]{2,50}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = /^\+?[\d\s-]{10,15}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+const zipcodeRegex = /^\d{5}(?:[-\s]\d{4})?$/;
 
 interface FormData {
   name: string;
@@ -81,15 +88,9 @@ const Signup: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [otp, setOtp] = useState(false);
   const [currentStep, setCurrentStep] = useState(1); // 1: Account info, 2: Address info
 
-  // Validation regex patterns
-  const nameRegex = /^[a-zA-Z\s]{2,50}$/;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^\+?[\d\s-]{10,15}$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
-  const zipcodeRegex = /^\d{5}(?:[-\s]\d{4})?$/;
+  // Validation regex patterns (moved to module scope to avoid effect dependency warnings)
 
   const validateField = (name: keyof FormData, value: string): string => {
     switch (name) {
@@ -172,14 +173,14 @@ const Signup: React.FC = () => {
     setIsFormValid(validateForm());
   }, [formData, currentStep]);
 
-const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault();
 
   // Validate fields
   const newErrors: Partial<FormErrors> = {};
   const fieldsToValidate = currentStep === 1 
     ? ['name', 'email', 'phone', 'password', 'confirmPassword'] 
-    : ['address', 'street', 'city', 'state', 'zipcode', 'country'];
+    : ['line1', 'street', 'city', 'state', 'zipcode', 'country'];
 
   fieldsToValidate.forEach(field => {
     newErrors[field as keyof FormErrors] = validateField(
@@ -210,7 +211,8 @@ const handleSubmit = (e: React.FormEvent) => {
     email: formData.email,
     password: formData.password,
   }).then(() => {
-    setOtp(true);
+    // After signup, redirect to shop (OTP flow not implemented here)
+    navigate.replace('/shop');
   }).catch((err) => {
     setErrors(prev => ({ ...prev, form: err instanceof Error ? err.message : String(err) }));
   }).finally(() => setIsLoading(false));

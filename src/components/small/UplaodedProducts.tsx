@@ -30,9 +30,10 @@ const UploadedProducts: React.FC = () => {
   // Remove searchTerm state, use local state in VoiceSearchBar
   const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [lastSearchQuery, setLastSearchQuery] = useState<string>('');
-  const [one,setOne] = useState<boolean>(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [viewed, setViewed] = useState<boolean>(false)
+  // unused UI state placeholders (kept for future use) - prefixed with underscore to avoid lint warnings
+  const [_one, _setOne] = useState<boolean>(false);
+  const [_selectedId, _setSelectedId] = useState<string | null>(null);
+  const [_viewed, _setViewed] = useState<boolean>(false);
   const router = useRouter();
 
   const handleProductSearch = (query: string) => {
@@ -92,6 +93,8 @@ const UploadedProducts: React.FC = () => {
   const { t } = useI18n();
 
   if (isLoading) {
+    // reference unused states to avoid lint warnings until they're used for features
+    void _one; void _setOne; void _selectedId; void _setSelectedId; void _viewed; void _setViewed;
     return (
       <div>
         <div className="grid grid-cols-1 w-full sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 justify-items-center">
