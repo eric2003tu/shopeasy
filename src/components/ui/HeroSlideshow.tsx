@@ -28,7 +28,7 @@ const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ delay = 5000, className =
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch('https://dummyjson.com/products?limit=20');
+        const res = await fetch('https://dummyjson.com/products?limit=40');
         if (!res.ok) return;
   const data = await res.json() as { products?: unknown };
   const list = Array.isArray(data?.products) ? (data.products as Product[]) : [];
