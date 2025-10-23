@@ -106,7 +106,7 @@ export async function mergeServerCartFromUser(userId: number) {
       mergeServerCart(cart);
       return cart;
     }
-  } catch (_e) {
+  } catch (_ignored) {
     // ignore errors
   }
   return null;
@@ -114,7 +114,7 @@ export async function mergeServerCartFromUser(userId: number) {
 
 // Try to sync a client cart to the dummyjson carts/add endpoint.
 // Returns the remote cart response or throws on failure.
-export async function syncCartToServer(userId: number, token: string | null) {
+export async function syncCartToServer(userId: number, _token: string | null) {
   const cart = getCart();
   if (!cart || cart.length === 0) return null;
   const products = cart.map(c => ({ id: Number(c.id), quantity: c.quantity }));

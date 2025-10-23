@@ -45,8 +45,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const populate = async () => {
       if (!token) return;
       try {
-        const u = await fetchCurrentUser(token);
-        if (mounted) setUser(u);
+        const _u = await fetchCurrentUser(token);
+        if (mounted) setUser(_u);
       } catch (_err) {
         // If token invalid or fetch fails, clear stored auth
         if (mounted) {
