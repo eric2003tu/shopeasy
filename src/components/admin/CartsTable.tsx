@@ -39,7 +39,7 @@ export default function CartsTable() {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch('https://dummyjson.com/carts?limit=100');
+        const res = await fetch('https://dummyjson.com/carts?limit=1000');
         if (!res.ok) return;
         const data = await res.json();
         const list = Array.isArray(data?.carts) ? data.carts : [];
