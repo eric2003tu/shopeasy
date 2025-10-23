@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { sampleHeroSlides, sampleProducts } from '@/lib/sampleData';
+// hero slideshow now sources slides from dummyjson products
 
 interface HeroSlideshowProps {
   delay?: number; // ms
@@ -12,7 +12,34 @@ interface HeroSlideshowProps {
 
 // Sliding carousel (right -> left) with cloned-first slide for seamless loop
 const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ delay = 5000, className = '', height = 'py-16' }) => {
-  const slides = sampleHeroSlides ?? [];
+  type Product = {
+    id?: number | string;
+    images?: string[];
+    thumbnail?: string;
+    title?: string;
+    name?: string;
+    description?: string;
+  };
+
+  const [slides, setSlides] = useState<Array<{ id: string; image: string; title: string; subtitle?: string }>>([]);
+
+  // load a few products to use as slides
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('https://dummyjson.com/products?limit=20');
+        if (!res.ok) return;
+  const data = await res.json() as { products?: unknown };
+  const list = Array.isArray(data?.products) ? (data.products as Product[]) : [];
+  const s = list.map((p: Product) => ({ id: String(p.id), image: (p.images && p.images[0]) || p.thumbnail || '/placeholder-product.jpg', title: p.title || p.name || `Product ${p.id}`, subtitle: p.description || '' }));
+        if (mounted) setSlides(s);
+      } catch {
+        // ignore
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   // add clone of first slide at end for seamless transition (compute before hooks)
   const slidesWithClone = slides.length > 0 ? [...slides, slides[0]] : [];
@@ -64,7 +91,7 @@ const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ delay = 5000, className =
   const translatePercent = -(index * percentPer);
 
   const heroSlide = slides[index % slides.length] || slides[0];
-  const product = sampleProducts.find(p => p.id === heroSlide.id);
+  // product price not available here; CTA shows no price in slideshow
 
   return (
     <section
@@ -96,11 +123,7 @@ const HeroSlideshow: React.FC<HeroSlideshowProps> = ({ delay = 5000, className =
         <div className="space-y-6 px-4">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight">{heroSlide.title}</h1>
           <p className="text-lg md:text-xl">{heroSlide.subtitle}</p>
-          {product && typeof product.price === 'number' && (
-            <div className="flex items-center gap-4">
-              <div className="text-3xl font-bold text-[#ffdc89]">${product.price.toFixed(2)}</div>
-            </div>
-          )}
+          {/* price not shown in slideshow */}
           <div className="flex flex-wrap gap-4">
             <Link href="/signup" className="px-8 py-3 bg-[#ffdc89] text-[#634bc1] font-semibold rounded-lg hover:bg-[#ffe8a8] transition-colors shadow-lg">Sign up</Link>
             <Link href="/products" className="px-8 py-3 border-2 border-white font-semibold rounded-lg hover:bg-white hover:text-[#634bc1] transition-colors">Start shopping</Link>

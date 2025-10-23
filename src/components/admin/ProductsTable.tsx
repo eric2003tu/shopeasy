@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import VoiceSearchBar from './VoiceSearchBar';
 import Image from 'next/image';
-import { sampleProducts, SampleProduct } from '@/lib/sampleData';
+import { SampleProduct } from '@/lib/sampleData';
 import ProductForm from './ProductForm';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -54,8 +54,8 @@ export default function ProductsTable() {
         });
         if (mounted) setProducts(mapped);
       } catch (e) {
-        console.debug('Failed to load products from dummyjson, falling back to sampleProducts', e);
-        if (mounted) setProducts(sampleProducts);
+        console.debug('Failed to load products from dummyjson', e);
+        if (mounted) setProducts([]);
       }
     };
     if (products.length === 0) load();

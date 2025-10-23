@@ -16,21 +16,7 @@ interface Product {
   featured?: boolean;
 }
 
-const STORAGE_KEY = 'admin_products_v1';
-
-const loadFromStorage = (): Product[] => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw) as Product[];
-  } catch {
-    return [];
-  }
-};
-
-const saveToStorage = (items: Product[]) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-};
+// Products are sourced from the API; we no longer persist admin products to localStorage
 
 const ProductsAdmin: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -39,20 +25,10 @@ const ProductsAdmin: React.FC = () => {
   const [confirm, setConfirm] = useState<{ open: boolean; id?: string; message?: string }>({ open: false });
 
   useEffect(() => {
-    const stored = loadFromStorage();
-    if (stored.length) setProducts(stored);
-    else {
-      const defaultProducts = window.__SHOPEASY_DEFAULT_PRODUCTS as Product[] | undefined;
-      if (defaultProducts && defaultProducts.length) {
-        setProducts(defaultProducts);
-        saveToStorage(defaultProducts);
-      }
-    }
+    // do not read or write product lists from localStorage; allow UI to manage via API
   }, []);
 
-  useEffect(() => {
-    saveToStorage(products);
-  }, [products]);
+  // no local persistence for products
 
   const onAdd = () => {
     setEditing(null);
@@ -93,7 +69,7 @@ const ProductsAdmin: React.FC = () => {
         <h2 className="text-xl font-semibold">{t('admin.products')}</h2>
         <div className="flex items-center gap-2">
           <button onClick={onAdd} className="px-3 py-1 bg-primary text-primary-foreground rounded">{t('admin.buttons.addProduct')}</button>
-          <button onClick={() => { localStorage.removeItem(STORAGE_KEY); setProducts([]); }} className="px-3 py-1 bg-destructive/10 text-destructive rounded">{t('admin.buttons.clear') || 'Clear'}</button>
+          <button onClick={() => { setProducts([]); }} className="px-3 py-1 bg-destructive/10 text-destructive rounded">{t('admin.buttons.clear') || 'Clear'}</button>
         </div>
       </div>
 

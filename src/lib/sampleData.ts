@@ -66,28 +66,8 @@ export const organizations = [
   'Western Province Org 7',
 ];
 
-export const sampleProducts: SampleProduct[] = [
-  { id: 'p1', name: 'Premium Running Shoes', description: 'Comfortable and durable running shoes', price: 89.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 24, funded: false, completed: false },
-  { id: 'p2', name: 'Designer Handbag', description: 'Stylish handbag for every occasion', price: 199.99, images: ['/bag.jpg'], category: 'Accessories', stock: 12, funded: false, completed: false },
-  { id: 'p3', name: 'Smart Watch Pro', description: 'Advanced smartwatch with health tracking', price: 249.99, images: ['/watch.jpg'], category: 'Electronics', stock: 6, funded: false, completed: false },
-  { id: 'p4', name: 'Trail Runner Shoes', description: 'Grip and comfort for outdoor runs', price: 99.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 18, funded: true, completed: false },
-  { id: 'p5', name: 'Everyday Tote Bag', description: 'Spacious tote for daily essentials', price: 59.99, images: ['/bag.jpg'], category: 'Accessories', stock: 30, funded: false, completed: false },
-  { id: 'p6', name: 'Fitness Smartband', description: 'Lightweight band for activity tracking', price: 69.99, images: ['/watch.jpg'], category: 'Electronics', stock: 40, funded: false, completed: true },
-  { id: 'p7', name: 'Classic Sneakers', description: 'Timeless style and comfort', price: 79.99, images: ['/shoes.jpg'], category: 'Footwear', stock: 15, funded: false, completed: false },
-  { id: 'p8', name: 'Evening Clutch', description: 'Elegant clutch for nights out', price: 89.99, images: ['/bag.jpg'], category: 'Accessories', stock: 8, funded: false, completed: false },
-  { id: 'p9', name: 'Sportwatch X', description: 'Durable sports watch with GPS', price: 179.99, images: ['/watch.jpg'], category: 'Electronics', stock: 10, funded: true, completed: false },
-  { id: 'p10', name: 'Comfort Running Shoes', description: 'Cushioned soles for long runs', price: 95.0, images: ['/shoes.jpg'], category: 'Footwear', stock: 20, funded: false, completed: false },
-  { id: 'p11', name: 'Leather Shoulder Bag', description: 'Premium leather for everyday use', price: 229.99, images: ['/bag.jpg'], category: 'Accessories', stock: 5, funded: false, completed: false },
-  { id: 'p12', name: 'Hybrid Smartwatch', description: 'Smart features with classic look', price: 199.99, images: ['/watch.jpg'], category: 'Electronics', stock: 14, funded: false, completed: false },
-];
-
-// Hero slides derived from sampleProducts (first 10)
-export const sampleHeroSlides = sampleProducts.slice(0, 10).map(p => ({
-  id: p.id,
-  image: p.images && p.images.length ? p.images[0] : '/placeholder.png',
-  title: p.name,
-  subtitle: p.description || ''
-}));
+// sampleProducts removed — admin/product UI now sources products from dummyjson
+export const sampleHeroSlides: { id: string; image: string; title: string; subtitle?: string }[] = [];
 
 // Sample users removed: admin UI now relies on live dummyjson users (no local sample users)
 

@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
 import AdminStats from '@/components/admin/AdminStats';
 import {
@@ -15,22 +15,44 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { sampleProducts, samplePayments } from '@/lib/sampleData';
+import { samplePayments } from '@/lib/sampleData';
+import { useEffect, useState, useMemo } from 'react';
 
 export default function DashboardPage() {
   const { t } = useI18n();
-  // Compute revenue per product category using canonical sample data
+  // Fetch products client-side and compute revenue per category by matching payments' productId -> product.category when possible
+  type Product = {
+    id?: number | string;
+    category?: string;
+  };
+
+  const [products, setProducts] = useState<Array<Product>>([]);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('https://dummyjson.com/products?limit=1000');
+        if (!res.ok) return;
+        const data = await res.json();
+        const list = Array.isArray(data?.products) ? data.products : [];
+        if (mounted) setProducts(list);
+      } catch (e) {
+        console.debug('Failed to fetch products for dashboard charts', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
   const revenueByCategory = useMemo(() => {
-    const prodCat = new Map<string, string>();
-    sampleProducts.forEach((p) => prodCat.set(p.id, p.category || 'Uncategorized'));
+  const prodCat = new Map<string, string>();
+  products.forEach((p: Product) => prodCat.set(String(p.id), p.category || 'Uncategorized'));
 
     const totals = new Map<string, number>();
 
     samplePayments.forEach((pay) => {
-      // only count completed payments as revenue
       if (pay.status !== 'completed') return;
       (pay.items || []).forEach((it) => {
-        const category = it.productId ? prodCat.get(it.productId) || 'Uncategorized' : it.productName || 'Uncategorized';
+        const category = it.productId ? prodCat.get(String(it.productId)) || (it.productName || 'Uncategorized') : (it.productName || 'Uncategorized');
         const amount = (typeof it.price === 'number' ? it.price : 0) * (it.quantity || 1);
         totals.set(category, (totals.get(category) || 0) + amount);
       });
@@ -39,18 +61,18 @@ export default function DashboardPage() {
     const rows = Array.from(totals.entries()).map(([category, revenue]) => ({ category, value: revenue }));
     rows.sort((a, b) => b.value - a.value);
     return rows;
-  }, []);
+  }, [products]);
 
   const colors = ['#4f46e5', '#06b6d4', '#f97316', '#10b981', '#ef4444', '#a78bfa'];
 
   const productsByCategory = useMemo(() => {
     const m = new Map<string, number>();
-    sampleProducts.forEach((p) => {
+    products.forEach((p: Product) => {
       const cat = p.category || 'Uncategorized';
       m.set(cat, (m.get(cat) || 0) + 1);
     });
     return Array.from(m.entries()).map(([name, value]) => ({ name, value }));
-  }, []);
+  }, [products]);
 
   return (
     <div>

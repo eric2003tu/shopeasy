@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react';
 import VoiceSearchBar from './VoiceSearchBar';
-import { sampleCheckouts, SampleCheckout, sampleProducts } from '@/lib/sampleData';
+import { sampleCheckouts, SampleCheckout } from '@/lib/sampleData';
 import { useI18n } from '@/i18n/I18nProvider';
 
 import { useToast } from '@/context/ToastProvider';
@@ -38,9 +38,9 @@ export default function CheckoutsTable() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleCheckouts));
       setCheckouts(sampleCheckouts);
-        toast({ title: 'Samples loaded', description: 'Sample checkouts loaded', type: 'success' });
+      toast({ title: 'Samples loaded', description: 'Sample checkouts loaded', type: 'success' });
     } catch {
-        toast({ title: 'Error', description: 'Failed to load sample checkouts', type: 'error' });
+      toast({ title: 'Error', description: 'Failed to load sample checkouts', type: 'error' });
     }
   };
 
@@ -82,10 +82,7 @@ export default function CheckoutsTable() {
   }
 
   function productList(c: SampleCheckout) {
-    return c.items.map((it) => {
-      const p = it.productId ? sampleProducts.find((x) => x.id === it.productId) : null;
-      return p ? p.name : it.productName;
-    }).join(', ');
+    return c.items.map((it) => it.productName || String(it.productId || '')).join(', ');
   }
 
   return (

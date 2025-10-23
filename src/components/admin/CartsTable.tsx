@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react';
 import VoiceSearchBar from './VoiceSearchBar';
-import { sampleCarts, SampleCart, sampleProducts, SampleCartItem } from '@/lib/sampleData';
+import { sampleCarts, SampleCart, SampleCartItem } from '@/lib/sampleData';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useToast } from '@/context/ToastProvider';
 
@@ -90,11 +90,7 @@ export default function CartsTable() {
   }
 
   function productName(item: SampleCartItem) {
-    if (item.productId) {
-      const p = sampleProducts.find((x) => x.id === item.productId);
-      if (p) return p.name;
-    }
-    return item.productName;
+    return item.productName || String(item.productId || '');
   }
 
   const resetSamples = () => {

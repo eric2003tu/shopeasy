@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
 
-import { sampleProducts, samplePayments, sampleRefunds, sampleComments } from '@/lib/sampleData';
+import { samplePayments, sampleRefunds, sampleComments } from '@/lib/sampleData';
 import { useEffect, useState } from 'react';
 
 function StatCard({ title, value, href }: { title: string; value: number | string; href?: string }) {
@@ -27,7 +27,7 @@ function StatCard({ title, value, href }: { title: string; value: number | strin
 
 export default function AdminStats() {
   const { t } = useI18n();
-  const [totalProducts, setTotalProducts] = useState<number>(sampleProducts.length);
+  const [totalProducts, setTotalProducts] = useState<number>(0);
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const totalRevenue = samplePayments.filter((p) => p.status === 'completed').reduce((sum, p) => sum + (p.amount || 0), 0);
   const totalRefunds = sampleRefunds.length;
