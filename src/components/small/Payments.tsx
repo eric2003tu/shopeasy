@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image'
 import { getCart, clearCart } from '@/lib/cart';
 import { loadStripe } from '@stripe/stripe-js';
 import {
