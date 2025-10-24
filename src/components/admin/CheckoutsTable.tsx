@@ -1,47 +1,34 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react';
 import VoiceSearchBar from './VoiceSearchBar';
-import { sampleCheckouts, SampleCheckout } from '@/lib/sampleData';
+// local types for checkout items (sample data removed)
+type CheckoutItem = { productId?: string; productName?: string; quantity: number; price?: number };
+type Checkout = { id: string; cartId?: string; userId?: string; email?: string; items: CheckoutItem[]; total: number; paymentStatus: string; createdAt: string };
 import { useI18n } from '@/i18n/I18nProvider';
 
 import { useToast } from '@/context/ToastProvider';
 
-const STORAGE_KEY = 'shopeasy_admin_checkouts_v1';
-
 export default function CheckoutsTable() {
-  const [checkouts, setCheckouts] = useState<SampleCheckout[]>(() => {
-    try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-      if (raw) return JSON.parse(raw) as SampleCheckout[];
-    } catch {}
-    return sampleCheckouts;
-  });
+  const [checkouts, setCheckouts] = useState<Checkout[]>([]);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
-  const [view, setView] = useState<SampleCheckout | null>(null);
+  const [view, setView] = useState<Checkout | null>(null);
 
-  const [deleteTarget, setDeleteTarget] = useState<SampleCheckout | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Checkout | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
 
-  useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkouts)); } catch {}
-  }, [checkouts]);
+  // Removed localStorage persistence for checkouts per user request
 
   const { toast } = useToast();
   const { t } = useI18n();
 
   const resetSamples = () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleCheckouts));
-      setCheckouts(sampleCheckouts);
-      toast({ title: 'Samples loaded', description: 'Sample checkouts loaded', type: 'success' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to load sample checkouts', type: 'error' });
-    }
+    // samples removed — no-op
+    toast({ title: 'No samples', description: 'Sample checkouts were removed', type: 'info' });
   };
 
   const filtered = useMemo(() => {
@@ -81,8 +68,8 @@ export default function CheckoutsTable() {
     setDeleteConfirmInput('');
   }
 
-  function productList(c: SampleCheckout) {
-    return c.items.map((it) => it.productName || String(it.productId || '')).join(', ');
+  function productList(c: Checkout) {
+    return c.items.map((it: CheckoutItem) => it.productName || String(it.productId || '')).join(', ');
   }
 
   return (
@@ -162,7 +149,7 @@ export default function CheckoutsTable() {
             <h3 className="text-lg font-semibold mb-2">Checkout {view!.id}</h3>
             <div className="mb-2 text-sm text-muted-foreground">Cart: {view!.cartId || '—'}</div>
             <div className="divide-y">
-              {view!.items.map((it, idx) => (
+              {view!.items.map((it: CheckoutItem, idx: number) => (
                 <div key={idx} className="py-2 flex justify-between">
                   <div>
                     <div className="font-medium">{it.productName}</div>
