@@ -12,7 +12,7 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
     <div>
       <ShopHeader />
       <SystemCommentLauncher />
-      <main className="pt-16">{/* offset for fixed header */}
+      <main className="pt-9">{/* offset for fixed header */}
         {/* <AuthGuard> */}
           {children}
         {/* </AuthGuard> */}
