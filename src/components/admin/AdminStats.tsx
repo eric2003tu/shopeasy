@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
 
-import { samplePayments, sampleRefunds, sampleComments } from '@/lib/sampleData';
+import { samplePayments, sampleRefunds } from '@/lib/sampleData';
 import { useEffect, useState } from 'react';
 
 function StatCard({ title, value, href }: { title: string; value: number | string; href?: string }) {
@@ -31,7 +31,7 @@ export default function AdminStats() {
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const totalRevenue = samplePayments.filter((p) => p.status === 'completed').reduce((sum, p) => sum + (p.amount || 0), 0);
   const totalRefunds = sampleRefunds.length;
-  const [totalFeedbacks, setTotalFeedbacks] = useState<number>(sampleComments.length);
+  const [totalFeedbacks, setTotalFeedbacks] = useState<number>(0);
 
   useEffect(() => {
     let mounted = true;

@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { getCart, clearCart } from '@/lib/cart';
+import { getCart, clearCart, fetchUserCarts } from '@/lib/cart';
+import { useAuth } from '@/context/AuthProvider';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   CardElement,
@@ -151,6 +152,7 @@ function PaymentMethodButton({
 }
 
 export default function Payments() {
+  const { user } = useAuth();
   const [cart, setCart] = useState(() => (typeof window !== 'undefined' ? getCart() : []));
   const [method, setMethod] = useState<PaymentMethod>('card');
   const [success, setSuccess] = useState(false);
@@ -158,8 +160,36 @@ export default function Payments() {
   const total = cart.reduce((s, it) => s + (it.price || 0) * (it.quantity || 1), 0);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') setCart(getCart());
-  }, []);
+    let mounted = true;
+    const load = async () => {
+      // If user is logged in, try to load their cart from the backend and use it as the authoritative source
+      try {
+        if (user && typeof (user as any).id !== 'undefined') {
+          const userId = Number((user as any).id);
+          const remoteCart = await fetchUserCarts(userId);
+          if (remoteCart && Array.isArray(remoteCart.products) && remoteCart.products.length > 0) {
+            const mapped = remoteCart.products.map((p: any) => ({
+              id: String(p.id),
+              name: p.title || p.name || `Product ${p.id}`,
+              price: Number(p.price || 0),
+              image: p.thumbnail || p.image || undefined,
+              quantity: Number(p.quantity || 1),
+            }));
+            if (mounted) setCart(mapped);
+            return;
+          }
+        }
+      } catch (err) {
+        // fallback to local cart on any error
+        // console.debug('[Payments] fetchUserCarts failed', err);
+      }
+
+      // fallback: use local cart (guest or if backend unavailable)
+      if (mounted && typeof window !== 'undefined') setCart(getCart());
+    };
+    load();
+    return () => { mounted = false; };
+  }, [user]);
 
   const handleContinue = () => {
     // In a real app, you would integrate with each payment provider's API
