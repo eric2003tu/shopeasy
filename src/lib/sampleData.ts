@@ -71,3 +71,43 @@ export const sampleRefunds: SampleRefund[] = [
   { id: 'r4', orderId: 'o1004', productId: 'p9', productName: 'Sportwatch X', userId: 'u6', userName: 'Frank Ntege', amount: 179.99, reason: 'Battery issue', status: 'pending', createdAt: '2025-10-01' },
   { id: 'r5', orderId: 'o1005', productId: 'p11', productName: 'Leather Shoulder Bag', userId: 'u7', userName: 'Grace Karungi', amount: 229.99, reason: 'Arrived late', status: 'pending', createdAt: '2025-10-05' },
 ];
+
+// Small sample payments dataset used only for admin demos and charts (kept minimal)
+export const samplePayments: SamplePayment[] = [
+  {
+    id: 'pay_1',
+    orderId: 'o1001',
+    transactionId: 'txn_abc123',
+    userId: 'u3',
+    userName: 'Clara Nshimiyimana',
+    gateway: 'Stripe',
+    amount: 249.99,
+    status: 'completed',
+    items: [{ productId: 'p3', productName: 'Smart Watch Pro', quantity: 1, price: 249.99 }],
+    createdAt: '2025-09-20'
+  },
+  {
+    id: 'pay_2',
+    orderId: 'o1002',
+    transactionId: 'txn_def456',
+    userId: 'u5',
+    userName: 'Eve Mukasa',
+    gateway: 'PayPal',
+    amount: 59.99,
+    status: 'completed',
+    items: [{ productId: 'p5', productName: 'Everyday Tote Bag', quantity: 1, price: 59.99 }],
+    createdAt: '2025-08-18'
+  },
+  {
+    id: 'pay_3',
+    orderId: 'o1003',
+    transactionId: 'txn_xyz789',
+    userId: 'u2',
+    userName: 'Bob Mwangi',
+    gateway: 'M-Pesa',
+    amount: 89.99,
+    status: 'failed',
+    items: [{ productId: 'p1', productName: 'Premium Running Shoes', quantity: 1, price: 89.99 }],
+    createdAt: '2025-07-30'
+  }
+];
