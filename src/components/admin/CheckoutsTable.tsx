@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import VoiceSearchBar from './VoiceSearchBar';
 // local types for checkout items (sample data removed)
 type CheckoutItem = { productId?: string; productName?: string; quantity: number; price?: number };

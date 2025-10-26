@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { getCart, clearCart, fetchUserCarts } from '@/lib/cart';
 import { useAuth } from '@/context/AuthProvider';
+import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   CardElement,
@@ -11,6 +12,21 @@ import {
 } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+
+// Remote types for carts returned by dummyjson
+type RemoteProduct = {
+  id: number;
+  quantity?: number;
+  title?: string;
+  name?: string;
+  price?: number;
+  thumbnail?: string;
+  image?: string;
+};
+
+type RemoteCart = { products?: RemoteProduct[] } | null;
+
+type UserWithId = { id?: number | string } | null;
 
 // Payment method types
 type PaymentMethod = 'card' | 'paypal' | 'momo' | 'equity' | 'airtel' | 'cod';
@@ -138,7 +154,7 @@ function PaymentMethodButton({
       }`}
     >
       <div className="flex items-center gap-3">
-        <img src= {method.icon} className='w-10 h-10'/>
+        <Image src={method.icon} alt={method.name} width={40} height={40} className="w-10 h-10 object-contain" />
         <div className="flex-1">
           <div className="font-medium text-gray-900">{method.name}</div>
           <div className="text-sm text-gray-500">{method.description}</div>
@@ -164,11 +180,12 @@ export default function Payments() {
     const load = async () => {
       // If user is logged in, try to load their cart from the backend and use it as the authoritative source
       try {
-        if (user && typeof (user as any).id !== 'undefined') {
-          const userId = Number((user as any).id);
-          const remoteCart = await fetchUserCarts(userId);
+        const u = user as UserWithId;
+        if (u && typeof u.id !== 'undefined') {
+          const userId = Number(u.id);
+          const remoteCart: RemoteCart = await fetchUserCarts(userId as number);
           if (remoteCart && Array.isArray(remoteCart.products) && remoteCart.products.length > 0) {
-            const mapped = remoteCart.products.map((p: any) => ({
+            const mapped = remoteCart.products.map((p: RemoteProduct) => ({
               id: String(p.id),
               name: p.title || p.name || `Product ${p.id}`,
               price: Number(p.price || 0),
@@ -179,7 +196,7 @@ export default function Payments() {
             return;
           }
         }
-      } catch (err) {
+      } catch {
         // fallback to local cart on any error
         // console.debug('[Payments] fetchUserCarts failed', err);
       }
@@ -302,7 +319,7 @@ export default function Payments() {
             <div className="space-y-4">
               <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                 <p className="text-green-800 text-sm">
-                  Secure payment through Equity Bank. You will be redirected to Equity's payment portal.
+                  Secure payment through Equity Bank. You will be redirected to Equity Bank payment portal.
                 </p>
               </div>
               <button 

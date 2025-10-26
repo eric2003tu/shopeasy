@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { getCart, clearCart, updateQuantity } from '@/lib/cart';
+import { getCart } from '@/lib/cart';
 
 interface CartItem {
   id: string;

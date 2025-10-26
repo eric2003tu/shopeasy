@@ -73,16 +73,7 @@ export default function CartsTable() {
 
   function convertToCheckout(cart: Cart) {
     // create a checkout object (in-memory only, no localStorage persistence)
-    const checkout = {
-      id: `co_${Date.now().toString(36)}`,
-      cartId: cart.id,
-      userId: cart.userId,
-      email: undefined,
-      items: cart.products,
-      total: cart.total,
-      paymentStatus: 'pending',
-      createdAt: new Date().toISOString().slice(0,10),
-    };
+    // Note: we intentionally do not persist checkouts locally; this is an in-memory conversion for the admin UI
     // mark cart as converted in-memory
     setCarts((prev) => prev.map((c) => c.id === cart.id ? { ...c, status: 'converted' } : c));
     toast({ title: 'Checkout created', description: 'Checkout created from cart (in-memory)', type: 'success' });
