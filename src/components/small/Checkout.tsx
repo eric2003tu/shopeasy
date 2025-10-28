@@ -81,10 +81,10 @@ export default function Checkout() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="w-full mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8">
           {/* Left Column - Customer Information & Shipping */}
-          <div className="space-y-6">
+          <div className="space-y-6 border-t-4 border-t-blue-400 rounded-lg">
             {/* Customer Information */}
             <div className="bg-white w-full rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Customer Information</h2>
@@ -233,7 +233,7 @@ export default function Checkout() {
           </div>
 
           {/* Right Column - Order Summary */}
-          <div className="space-y-6">
+          <div className="space-y-6 border-t-4 border-t-blue-400 rounded-lg">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Order Summary</h2>
               <p className="text-gray-600 mb-6">{cart.length} items</p>

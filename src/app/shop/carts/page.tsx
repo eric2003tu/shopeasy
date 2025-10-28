@@ -55,7 +55,7 @@ export default function CartsPage() {
     return <div className="min-h-screen flex items-center justify-center">{warning}</div>;
 
   return (
-    <div className="min-h-screen p-5 bg-gray-50">
+    <div className="min-h-screen p-5 pt-16 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-[#634bc1] mb-6">Your Cart</h1>
 

@@ -234,7 +234,7 @@ export default function Payments() {
   return (
     <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
       {/* Order Summary */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-t-blue-400 rounded-lg">
         <h3 className="text-xl font-semibold mb-6 text-gray-900">Order Summary</h3>
         {cart.length === 0 ? (
           <p className="text-gray-500 text-center py-8">Your cart is empty.</p>
@@ -260,7 +260,7 @@ export default function Payments() {
       </div>
 
       {/* Payment Section */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-t-blue-400 rounded-lg">
         <h3 className="text-xl font-semibold mb-6 text-gray-900">Payment Method</h3>
         
         {/* Payment Method Selection */}
