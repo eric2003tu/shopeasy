@@ -93,7 +93,7 @@ export default async function ProductDetailServer({ id }: Props) {
       {related.length > 0 && (
         <section className="max-w-6xl mx-auto mt-12">
           <h2 className="text-xl font-bold mb-4">Related products</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {related.map(r => (
               <ProductCard key={r.id} image={r.images?.[0]||r.thumbnail||'/placeholder.png'} name={r.title} price={r.price} rating={r.rating||0} reviews={0} />
             ))}
