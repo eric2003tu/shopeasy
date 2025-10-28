@@ -48,6 +48,12 @@ export async function fetchProductById(id: number): Promise<ApiProduct> {
   return res.json();
 }
 
+export async function searchProducts(query: string, limit = 10): Promise<ListProductsResponse> {
+  const res = await fetch(`${BASE}/products/search?q=${encodeURIComponent(query)}&limit=${limit}`);
+  if (!res.ok) throw new Error(`Failed to search products: ${res.status}`);
+  return res.json();
+}
+
 // Fetch current authenticated user using access token
 export interface FullUser {
   id: number;
