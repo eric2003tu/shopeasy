@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthProvider';
 import { subscribeCart, getCartCount } from '@/lib/cart';
 import { useI18n } from '@/i18n/I18nProvider';
+import { FaJediOrder } from 'react-icons/fa';
 
 export default function ShopHeader() {
   const [scrolled, setScrolled] = useState(false);
@@ -194,6 +195,10 @@ export default function ShopHeader() {
               <AiOutlineCheckCircle className="text-lg" />
               {t('header.checkouts')}
             </Link>
+            <Link href="/shop/orders" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+              <FaJediOrder className="text-lg" />
+              Orders
+            </Link>
             <Link href="/shop/payments" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
               <MdPayment className="text-lg" />
               {t('header.payments')}
@@ -353,7 +358,14 @@ export default function ShopHeader() {
                 <AiOutlineCheckCircle className="text-lg text-gray-700" />
                 <span className="font-medium">{t('header.checkouts')}</span>
               </Link>
-              
+              <Link 
+                href="/shop/orders" 
+                className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                onClick={handleMobileLinkClick}
+              >
+                <FaJediOrder className="text-lg text-gray-700" />
+                <span className="font-medium">Orders</span>
+              </Link>
               <Link 
                 href="/shop/payments" 
                 className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"

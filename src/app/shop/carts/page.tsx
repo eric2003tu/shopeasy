@@ -210,12 +210,12 @@ export default function CartsPage() {
                 </span>
               </div>
 
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-full mb-3 flex items-center justify-center gap-2 transition">
+              <Link href="/shop/checkouts" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-full mb-3 flex items-center justify-center gap-2 transition">
                 Proceed to Checkout →
-              </button>
-              <button className="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-3 rounded-full mb-4 flex items-center justify-center gap-2 transition">
+              </Link>
+              <Link href="/shop/checkouts" className="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-3 rounded-full mb-4 flex items-center justify-center gap-2 transition">
                 ← Continue Shopping
-              </button>
+              </Link>
 
               <div className="border-t pt-4 text-center">
                 <p className="text-gray-500 text-sm mb-3">We Accept</p>
