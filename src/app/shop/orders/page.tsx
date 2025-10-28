@@ -216,7 +216,7 @@ export default function OrdersPage() {
                     </div>
                     <button 
                       onClick={() => setOpenId(openId === order.id ? null : order.id)}
-                      className="flex items-center px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                      className="cursor-pointer flex items-center px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
                     >
                       {openId === order.id ? 'Hide' : 'View'}
                       <FiChevronDown className={`ml-1 w-4 h-4 transition-transform ${openId === order.id ? 'rotate-180' : ''}`} />
