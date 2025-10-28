@@ -50,7 +50,9 @@ export function parseIntent(raw: string, products: string[] = []): IntentResult 
   }
 
   if (/\b(remove|delete|take out)\b/.test(t) && /\b(cart|basket)\b/.test(t)) {
-    const m = t.match(/(?:remove|delete|take out)\s+(.+?)(?:\s+from\s+cart)?/);
+    // Capture the full product phrase up to an optional 'from cart' or end-of-string.
+    // Using an end anchor ensures the lazy capture expands to the full name when 'from cart' is absent.
+    const m = t.match(/(?:remove|delete|take out)\s+(.+?)(?:\s+from\s+cart)?\s*$/);
     const product = m ? m[1] : null;
     const matched = product ? matchProductName(product, products) : null;
     return { intent: 'remove_from_cart', product: matched || (product ? product : null), query: product || null, confidence: 0.6, raw };

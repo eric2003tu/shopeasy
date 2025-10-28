@@ -68,20 +68,89 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
   function clickAddToCartButton(): boolean {
     try {
       if (typeof document === 'undefined') return false;
+      // Prefer explicit data attribute set on Add buttons for deterministic selection
+      const explicit = document.querySelector('[data-add-to-cart]') as HTMLButtonElement | null;
+      if (explicit) {
+        explicit.click();
+        return true;
+      }
       const buttons = Array.from(document.querySelectorAll('button')) as HTMLButtonElement[];
       const candidate = buttons.find(b => (b.innerText || b.textContent || '').toLowerCase().includes('add to cart') || (b.innerText || b.textContent || '').toLowerCase().includes('buy now'));
       if (candidate) {
         candidate.click();
         return true;
       }
-      // try data attribute or aria-label
-      const labeled = buttons.find(b => (b.getAttribute('aria-label') || '').toLowerCase().includes('add to cart') || (b.dataset?.action || '').toLowerCase().includes('add'));
+      // try aria-label or dataset.action heuristics
+      const labeled = buttons.find(b => (b.getAttribute('aria-label') || '').toLowerCase().includes('add to cart') || (b.dataset?.action || '').toLowerCase().includes('add') || b.hasAttribute('data-add-to-cart'));
       if (labeled) {
         labeled.click();
         return true;
       }
     } catch (e) {
       console.debug('[VoiceAssistant] clickAddToCartButton failed', e);
+    }
+    return false;
+  }
+
+  // Try to find and click a nav target (login/signup/payments, carts etc.) by data-nav, href or visible text.
+  function clickNavTarget(nameOrRoute: string): boolean {
+    try {
+      if (typeof document === 'undefined') return false;
+      const key = (nameOrRoute || '').toLowerCase();
+      // data-nav explicit selector
+      const explicit = document.querySelector(`[data-nav="${key}"]`) as HTMLElement | null;
+      if (explicit) { explicit.click(); return true; }
+
+      // try anchor with matching href fragment (/login /signup /shop/payments etc.)
+      const anchors = Array.from(document.querySelectorAll('a,button')) as HTMLElement[];
+      const byHref = anchors.find(a => {
+        try {
+          const href = (a as HTMLAnchorElement).getAttribute?.('href') || '';
+          return href.toLowerCase().includes(key) || (a.textContent || '').toLowerCase().includes(key);
+        } catch { return false; }
+      });
+      if (byHref) { byHref.click(); return true; }
+    } catch (e) {
+      console.debug('[VoiceAssistant] clickNavTarget failed', e);
+    }
+    return false;
+  }
+
+  // Try to remove an item from the cart by product name or id by clicking the remove control in the cart page.
+  async function clickRemoveFromCart(productPhrase?: string, productId?: string | number): Promise<boolean> {
+    try {
+      if (typeof document === 'undefined') return false;
+      // Ensure we're on the carts page so DOM structure is predictable; if not, navigate there and allow time
+      if (!window.location.pathname.includes('/shop/carts')) {
+        router.push('/shop/carts');
+        // let the navigation happen and DOM render; small delay
+        await new Promise(res => setTimeout(res, 300));
+      }
+
+      // Prefer exact data-remove-for selector
+      if (productId) {
+        const sel = document.querySelector(`[data-remove-for="${productId}"]`) as HTMLElement | null;
+        if (sel) { sel.click(); return true; }
+      }
+
+      // Try matching by product name text: find cart item blocks and look for a remove button inside
+      const itemBlocks = Array.from(document.querySelectorAll('[data-remove-for], .flex.items-center')) as HTMLElement[];
+      const phrase = (productPhrase || '').toLowerCase().trim();
+      for (const block of itemBlocks) {
+        const text = (block.textContent || '').toLowerCase();
+        if (phrase && text.includes(phrase)) {
+          // find a button inside
+          const btn = block.querySelector('button') as HTMLElement | null;
+          if (btn) { btn.click(); return true; }
+        }
+      }
+
+      // As a last resort, search all remove buttons by label
+      const allButtons = Array.from(document.querySelectorAll('button')) as HTMLElement[];
+      const removeButton = allButtons.find(b => (b.textContent || '').toLowerCase().includes('remove') || (b.getAttribute('aria-label') || '').toLowerCase().includes('remove'));
+      if (removeButton) { removeButton.click(); return true; }
+    } catch (e) {
+      console.debug('[VoiceAssistant] clickRemoveFromCart failed', e);
     }
     return false;
   }
@@ -139,6 +208,26 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
         console.debug('[VoiceAssistant] show command search failed', err);
         if (enableTts) speak("I couldn't check the store right now. Try again later.");
       }
+      return;
+    }
+
+    // Navigation shortcuts: prefer clicking a visible nav control, otherwise navigate programmatically
+    const navLogin = /\b(go to|go|open|proceed to|proceed)\s+(login|sign ?in)\b/i;
+    const navSignup = /\b(go to|go|open|proceed to|proceed)\s+(signup|sign ?up|register)\b/i;
+    const navPayments = /\b(go to|go|open|proceed to|proceed)\s+(payments|payment|checkout)\b/i;
+    if (navLogin.test(text)) {
+      if (enableTts) speak('Opening login');
+      if (!clickNavTarget('login')) router.push('/login');
+      return;
+    }
+    if (navSignup.test(text)) {
+      if (enableTts) speak('Opening signup');
+      if (!clickNavTarget('signup')) router.push('/signup');
+      return;
+    }
+    if (navPayments.test(text)) {
+      if (enableTts) speak('Opening payments');
+      if (!clickNavTarget('payments')) router.push('/shop/payments');
       return;
     }
 
@@ -271,15 +360,35 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
         break;
       case 'view_cart':
         if (enableTts) speak('Opening your cart');
-        router.push('/shop/carts');
+        // prefer clicking header/cart button if present
+        if (!clickNavTarget('carts')) router.push('/shop/carts');
         break;
       case 'checkout':
         if (enableTts) speak('Proceeding to checkout');
-        router.push('/shop/checkouts');
+        if (!clickNavTarget('checkouts') && !clickNavTarget('checkout')) router.push('/shop/checkouts');
         break;
       case 'remove_from_cart':
-        if (enableTts) speak('Removing item from cart — open cart to confirm.');
-        router.push('/shop/carts');
+        // Try to remove a specific product if provided in the intent
+        if (intent.product) {
+          if (enableTts) speak(`Removing ${intent.product} from your cart`);
+          const removed = await clickRemoveFromCart(intent.product);
+          if (!removed) {
+            // fallback: open cart and inform the user
+            if (enableTts) speak('I could not find the item in the cart visually; I opened the cart for you to remove it manually.');
+            router.push('/shop/carts');
+          }
+        } else if (intent.query) {
+          if (enableTts) speak(`Removing ${intent.query} from your cart`);
+          const removedQ = await clickRemoveFromCart(intent.query);
+          if (!removedQ) {
+            if (enableTts) speak('I could not locate that item; I opened the cart for you to remove it manually.');
+            router.push('/shop/carts');
+          }
+        } else {
+          // no product specified: open cart so user can interact
+          if (enableTts) speak('Opening your cart so you can remove items.');
+          router.push('/shop/carts');
+        }
         break;
       case 'search':
         if (enableTts) speak(`Searching for ${intent.query}`);

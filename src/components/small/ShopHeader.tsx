@@ -178,11 +178,11 @@ export default function ShopHeader() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
-            <Link href="/shop/products" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+            <Link data-nav="products" href="/shop/products" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
               <BsBoxSeam className="text-lg" />
               {t('header.products')}
             </Link>
-            <Link href="/shop/carts" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors relative">
+            <Link data-nav="carts" href="/shop/carts" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors relative">
               <BsCart2 className="text-lg" />
               {t('header.carts')}
               {cartCount > 0 && (
@@ -199,7 +199,7 @@ export default function ShopHeader() {
               <FaJediOrder className="text-lg" />
               Orders
             </Link>
-            <Link href="/shop/payments" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+            <Link data-nav="payments" href="/shop/payments" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
               <MdPayment className="text-lg" />
               {t('header.payments')}
             </Link>

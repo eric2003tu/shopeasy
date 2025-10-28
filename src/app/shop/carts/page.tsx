@@ -96,6 +96,7 @@ export default function CartsPage() {
                         {item.name}
                       </h2>
                       <button
+                        data-remove-for={item.id}
                         onClick={() => removeItem(item.id)}
                         className="flex items-center cursor-pointer gap-1 text-gray-500 mt-2 text-sm hover:text-red-600"
                       >

@@ -87,6 +87,7 @@ const Header: React.FC = () => {
               </Link>
             ) : (
               <Link 
+                data-nav="login"
                 href="/login" 
                 className="px-3 py-2 rounded-md text-sm lg:text-base font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
               >
@@ -150,6 +151,7 @@ const Header: React.FC = () => {
             {t('header.cart')}
           </Link> */}
           <Link
+            data-nav="login"
             href="/login"
             className="flex items-center gap-3 text-white hover:bg-white/10 block px-3 py-3 rounded-md text-base font-medium transition-colors"
           >

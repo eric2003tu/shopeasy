@@ -77,6 +77,7 @@ export default function AddToCart() {
         <p>{product.description}</p>
         <p className='text-[#634bc1] font-semibold'>${product.price}</p>
         <button
+          data-add-to-cart="true"
           className='text-center text-white p-2 px-4 lg:w-1/2 bg-[#634bc1] rounded-md hover:bg-[#5340a0] transition-colors'
           onClick={addingToCart}
         >

@@ -676,7 +676,7 @@ const Signup: React.FC = () => {
                   {currentStep === 1 ? (
                     <>
                       {t('signup.alreadyHaveAccount')}{' '}
-                      <Link href="/login" className="font-medium text-[#634bc1] hover:text-[#5239ad]">
+                      <Link data-nav="login" href="/login" className="font-medium text-[#634bc1] hover:text-[#5239ad]">
                         {t('auth.signIn')}
                       </Link>
                     </>
