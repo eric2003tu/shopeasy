@@ -146,14 +146,14 @@ export default function ShopHeader() {
                     />
                   )}
                 </div>
-                <div>
+                {/* <div>
                   <div className="font-medium">
                     {(auth.user ? `${auth.user.firstName || ''} ${auth.user.lastName || ''}`.trim() || auth.user.username : 'Guest')}
                   </div>
                   <div className="text-sm text-white/80">
-                    {auth.user?.email || 'Welcome!'}
+                    Welcome!
                   </div>
-                </div>
+                </div> */}
               </div>
             <button 
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'} 
