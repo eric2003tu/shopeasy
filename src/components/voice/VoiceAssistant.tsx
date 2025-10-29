@@ -174,10 +174,17 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
     };
 
     r.onresult = (ev: any) => {
-      const last = ev.results[ev.results.length - 1];
-      const text = last[0].transcript.trim();
-      setTranscript(text);
-      handleTranscript(text);
+      try {
+        // log raw ASR results to help debugging parsing edge-cases
+        console.debug('[VoiceAssistant] ASR raw results', ev.results);
+        const last = ev.results[ev.results.length - 1];
+        const text = (last && last[0] && last[0].transcript) ? String(last[0].transcript).trim() : '';
+        console.debug('[VoiceAssistant] ASR transcript', text);
+        setTranscript(text);
+        handleTranscript(text);
+      } catch (e) {
+        console.debug('[VoiceAssistant] onresult parsing error', e);
+      }
     };
 
     recognitionRef.current = r;
@@ -231,7 +238,8 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
       return;
     }
 
-    const intent: IntentResult = parseIntent(text, products?.map((p: any) => p?.title || p?.name || String(p?.id) || ''));
+  const intent: IntentResult = parseIntent(text, products?.map((p: any) => p?.title || p?.name || String(p?.id) || ''));
+  console.debug('[VoiceAssistant] parsed intent', intent);
     if (!intent || intent.intent === 'unknown') {
       // Try a backend search as a fallback: if user just said a product name, surface matches
       try {
@@ -252,13 +260,37 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
     }
 
     switch (intent.intent) {
+      // NAV
+      case 'go_home':
+        if (enableTts) speak('Going home');
+        router.push('/');
+        break;
+      case 'open_products':
       case 'show_products':
         if (enableTts) speak(`Showing products${intent.query ? ` for ${intent.query}` : ''}`);
         router.push('/shop/products');
         break;
+      case 'open_cart':
+        if (enableTts) speak('Opening your cart');
+        if (!clickNavTarget('carts')) router.push('/shop/carts');
+        break;
+      case 'go_checkout':
+        if (enableTts) speak('Proceeding to checkout');
+        if (!clickNavTarget('checkout') && !clickNavTarget('checkouts')) router.push('/shop/checkouts');
+        break;
+      case 'open_payments':
+        if (enableTts) speak('Opening payments');
+        if (!clickNavTarget('payments')) router.push('/shop/payments');
+        break;
+      case 'view_orders':
+        if (enableTts) speak('Opening your orders');
+        if (!clickNavTarget('orders')) router.push('/shop/orders');
+        break;
+
+      // PRODUCT DETAILS
+      case 'view_product_details':
       case 'product_details':
         if (intent.product) {
-          // Search for the named product in the backend
           try {
             const res = await searchProducts(intent.product, 5);
             if (res?.products?.length) {
@@ -357,6 +389,64 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
             if (enableTts) speak("I couldn't detect the product to add. First say the product name, then say 'add it to cart'.");
           }
         }
+        break;
+      case 'increase_quantity':
+        // Increase quantity of named or current product
+        try {
+          let p: any = null;
+          if (intent.product) {
+            const res = await searchProducts(intent.product, 5);
+            if (res?.products?.length) p = selectBestMatch(intent.product || '', res.products);
+          }
+          if (!p) p = currentProduct;
+          if (!p) {
+            const m = window.location.pathname.match(/\/shop\/product\/(\d+)/);
+            if (m && m[1]) p = await fetchProductById(Number(m[1]));
+          }
+          if (p) {
+            const qty = intent.quantity || 1;
+            const item = { id: p.id, name: p.title || p.name, price: p.price || 0, quantity: qty } as any;
+            addToCart(item);
+            if (enableTts) speak(`Added ${qty} ${p.title || p.name} to your cart`);
+          } else {
+            if (enableTts) speak("I couldn't find the product to increase quantity. First say the product name.");
+          }
+        } catch (e) {
+          console.debug('[VoiceAssistant] increase_quantity failed', e);
+          if (enableTts) speak('Failed to increase quantity.');
+        }
+        break;
+
+      case 'filter_products':
+        if (enableTts) speak('Applying filter');
+        // send user to product list with filter query params
+        router.push(`/shop/products?filter=${encodeURIComponent(String(intent.filterType || ''))}&value=${encodeURIComponent(String(intent.filterValue || ''))}`);
+        break;
+
+      case 'login':
+        if (enableTts) speak('Opening login');
+        if (!clickNavTarget('login')) router.push('/login');
+        break;
+      case 'signup':
+        if (enableTts) speak('Opening signup');
+        if (!clickNavTarget('signup')) router.push('/signup');
+        break;
+      case 'view_profile':
+        if (enableTts) speak('Opening profile');
+        if (!clickNavTarget('profile')) router.push('/shop/profile');
+        break;
+      case 'help':
+        if (enableTts) speak('Opening help');
+        if (!clickNavTarget('help')) router.push('/help');
+        break;
+      case 'greetings':
+        if (enableTts) speak('Hello — how can I help you today?');
+        break;
+      case 'confirm':
+        if (enableTts) speak('Confirmed.');
+        break;
+      case 'cancel':
+        if (enableTts) speak('Cancelled.');
         break;
       case 'view_cart':
         if (enableTts) speak('Opening your cart');

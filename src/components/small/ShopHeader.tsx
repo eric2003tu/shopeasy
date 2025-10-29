@@ -107,7 +107,7 @@ export default function ShopHeader() {
     <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#634bc1] shadow-md' : 'bg-[#634bc1]/90 backdrop-blur-sm'} shadow-lg`}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between py-2 relative">
-          <Link href="/shop" className="flex items-center gap-3 group">
+          <Link data-nav="home" href="/shop" className="flex items-center gap-3 group">
             <div className="relative h-12 w-12">
               <Image src="/logo.jpg" alt="ShopEasy Logo" fill className="rounded-full border-2 border-white/30 group-hover:border-[#ffdc89] transition-all object-cover" sizes="48px" />
             </div>
@@ -191,11 +191,11 @@ export default function ShopHeader() {
                 </span>
               )}
             </Link>
-            <Link href="/shop/checkouts" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+            <Link data-nav="checkouts" href="/shop/checkouts" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
               <AiOutlineCheckCircle className="text-lg" />
               {t('header.checkouts')}
             </Link>
-            <Link href="/shop/orders" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
+            <Link data-nav="orders" href="/shop/orders" className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors">
               <FaJediOrder className="text-lg" />
               Orders
             </Link>
@@ -259,6 +259,7 @@ export default function ShopHeader() {
               {userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-44 bg-white rounded shadow-lg text-gray-800 py-2 z-50">
                   <Link 
+                    data-nav="profile"
                     href="/shop/profile" 
                     className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
                     onClick={() => setUserMenuOpen(false)}
@@ -267,6 +268,7 @@ export default function ShopHeader() {
                     <span>My profile</span>
                   </Link>
                   <Link 
+                    data-nav="settings"
                     href="/shop/settings" 
                     className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
                     onClick={() => setUserMenuOpen(false)}
@@ -328,6 +330,7 @@ export default function ShopHeader() {
             {/* Navigation links */}
             <div className="flex flex-col divide-y divide-gray-100">
               <Link 
+                data-nav="products"
                 href="/shop/products" 
                 className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                 onClick={handleMobileLinkClick}
@@ -337,6 +340,7 @@ export default function ShopHeader() {
               </Link>
               
               <Link 
+                data-nav="carts"
                 href="/shop/carts" 
                 className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                 onClick={handleMobileLinkClick}
@@ -351,6 +355,7 @@ export default function ShopHeader() {
               </Link>
               
               <Link 
+                data-nav="checkouts"
                 href="/shop/checkouts" 
                 className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                 onClick={handleMobileLinkClick}
@@ -359,6 +364,7 @@ export default function ShopHeader() {
                 <span className="font-medium">{t('header.checkouts')}</span>
               </Link>
               <Link 
+                data-nav="orders"
                 href="/shop/orders" 
                 className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                 onClick={handleMobileLinkClick}
@@ -367,6 +373,7 @@ export default function ShopHeader() {
                 <span className="font-medium">Orders</span>
               </Link>
               <Link 
+                data-nav="payments"
                 href="/shop/payments" 
                 className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                 onClick={handleMobileLinkClick}
@@ -376,6 +383,7 @@ export default function ShopHeader() {
               </Link>
               
               <Link 
+                data-nav="profile"
                 href="/shop/profile" 
                 className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                 onClick={handleMobileLinkClick}
@@ -385,6 +393,7 @@ export default function ShopHeader() {
               </Link>
               
               <Link 
+                data-nav="settings"
                 href="/shop/settings" 
                 className="px-4 py-4 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                 onClick={handleMobileLinkClick}
