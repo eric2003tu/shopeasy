@@ -2,9 +2,25 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['cdn.dummyjson.com', 'i.dummyjson.com', 'dummyjson.com'],
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.dummyjson.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i.dummyjson.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "dummyjson.com",
+        pathname: "/**",
+      },
+    ],
   },
-  // Ignore ESLint during production builds to prevent warnings from failing the build
   eslint: {
     ignoreDuringBuilds: true,
   },

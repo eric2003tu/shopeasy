@@ -7,84 +7,127 @@ import { addToCart } from '@/lib/cart';
 import { searchProducts, fetchProductById } from '@/lib/appClient';
 
 /**
- * Single global VoiceAssistant component.
- * - Uses Web Speech API for speech-to-text
- * - Uses simple parseIntent() to map free-speech -> intent
- * - Uses speak() for TTS feedback
- * - Triggers navigation and cart updates
+ * Enhanced VoiceAssistant component with professional voice recognition
+ * - Improved Web Speech API handling
+ * - Enhanced voice feedback
+ * - Better error handling and user experience
  */
 export default function VoiceAssistant({ enableTts = true, products = [] }: { enableTts?: boolean; products?: any[] }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [listening, setListening] = useState(false);
   const [lang, setLang] = useState('en-US');
   const [transcript, setTranscript] = useState('');
   const [currentProduct, setCurrentProduct] = useState<any | null>(null);
   const [currentMatches, setCurrentMatches] = useState<any[]>([]);
+  const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<any>(null);
-  const pathname = usePathname();
 
-  // Keep `currentProduct` in sync with the product details page if user navigates there manually
+  // Check browser support
+  useEffect(() => {
+    const supported = typeof window !== 'undefined' && 
+      (!!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition);
+    setIsSupported(supported);
+    
+    if (!supported && enableTts) {
+      speak("Voice recognition is not supported in your browser. Please try Chrome, Edge, or Safari.");
+    }
+  }, [enableTts]);
+
+  // Sync current product with product details page
   useEffect(() => {
     if (!pathname) return;
-    const m = pathname.match(/\/shop\/product\/(\d+)/);
+    const m = pathname.match(/\/shop\/products\/(\d+)/);
     if (m && m[1]) {
       const id = Number(m[1]);
-      // fetch product details and set as currentProduct
       (async () => {
         try {
           const p = await fetchProductById(id);
           setCurrentProduct(p);
         } catch (e) {
-          console.debug('[VoiceAssistant] failed to fetch product for pathname', pathname, e);
+          console.debug('[VoiceAssistant] Failed to fetch product for pathname', pathname, e);
         }
       })();
     }
   }, [pathname]);
 
-  // Helper: pick the best product match from a search result
+  // Enhanced product matching algorithm
   function selectBestMatch(query: string, productsList: any[]) {
     if (!productsList || productsList.length === 0) return null;
+    
     const q = (query || '').trim().toLowerCase();
     if (!q) return productsList[0];
-    // 1) exact title match
-    const exact = productsList.find((p: any) => (p.title || '').toLowerCase() === q);
-    if (exact) return exact;
-    // 2) whole-word contains (title contains all tokens)
-    const tokens = q.split(/\s+/).filter(Boolean);
-    const whole = productsList.find((p: any) => {
-      const t = (p.title || '').toLowerCase();
-      return tokens.every((tok: string) => new RegExp(`\\b${tok.replace(/[-\\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`).test(t));
-    });
-    if (whole) return whole;
-    // 3) contains query as substring
-    const substr = productsList.find((p: any) => (p.title || '').toLowerCase().includes(q));
-    if (substr) return substr;
-    // 4) fallback to first
-    return productsList[0];
-  }
-  const supported = typeof window !== 'undefined' && (!!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition);
 
-  // Try to find and click the page's 'Add to cart' button to emulate a real user click.
+    // Scoring system for better matching
+    const scoredProducts = productsList.map((p: any) => {
+      const title = (p.title || p.name || '').toLowerCase();
+      let score = 0;
+
+      // Exact match (highest score)
+      if (title === q) score += 100;
+      
+      // Contains all query words
+      const queryWords = q.split(/\s+/).filter(Boolean);
+      const titleWords = title.split(/\s+/).filter(Boolean);
+      const commonWords = queryWords.filter(word => titleWords.includes(word));
+      
+      if (commonWords.length === queryWords.length) score += 50;
+      
+      // Partial matches
+      if (title.includes(q)) score += 30;
+      if (q.includes(title)) score += 20;
+      
+      // Word overlap
+      const overlapScore = (commonWords.length / Math.max(queryWords.length, 1)) * 20;
+      score += overlapScore;
+
+      return { product: p, score };
+    });
+
+    // Return product with highest score
+    scoredProducts.sort((a, b) => b.score - a.score);
+    return scoredProducts[0]?.score > 10 ? scoredProducts[0].product : productsList[0];
+  }
+
+  // Enhanced DOM interaction functions
   function clickAddToCartButton(): boolean {
     try {
       if (typeof document === 'undefined') return false;
-      // Prefer explicit data attribute set on Add buttons for deterministic selection
-      const explicit = document.querySelector('[data-add-to-cart]') as HTMLButtonElement | null;
-      if (explicit) {
-        explicit.click();
-        return true;
-      }
-      const buttons = Array.from(document.querySelectorAll('button')) as HTMLButtonElement[];
-      const candidate = buttons.find(b => (b.innerText || b.textContent || '').toLowerCase().includes('add to cart') || (b.innerText || b.textContent || '').toLowerCase().includes('buy now'));
-      if (candidate) {
-        candidate.click();
-        return true;
-      }
-      // try aria-label or dataset.action heuristics
-      const labeled = buttons.find(b => (b.getAttribute('aria-label') || '').toLowerCase().includes('add to cart') || (b.dataset?.action || '').toLowerCase().includes('add') || b.hasAttribute('data-add-to-cart'));
-      if (labeled) {
-        labeled.click();
-        return true;
+      
+      // Multiple strategies for finding add to cart button
+      const selectors = [
+        '[data-add-to-cart]',
+        'button[aria-label*="add to cart" i]',
+        'button:contains("Add to Cart")',
+        'button:contains("Buy Now")',
+        '.add-to-cart',
+        '.buy-now',
+        'button[data-action="add-to-cart"]'
+      ];
+
+      for (const selector of selectors) {
+        try {
+          if (selector.includes(':contains')) {
+            // Text content search
+            const buttons = Array.from(document.querySelectorAll('button'));
+            const match = buttons.find(btn => 
+              (btn.textContent || '').toLowerCase().includes('add to cart') ||
+              (btn.textContent || '').toLowerCase().includes('buy now')
+            );
+            if (match) {
+              match.click();
+              return true;
+            }
+          } else {
+            const element = document.querySelector(selector) as HTMLElement;
+            if (element) {
+              element.click();
+              return true;
+            }
+          }
+        } catch (e) {
+          console.debug(`[VoiceAssistant] Selector ${selector} failed`, e);
+        }
       }
     } catch (e) {
       console.debug('[VoiceAssistant] clickAddToCartButton failed', e);
@@ -92,441 +135,610 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
     return false;
   }
 
-  // Try to find and click a nav target (login/signup/payments, carts etc.) by data-nav, href or visible text.
   function clickNavTarget(nameOrRoute: string): boolean {
     try {
       if (typeof document === 'undefined') return false;
+      
       const key = (nameOrRoute || '').toLowerCase();
-      // data-nav explicit selector
-      const explicit = document.querySelector(`[data-nav="${key}"]`) as HTMLElement | null;
-      if (explicit) { explicit.click(); return true; }
-
-      // try anchor with matching href fragment (/login /signup /shop/payments etc.)
-      const anchors = Array.from(document.querySelectorAll('a,button')) as HTMLElement[];
-      const byHref = anchors.find(a => {
+      const elements = Array.from(document.querySelectorAll('a, button, [data-nav]')) as HTMLElement[];
+      
+      for (const element of elements) {
         try {
-          const href = (a as HTMLAnchorElement).getAttribute?.('href') || '';
-          return href.toLowerCase().includes(key) || (a.textContent || '').toLowerCase().includes(key);
-        } catch { return false; }
-      });
-      if (byHref) { byHref.click(); return true; }
+          const href = (element as HTMLAnchorElement).href || '';
+          const text = (element.textContent || '').toLowerCase();
+          const ariaLabel = (element.getAttribute('aria-label') || '').toLowerCase();
+          const dataNav = (element.getAttribute('data-nav') || '').toLowerCase();
+          
+          if (dataNav.includes(key) || 
+              href.toLowerCase().includes(key) || 
+              text.includes(key) || 
+              ariaLabel.includes(key)) {
+            element.click();
+            return true;
+          }
+        } catch (e) {
+          continue;
+        }
+      }
     } catch (e) {
       console.debug('[VoiceAssistant] clickNavTarget failed', e);
     }
     return false;
   }
 
-  // Try to remove an item from the cart by product name or id by clicking the remove control in the cart page.
-  async function clickRemoveFromCart(productPhrase?: string, productId?: string | number): Promise<boolean> {
-    try {
-      if (typeof document === 'undefined') return false;
-      // Ensure we're on the carts page so DOM structure is predictable; if not, navigate there and allow time
-      if (!window.location.pathname.includes('/shop/carts')) {
-        router.push('/shop/carts');
-        // let the navigation happen and DOM render; small delay
-        await new Promise(res => setTimeout(res, 300));
-      }
-
-      // Prefer exact data-remove-for selector
-      if (productId) {
-        const sel = document.querySelector(`[data-remove-for="${productId}"]`) as HTMLElement | null;
-        if (sel) { sel.click(); return true; }
-      }
-
-      // Try matching by product name text: find cart item blocks and look for a remove button inside
-      const itemBlocks = Array.from(document.querySelectorAll('[data-remove-for], .flex.items-center')) as HTMLElement[];
-      const phrase = (productPhrase || '').toLowerCase().trim();
-      for (const block of itemBlocks) {
-        const text = (block.textContent || '').toLowerCase();
-        if (phrase && text.includes(phrase)) {
-          // find a button inside
-          const btn = block.querySelector('button') as HTMLElement | null;
-          if (btn) { btn.click(); return true; }
+  async function clickRemoveFromCart(productPhrase?: string | null, productId?: string | number): Promise<boolean> {
+      try {
+        if (typeof document === 'undefined') return false;
+        
+        // Navigate to cart if not already there
+        if (!window.location.pathname.includes('/shop/carts')) {
+          router.push('/shop/carts');
+          await new Promise(res => setTimeout(res, 500));
         }
+  
+        // Multiple strategies for remove buttons
+        if (productId) {
+          const selectors = [
+            `[data-remove-for="${productId}"]`,
+            `[data-product-id="${productId}"] .remove-btn`,
+            `#remove-${productId}`
+          ];
+          
+          for (const selector of selectors) {
+            const element = document.querySelector(selector) as HTMLElement;
+            if (element) {
+              element.click();
+              return true;
+            }
+          }
+        }
+  
+        // Text-based search
+        if (productPhrase) {
+          const phrase = productPhrase.toLowerCase();
+          const elements = Array.from(document.querySelectorAll('[class*="item"], [class*="product"], [data-product]'));
+          
+          for (const element of elements) {
+            const text = (element.textContent || '').toLowerCase();
+            if (text.includes(phrase)) {
+              const removeBtn = element.querySelector('button, [class*="remove"], [class*="delete"]') as HTMLElement;
+              if (removeBtn) {
+                removeBtn.click();
+                return true;
+              }
+            }
+          }
+        }
+  
+        // Generic remove button
+        const removeButtons = Array.from(document.querySelectorAll('button')).filter(btn => 
+          (btn.textContent || '').toLowerCase().includes('remove') ||
+          (btn.getAttribute('aria-label') || '').toLowerCase().includes('remove')
+        );
+        
+        if (removeButtons.length > 0) {
+          removeButtons[0].click();
+          return true;
+        }
+      } catch (e) {
+        console.debug('[VoiceAssistant] clickRemoveFromCart failed', e);
       }
-
-      // As a last resort, search all remove buttons by label
-      const allButtons = Array.from(document.querySelectorAll('button')) as HTMLElement[];
-      const removeButton = allButtons.find(b => (b.textContent || '').toLowerCase().includes('remove') || (b.getAttribute('aria-label') || '').toLowerCase().includes('remove'));
-      if (removeButton) { removeButton.click(); return true; }
-    } catch (e) {
-      console.debug('[VoiceAssistant] clickRemoveFromCart failed', e);
+      return false;
     }
-    return false;
-  }
 
+  // Enhanced speech recognition setup
   useEffect(() => {
-    if (!supported) return;
+    if (!isSupported) return;
+
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const r = new SpeechRecognition();
+    
+    // Enhanced configuration for better voice recognition
+    r.continuous = false;
+    r.interimResults = true;
+    r.maxAlternatives = 3;
     r.lang = lang;
-    r.interimResults = false;
-    r.maxAlternatives = 1;
+    
+    let finalTranscript = '';
 
-    r.onstart = () => setListening(true);
-    r.onend = () => setListening(false);
-    r.onerror = (e: any) => {
-      console.debug('[VoiceAssistant] recognition error', e);
+    r.onstart = () => {
+      setListening(true);
+      setTranscript('');
+      finalTranscript = '';
+      if (enableTts) speak("I'm listening...");
+    };
+
+    r.onend = () => {
       setListening(false);
-      if (e?.error === 'not-allowed' || e?.error === 'permission-denied') {
-        if (enableTts) speak('Microphone access blocked. Please enable microphone permission.');
+      // Process final transcript if any
+      if (finalTranscript.trim()) {
+        handleTranscript(finalTranscript.trim());
+      }
+    };
+
+    r.onerror = (e: any) => {
+      console.debug('[VoiceAssistant] Recognition error', e);
+      setListening(false);
+      
+      if (enableTts) {
+        switch (e.error) {
+          case 'not-allowed':
+          case 'permission-denied':
+            speak('Microphone access is blocked. Please enable microphone permission in your browser settings.');
+            break;
+          case 'network':
+            speak('Network error occurred. Please check your connection.');
+            break;
+          case 'audio-capture':
+            speak('No microphone detected. Please check your microphone connection.');
+            break;
+          default:
+            speak('Voice recognition error. Please try again.');
+        }
       }
     };
 
     r.onresult = (ev: any) => {
-      try {
-        // log raw ASR results to help debugging parsing edge-cases
-        console.debug('[VoiceAssistant] ASR raw results', ev.results);
-        const last = ev.results[ev.results.length - 1];
-        const text = (last && last[0] && last[0].transcript) ? String(last[0].transcript).trim() : '';
-        console.debug('[VoiceAssistant] ASR transcript', text);
-        setTranscript(text);
-        handleTranscript(text);
-      } catch (e) {
-        console.debug('[VoiceAssistant] onresult parsing error', e);
+      let interimTranscript = '';
+      
+      for (let i = ev.resultIndex; i < ev.results.length; ++i) {
+        const transcript = ev.results[i][0].transcript;
+        
+        if (ev.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
       }
+      
+      setTranscript(interimTranscript || finalTranscript);
     };
 
     recognitionRef.current = r;
+
     return () => {
-      try { r.onstart = r.onend = r.onerror = r.onresult = null; } catch {};
-      recognitionRef.current = null;
+      try { 
+        r.stop();
+        recognitionRef.current = null;
+      } catch (e) {}
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang]);
+  }, [lang, isSupported, enableTts]);
 
+  // Enhanced transcript handling
   async function handleTranscript(text: string) {
-    // Quick 'show <name>' command detection (user explicitly requests details)
-    const showCmd = text.match(/^\s*(?:show|open|view)\s+(.+)/i);
-    if (showCmd && showCmd[1]) {
-      const q = showCmd[1].trim();
-      try {
-        const res = await searchProducts(q, 10);
-        if (res?.products?.length) {
-          const p = selectBestMatch(q, res.products);
-          setCurrentProduct(p);
-          setCurrentMatches(res.products.slice(0, 5));
-          if (enableTts) speak(`Opening details for ${p.title}`);
-          router.push(`/shop/product/${p.id}`);
-        } else {
-          if (enableTts) speak(`I couldn't find any product matching ${q}. Please try another name.`);
-        }
-      } catch (err) {
-        console.debug('[VoiceAssistant] show command search failed', err);
-        if (enableTts) speak("I couldn't check the store right now. Try again later.");
-      }
+    if (!text.trim()) {
+      if (enableTts) speak("I didn't catch that. Please try again.");
       return;
     }
 
-    // Navigation shortcuts: prefer clicking a visible nav control, otherwise navigate programmatically
-    const navLogin = /\b(go to|go|open|proceed to|proceed)\s+(login|sign ?in)\b/i;
-    const navSignup = /\b(go to|go|open|proceed to|proceed)\s+(signup|sign ?up|register)\b/i;
-    const navPayments = /\b(go to|go|open|proceed to|proceed)\s+(payments|payment|checkout)\b/i;
-    if (navLogin.test(text)) {
-      if (enableTts) speak('Opening login');
-      if (!clickNavTarget('login')) router.push('/login');
-      return;
-    }
-    if (navSignup.test(text)) {
-      if (enableTts) speak('Opening signup');
-      if (!clickNavTarget('signup')) router.push('/signup');
-      return;
-    }
-    if (navPayments.test(text)) {
-      if (enableTts) speak('Opening payments');
-      if (!clickNavTarget('payments')) router.push('/shop/payments');
-      return;
-    }
+    console.debug('[VoiceAssistant] Processing transcript:', text);
 
-  const intent: IntentResult = parseIntent(text, products?.map((p: any) => p?.title || p?.name || String(p?.id) || ''));
-  console.debug('[VoiceAssistant] parsed intent', intent);
-    if (!intent || intent.intent === 'unknown') {
-      // Try a backend search as a fallback: if user just said a product name, surface matches
-      try {
-        const res = await searchProducts(text, 6);
-        if (res?.products?.length) {
-          setCurrentMatches(res.products);
-          const best = selectBestMatch(text, res.products);
-          setCurrentProduct(best);
-          const names = res.products.slice(0, 3).map((x: any) => x.title).join(', ');
-          if (enableTts) speak(`I found ${res.products.length} products. First matches: ${names}. Say 'show <product name>' to see details or 'add it to cart' to add the first one.`);
-          return;
-        }
-      } catch (e) {
-        console.debug('[VoiceAssistant] fallback search failed', e);
-      }
-      if (enableTts) speak("Sorry, I didn't understand that. Try: 'Show me products' or 'Add iPhone to cart'.");
-      return;
-    }
-
-    switch (intent.intent) {
-      // NAV
-      case 'go_home':
-        if (enableTts) speak('Going home');
-        router.push('/');
-        break;
-      case 'open_products':
-      case 'show_products':
-        if (enableTts) speak(`Showing products${intent.query ? ` for ${intent.query}` : ''}`);
-        router.push('/shop/products');
-        break;
-      case 'open_cart':
-        if (enableTts) speak('Opening your cart');
-        if (!clickNavTarget('carts')) router.push('/shop/carts');
-        break;
-      case 'go_checkout':
-        if (enableTts) speak('Proceeding to checkout');
-        if (!clickNavTarget('checkout') && !clickNavTarget('checkouts')) router.push('/shop/checkouts');
-        break;
-      case 'open_payments':
-        if (enableTts) speak('Opening payments');
-        if (!clickNavTarget('payments')) router.push('/shop/payments');
-        break;
-      case 'view_orders':
-        if (enableTts) speak('Opening your orders');
-        if (!clickNavTarget('orders')) router.push('/shop/orders');
-        break;
-
-      // PRODUCT DETAILS
-      case 'view_product_details':
-      case 'product_details':
-        if (intent.product) {
+    // Enhanced quick commands with better voice recognition
+    const quickCommands = [
+      {
+        pattern: /^\s*(?:show|open|view|see)\s+(.+)/i,
+        handler: async (match: RegExpMatchArray) => {
+          const query = match[1].trim();
           try {
-            const res = await searchProducts(intent.product, 5);
+            const res = await searchProducts(query, 10);
             if (res?.products?.length) {
-              const p = res.products[0];
-              setCurrentProduct(p);
-              if (enableTts) speak(`Found ${p.title}. Opening details.`);
-              router.push(`/shop/product/${p.id}`);
+              const product = selectBestMatch(query, res.products);
+              setCurrentProduct(product);
+              setCurrentMatches(res.products.slice(0, 5));
+              
+              if (enableTts) {
+                if (res.products.length === 1) {
+                  speak(`Opening ${product.title}`);
+                } else {
+                  speak(`Found ${res.products.length} products. Opening ${product.title}`);
+                }
+              }
+              
+              router.push(`/products/${product.id}`);
             } else {
-              setCurrentProduct(null);
-              if (enableTts) speak(`Product ${intent.product} is not in the store. Please try another product.`);
+              if (enableTts) speak(`I couldn't find any products matching "${query}". Please try another name.`);
             }
           } catch (err) {
-            console.debug('[VoiceAssistant] product search failed', err);
-            if (enableTts) speak("I couldn't check the store right now. Try again later.");
+            console.debug('[VoiceAssistant] Quick command search failed', err);
+            if (enableTts) speak("I'm having trouble searching right now. Please try again later.");
+          }
+          return true;
+        }
+      },
+      {
+        pattern: /\b(go to|open|show|take me to)\s+(login|sign in)\b/i,
+        handler: () => {
+          if (enableTts) speak('Opening login page');
+          if (!clickNavTarget('login')) router.push('/login');
+          return true;
+        }
+      },
+      {
+        pattern: /\b(go to|open|show|take me to)\s+(sign up|register|signup)\b/i,
+        handler: () => {
+          if (enableTts) speak('Opening registration page');
+          if (!clickNavTarget('signup')) router.push('/signup');
+          return true;
+        }
+      },
+      {
+        pattern: /\b(go to|open|show|take me to)\s+(payments?|checkout)\b/i,
+        handler: () => {
+          if (enableTts) speak('Opening payment page');
+          if (!clickNavTarget('payments')) router.push('/shop/payments');
+          return true;
+        }
+      }
+    ];
+
+    // Check quick commands first
+    for (const command of quickCommands) {
+      const match = text.match(command.pattern);
+      if (match) {
+        await command.handler(match);
+        return;
+      }
+    }
+
+    // Process through intent parser
+    const productNames = products?.map((p: any) => p?.title || p?.name || String(p?.id) || '') || [];
+    const intent: IntentResult = parseIntent(text, productNames);
+    
+    console.debug('[VoiceAssistant] Parsed intent:', intent);
+
+    await handleIntent(intent, text);
+  }
+
+  // Enhanced intent handling
+  async function handleIntent(intent: IntentResult, originalText: string) {
+    if (!intent || intent.intent === 'unknown') {
+      // Enhanced fallback: try search and provide helpful feedback
+      try {
+        const res = await searchProducts(originalText, 6);
+        if (res?.products?.length) {
+          setCurrentMatches(res.products);
+          const bestMatch = selectBestMatch(originalText, res.products);
+          setCurrentProduct(bestMatch);
+          
+          if (enableTts) {
+            const matchCount = res.products.length;
+            const productNames = res.products.slice(0, 3).map((p: any) => p.title).join(', ');
+            
+            if (matchCount === 1) {
+              speak(`I found ${bestMatch.title}. Say "show details" or "add to cart" to proceed.`);
+            } else {
+              speak(`I found ${matchCount} products including ${productNames}. Say "show" followed by the product name for details.`);
+            }
           }
         } else {
-          if (enableTts) speak("I couldn't find that product. Try saying the full product name.");
+          if (enableTts) speak("I couldn't find any products matching your request. Please try different words or browse our categories.");
         }
+      } catch (e) {
+        console.debug('[VoiceAssistant] Fallback search failed', e);
+        if (enableTts) speak("I'm having trouble understanding. Try saying things like 'show me phones', 'add to cart', or 'go to checkout'.");
+      }
+      return;
+    }
+
+    // Enhanced intent routing with better voice feedback
+    switch (intent.intent) {
+      case 'navigation':
+        await handleNavigationIntent(intent);
+        break;
+      case 'view_product':
+        await handleViewProductIntent(intent);
         break;
       case 'add_to_cart':
-        // If intent includes a product phrase, try to resolve it first
-        if (intent.product) {
-          try {
-            const res = await searchProducts(intent.product, 5);
-            if (res?.products?.length) {
-              const p = selectBestMatch(intent.product || '', res.products);
-              // Try to emulate the page's Add button click first (so any UI flows run)
-              const clicked = clickAddToCartButton();
-              if (clicked) {
-                setCurrentProduct(p);
-                setCurrentMatches(res.products.slice(0, 5));
-                if (enableTts) speak(`Clicked the page's Add to cart button for ${p.title}`);
-              } else {
-                const item = { id: p.id, name: p.title, price: p.price, quantity: intent.quantity || 1 } as any;
-                addToCart(item);
-                setCurrentProduct(p);
-                setCurrentMatches(res.products.slice(0, 5));
-                if (enableTts) speak(`Added ${p.title} to your cart`);
-              }
-            } else {
-              if (enableTts) speak(`Product ${intent.product} is not in the store. Please try another product.`);
-            }
-          } catch (e) {
-            console.debug('[VoiceAssistant] add/search error', e);
-            if (enableTts) speak('Failed to add item to cart.');
-          }
-        } else {
-          // If there's no explicit product in the intent, but the user is viewing a product page,
-          // prefer that `currentProduct`. If not set yet, try deriving it from the pathname.
-          let p = currentProduct;
-          if (!p) {
-            const m = window.location.pathname.match(/\/shop\/product\/(\d+)/);
-            if (m && m[1]) {
-              try {
-                p = await fetchProductById(Number(m[1]));
-                setCurrentProduct(p);
-              } catch (e) {
-                console.debug('[VoiceAssistant] fetch by pathname failed', e);
-              }
-            }
-          }
-
-          if (p) {
-            try {
-              // attempt to click the page button first
-              const clicked = clickAddToCartButton();
-              if (clicked) {
-                if (enableTts) speak(`Clicked the page's Add to cart button for ${p.title || p.name}`);
-              } else {
-                const item = { id: p.id, name: p.title || p.name, price: p.price || 0, quantity: intent.quantity || 1 } as any;
-                addToCart(item);
-                if (enableTts) speak(`Added ${item.name} to your cart`);
-              }
-            } catch (e) {
-              console.debug('[VoiceAssistant] add current product failed', e);
-              if (enableTts) speak('Failed to add item to cart.');
-            }
-          } else if (currentProduct) {
-            // existing fallback: add currentProduct if present
-            try {
-              const p2 = currentProduct;
-              // try to click page button first
-              const clicked2 = clickAddToCartButton();
-              if (clicked2) {
-                if (enableTts) speak(`Clicked the page's Add to cart button for ${p2.title || p2.name}`);
-              } else {
-                const item = { id: p2.id, name: p2.title || p2.name, price: p2.price || 0, quantity: intent.quantity || 1 } as any;
-                addToCart(item);
-                if (enableTts) speak(`Added ${item.name} to your cart`);
-              }
-            } catch (e) {
-              console.debug('[VoiceAssistant] add current product failed', e);
-              if (enableTts) speak('Failed to add item to cart.');
-            }
-          } else {
-            if (enableTts) speak("I couldn't detect the product to add. First say the product name, then say 'add it to cart'.");
-          }
-        }
-        break;
-      case 'increase_quantity':
-        // Increase quantity of named or current product
-        try {
-          let p: any = null;
-          if (intent.product) {
-            const res = await searchProducts(intent.product, 5);
-            if (res?.products?.length) p = selectBestMatch(intent.product || '', res.products);
-          }
-          if (!p) p = currentProduct;
-          if (!p) {
-            const m = window.location.pathname.match(/\/shop\/product\/(\d+)/);
-            if (m && m[1]) p = await fetchProductById(Number(m[1]));
-          }
-          if (p) {
-            const qty = intent.quantity || 1;
-            const item = { id: p.id, name: p.title || p.name, price: p.price || 0, quantity: qty } as any;
-            addToCart(item);
-            if (enableTts) speak(`Added ${qty} ${p.title || p.name} to your cart`);
-          } else {
-            if (enableTts) speak("I couldn't find the product to increase quantity. First say the product name.");
-          }
-        } catch (e) {
-          console.debug('[VoiceAssistant] increase_quantity failed', e);
-          if (enableTts) speak('Failed to increase quantity.');
-        }
-        break;
-
-      case 'filter_products':
-        if (enableTts) speak('Applying filter');
-        // send user to product list with filter query params
-        router.push(`/shop/products?filter=${encodeURIComponent(String(intent.filterType || ''))}&value=${encodeURIComponent(String(intent.filterValue || ''))}`);
-        break;
-
-      case 'login':
-        if (enableTts) speak('Opening login');
-        if (!clickNavTarget('login')) router.push('/login');
-        break;
-      case 'signup':
-        if (enableTts) speak('Opening signup');
-        if (!clickNavTarget('signup')) router.push('/signup');
-        break;
-      case 'view_profile':
-        if (enableTts) speak('Opening profile');
-        if (!clickNavTarget('profile')) router.push('/shop/profile');
-        break;
-      case 'help':
-        if (enableTts) speak('Opening help');
-        if (!clickNavTarget('help')) router.push('/help');
-        break;
-      case 'greetings':
-        if (enableTts) speak('Hello — how can I help you today?');
-        break;
-      case 'confirm':
-        if (enableTts) speak('Confirmed.');
-        break;
-      case 'cancel':
-        if (enableTts) speak('Cancelled.');
-        break;
-      case 'view_cart':
-        if (enableTts) speak('Opening your cart');
-        // prefer clicking header/cart button if present
-        if (!clickNavTarget('carts')) router.push('/shop/carts');
-        break;
-      case 'checkout':
-        if (enableTts) speak('Proceeding to checkout');
-        if (!clickNavTarget('checkouts') && !clickNavTarget('checkout')) router.push('/shop/checkouts');
+        await handleAddToCartIntent(intent);
         break;
       case 'remove_from_cart':
-        // Try to remove a specific product if provided in the intent
-        if (intent.product) {
-          if (enableTts) speak(`Removing ${intent.product} from your cart`);
-          const removed = await clickRemoveFromCart(intent.product);
-          if (!removed) {
-            // fallback: open cart and inform the user
-            if (enableTts) speak('I could not find the item in the cart visually; I opened the cart for you to remove it manually.');
-            router.push('/shop/carts');
-          }
-        } else if (intent.query) {
-          if (enableTts) speak(`Removing ${intent.query} from your cart`);
-          const removedQ = await clickRemoveFromCart(intent.query);
-          if (!removedQ) {
-            if (enableTts) speak('I could not locate that item; I opened the cart for you to remove it manually.');
-            router.push('/shop/carts');
-          }
-        } else {
-          // no product specified: open cart so user can interact
-          if (enableTts) speak('Opening your cart so you can remove items.');
-          router.push('/shop/carts');
-        }
+        await handleRemoveFromCartIntent(intent);
         break;
       case 'search':
-        if (enableTts) speak(`Searching for ${intent.query}`);
-        router.push(`/shop/products?search=${encodeURIComponent(intent.query || '')}`);
+        await handleSearchIntent(intent);
+        break;
+      case 'auth':
+        await handleAuthIntent(intent);
+        break;
+      case 'support':
+        if (enableTts) speak('Opening help and support');
+        if (!clickNavTarget('help')) router.push('/help');
+        break;
+      case 'small_talk':
+        await handleSmallTalkIntent(intent);
+        break;
+      case 'action':
+        await handleActionIntent(intent);
+        break;
+      case 'filter_products':
+        await handleFilterIntent(intent);
+        break;
+      case 'price_inquiry':
+        await handlePriceInquiry(intent);
+        break;
+      case 'browse':
+        if (enableTts) speak('Opening product browser');
+        router.push('/shop/products');
         break;
       default:
-        if (enableTts) speak("Sorry, I couldn't perform that action.");
+        if (enableTts) speak("I understand what you're saying, but I can't perform that action yet.");
         break;
     }
   }
 
+  // Enhanced intent handlers
+  async function handleNavigationIntent(intent: IntentResult) {
+    const target = intent.navTarget;
+    const messages: Record<string, string> = {
+      home: 'Going to homepage',
+      products: 'Opening products',
+      cart: 'Opening your cart',
+      checkout: 'Proceeding to checkout',
+      payments: 'Opening payments',
+      orders: 'Showing your orders'
+    };
+
+    if (target && messages[target]) {
+      if (enableTts) speak(messages[target]);
+      const navSuccess = clickNavTarget(target);
+      if (!navSuccess) {
+        const routes: Record<string, string> = {
+          home: '/',
+          products: '/shop/products',
+          cart: '/shop/carts',
+          checkout: '/shop/checkouts',
+          payments: '/shop/payments',
+          orders: '/shop/orders'
+        };
+        if (routes[target]) router.push(routes[target]);
+      }
+    }
+  }
+
+  async function handleViewProductIntent(intent: IntentResult) {
+    if (intent.product) {
+      try {
+        const res = await searchProducts(intent.product, 5);
+        if (res?.products?.length) {
+          const product = selectBestMatch(intent.product, res.products);
+          setCurrentProduct(product);
+          
+          if (enableTts) {
+            speak(`Found ${product.title}. Opening product details.`);
+          }
+          
+          router.push(`/products/${product.id}`);
+        } else {
+          if (enableTts) speak(`Sorry, I couldn't find "${intent.product}" in our store. Please try another product name.`);
+        }
+      } catch (err) {
+        console.debug('[VoiceAssistant] Product search failed', err);
+        if (enableTts) speak("I'm having trouble accessing product information right now. Please try again later.");
+      }
+    }
+  }
+
+  async function handleAddToCartIntent(intent: IntentResult) {
+    let productToAdd = currentProduct;
+    
+    // Resolve product from intent if provided
+    if (intent.product && !productToAdd) {
+      try {
+        const res = await searchProducts(intent.product, 3);
+        if (res?.products?.length) {
+          productToAdd = selectBestMatch(intent.product, res.products);
+        }
+      } catch (e) {
+        console.debug('[VoiceAssistant] Product search for add failed', e);
+      }
+    }
+
+    // Fallback to current page product
+    if (!productToAdd) {
+      const pathMatch = window.location.pathname.match(/\/shop\/product\/(\d+)/);
+      if (pathMatch && pathMatch[1]) {
+        try {
+          productToAdd = await fetchProductById(Number(pathMatch[1]));
+        } catch (e) {
+          console.debug('[VoiceAssistant] Fetch current product failed', e);
+        }
+      }
+    }
+
+    if (productToAdd) {
+      try {
+        const clicked = clickAddToCartButton();
+        if (clicked) {
+          if (enableTts) speak(`Added ${productToAdd.title} to your cart`);
+        } else {
+          const item = {
+            id: productToAdd.id,
+            name: productToAdd.title || productToAdd.name,
+            price: productToAdd.price || 0,
+            quantity: intent.quantity || 1
+          };
+          addToCart(item);
+          if (enableTts) speak(`Added ${item.quantity} ${item.name} to your cart`);
+        }
+      } catch (e) {
+        console.debug('[VoiceAssistant] Add to cart failed', e);
+        if (enableTts) speak('Failed to add item to cart. Please try again.');
+      }
+    } else {
+      if (enableTts) speak("I'm not sure which product to add. Please specify the product name or view a product first.");
+    }
+  }
+
+  async function handleRemoveFromCartIntent(intent: IntentResult) {
+    const removed = await clickRemoveFromCart(intent.product, intent.product ? undefined : currentProduct?.id);
+    
+    if (removed) {
+      if (enableTts) speak(`Removed ${intent.product || 'item'} from your cart`);
+    } else {
+      if (enableTts) speak("I couldn't remove that item automatically. I've opened your cart for manual removal.");
+      router.push('/shop/carts');
+    }
+  }
+
+  async function handleSearchIntent(intent: IntentResult) {
+    if (intent.query) {
+      if (enableTts) speak(`Searching for ${intent.query}`);
+      router.push(`/shop/products?search=${encodeURIComponent(intent.query)}`);
+    }
+  }
+
+  async function handleAuthIntent(intent: IntentResult) {
+    const target = intent.navTarget;
+    const routes: Record<string, string> = {
+      login: '/login',
+      signup: '/signup',
+      profile: '/shop/profile'
+    };
+
+    if (target && routes[target]) {
+      if (enableTts) speak(`Opening ${target}`);
+      if (!clickNavTarget(target)) router.push(routes[target]);
+    }
+  }
+
+  async function handleSmallTalkIntent(intent: IntentResult) {
+    const responses: Record<string, string> = {
+      greeting: 'Hello! How can I help you with your shopping today?',
+      thanks: "You're welcome! Is there anything else I can help you with?",
+      goodbye: 'Goodbye! Thank you for shopping with us.'
+    };
+
+    if (intent.smallTalkType && responses[intent.smallTalkType]) {
+      if (enableTts) speak(responses[intent.smallTalkType]);
+    }
+  }
+
+  async function handleActionIntent(intent: IntentResult) {
+    if (intent.confirm) {
+      if (enableTts) speak('Action confirmed');
+    } else if (intent.cancel) {
+      if (enableTts) speak('Action cancelled');
+    }
+  }
+
+  async function handleFilterIntent(intent: IntentResult) {
+    if (enableTts) speak('Applying your filters');
+    const params = new URLSearchParams();
+    if (intent.filterType) params.append('filter', intent.filterType);
+    if (intent.filterValue) params.append('value', intent.filterValue);
+    router.push(`/shop/products?${params.toString()}`);
+  }
+
+  async function handlePriceInquiry(intent: IntentResult) {
+    if (intent.product) {
+      try {
+        const res = await searchProducts(intent.product, 3);
+        if (res?.products?.length) {
+          const product = res.products[0];
+          if (enableTts) speak(`The price for ${product.title} is $${product.price}`);
+        } else {
+          if (enableTts) speak(`I couldn't find pricing information for ${intent.product}`);
+        }
+      } catch (e) {
+        console.debug('[VoiceAssistant] Price inquiry failed', e);
+        if (enableTts) speak("I'm having trouble checking prices right now. Please try again later.");
+      }
+    }
+  }
+
+  // Enhanced voice recognition control
   function startListening() {
-    if (!supported) {
-      speak('Voice recognition is not supported in this browser.');
+    if (!isSupported) {
+      if (enableTts) speak('Voice recognition is not available in your browser.');
       return;
     }
+
     try {
       const r = recognitionRef.current;
-      if (!r) return;
-      r.lang = lang;
-      r.start();
+      if (r) {
+        r.lang = lang;
+        r.start();
+      }
     } catch (e) {
-      console.debug('[VoiceAssistant] start error', e);
-      speak('Failed to start voice recognition');
+      console.debug('[VoiceAssistant] Start listening error', e);
+      if (enableTts) speak('Failed to start voice recognition. Please check your microphone permissions.');
     }
+  }
+
+  function stopListening() {
+    try {
+      recognitionRef.current?.stop();
+    } catch (e) {
+      console.debug('[VoiceAssistant] Stop listening error', e);
+    }
+  }
+
+  if (!isSupported) {
+    return (
+      <div className="fixed right-4 bottom-4 z-50">
+        <div className="bg-yellow-100 border border-yellow-400 rounded-lg p-3 text-sm">
+          Voice commands not supported in this browser
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div aria-live="polite">
-      <div style={{ position: 'fixed', right: 20, bottom: 20, zIndex: 9999 }}>
-        <div className="flex flex-col items-end gap-2">
-          <select value={lang} onChange={(e) => setLang(e.target.value)} className="mb-2 p-1 rounded bg-white border">
-            <option value="en-US">English</option>
-            <option value="fr-FR">Français</option>
-            <option value="es-ES">Español</option>
-            <option value="rw-RW">Kinyarwanda</option>
-          </select>
+    <div aria-live="polite" className="fixed right-4 bottom-4 z-50">
+      <div className="flex flex-col items-end gap-3 bg-white rounded-2xl shadow-2xl p-4 border border-gray-200">
+        {/* Language Selector */}
+        <select 
+          value={lang} 
+          onChange={(e) => setLang(e.target.value)}
+          className="text-sm px-3 py-2 rounded-lg border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          aria-label="Select voice recognition language"
+        >
+          <option value="en-US">English (US)</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="fr-FR">Français</option>
+          <option value="es-ES">Español</option>
+          <option value="de-DE">Deutsch</option>
+          <option value="rw-RW">Kinyarwanda</option>
+        </select>
 
-          <button
-            onClick={startListening}
-            aria-pressed={listening}
-            title={listening ? 'Listening' : 'Start voice' }
-            className={`p-4 rounded-full shadow-lg text-white ${listening ? 'bg-red-600 animate-pulse' : 'bg-indigo-600 hover:bg-indigo-700'}`}>
-            {listening ? 'Listening…' : 'Speak'}
-          </button>
-          {transcript && (
-            <div className="mt-2 bg-white p-2 rounded shadow text-sm max-w-xs break-words">"{transcript}"</div>
+        {/* Voice Button */}
+        <button
+          onClick={listening ? stopListening : startListening}
+          aria-pressed={listening}
+          title={listening ? 'Stop listening' : 'Start voice commands'}
+          className={`
+            relative p-5 rounded-full shadow-lg text-white font-semibold
+            transition-all duration-300 ease-in-out transform hover:scale-105
+            focus:outline-none focus:ring-4 focus:ring-opacity-50
+            ${listening 
+              ? 'bg-red-600 animate-pulse focus:ring-red-300' 
+              : 'bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:ring-blue-300'
+            }
+          `}
+        >
+          {listening ? (
+            <>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                Listening...
+              </div>
+            </>
+          ) : (
+            'Start Voice'
           )}
+        </button>
+
+        {/* Transcript Display */}
+        {transcript && (
+          <div className="mt-2 bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm max-w-xs break-words animate-fade-in">
+            <div className="font-semibold text-blue-800 mb-1">You said:</div>
+            <div className="text-blue-900">"{transcript}"</div>
+          </div>
+        )}
+
+        {/* Status Indicator */}
+        <div className="text-xs text-gray-500 text-center mt-1">
+          {listening ? 'Speak now...' : 'Click to speak'}
         </div>
       </div>
     </div>
