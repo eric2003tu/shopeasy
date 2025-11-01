@@ -35,7 +35,7 @@ export default async function ProductDetailServer({ id }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 mt-10">
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
         <div>
           <div className="w-full bg-white rounded-xl overflow-hidden shadow-md">
