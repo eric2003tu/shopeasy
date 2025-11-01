@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { CiMenuBurger} from "react-icons/ci";
-import { BsBoxSeam } from "react-icons/bs";
+import { BsBoxSeam, BsCart2 } from "react-icons/bs";
 import { MdLogin } from "react-icons/md";
 import { HiOutlineGlobeAlt } from 'react-icons/hi';
 import { useI18n } from '@/i18n/I18nProvider';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthProvider';
-
+import { subscribeCart, getCartCount } from '@/lib/cart';
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -17,6 +17,7 @@ const Header: React.FC = () => {
   const { t, locale, setLocale } = useI18n();
   const auth = useAuth();
   const langRef = useRef<HTMLDivElement | null>(null);
+  const [cartCount, setCartCount] = useState<number>(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,6 +31,16 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+    useEffect(() => {
+      // subscribe to cart changes for live badge updates
+      const unsub = subscribeCart((cart) => {
+        setCartCount(cart.reduce((s, it) => s + (it.quantity || 0), 0));
+      });
+      // also seed from localStorage
+      try { setCartCount(getCartCount()); } catch {}
+      return () => unsub();
+    }, []);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -71,13 +82,14 @@ const Header: React.FC = () => {
               <BsBoxSeam className="text-lg" />
               {t('header.products')}
             </Link>
-            {/* <Link 
-              href="/cart" 
-              className="px-3 py-2 rounded-md text-sm lg:text-base font-medium text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
-            >
-              <BsCart2 className="text-lg" />
-              {t('header.cart')}
-            </Link> */}
+            <Link href="/shop/carts" className="relative p-2 text-white hover:bg-white/10 rounded-md transition-colors">
+              <BsCart2 className="text-2xl" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white bg-red-500 rounded-full min-w-[20px]">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>
             {auth.user ? (
               <Link href="/profile" className="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-white/10">
                 <div className="h-8 w-8 relative rounded-full overflow-hidden bg-gray-100">
@@ -143,13 +155,14 @@ const Header: React.FC = () => {
             <BsBoxSeam />
             {t('header.products')}
           </Link>
-          {/* <Link
-            href="/cart"
-            className="flex items-center gap-3 text-white hover:bg-white/10 block px-3 py-3 rounded-md text-base font-medium transition-colors"
-          >
-            <BsCart2 />
-            {t('header.cart')}
-          </Link> */}
+            <Link href="/shop/carts" className="relative p-2 text-white px-3 py-3 hover:bg-white/10 rounded-md transition-colors">
+              <BsCart2 className="text-2xl" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white bg-red-500 rounded-full min-w-[20px]">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>
           <Link
             data-nav="login"
             href="/login"
