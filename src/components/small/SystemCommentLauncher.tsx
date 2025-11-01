@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import CommentPopup from '@/components/small/CommentPopup';
+import { CommentPopup } from './CommentPopup';
 
 export default function SystemCommentLauncher() {
   // use postId 1 for system-wide comments (dummyjson requires positive postId)

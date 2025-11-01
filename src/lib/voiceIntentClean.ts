@@ -10,6 +10,7 @@ export type IntentResult = {
   smallTalkType?: string | null;
   confirm?: boolean;
   cancel?: boolean;
+  infoType?: string | null; // 'price', 'category', 'weight', 'dimensions', 'description', 'availability', 'shipping'
   raw?: string;
   confidence?: number;
 };
@@ -184,6 +185,10 @@ export function parseIntent(raw: string, products: string[] = []): IntentResult 
       'need assistance', 'help section', 'support page', 'get help',
       'help center', 'customer support', 'i need support'
     ],
+    // Logout
+    logout: [
+      'log me out', 'logout', 'sign out', 'log off', 'log out', 'exit my account', 'sign me out', 'i want to log out', 'log off please', 'end session', 'stop my login session', 'remove account session'
+    ],
 
     // Small Talk
     greetings: [
@@ -249,6 +254,7 @@ export function parseIntent(raw: string, products: string[] = []): IntentResult 
   if (matchPhrase(phrases.login)) return { intent: 'auth', navTarget: 'login', confidence: 0.95, raw };
   if (matchPhrase(phrases.signup)) return { intent: 'auth', navTarget: 'signup', confidence: 0.95, raw };
   if (matchPhrase(phrases.view_profile)) return { intent: 'auth', navTarget: 'profile', confidence: 0.95, raw };
+  if (matchPhrase(phrases.logout)) return { intent: 'auth', navTarget: 'logout', confidence: 0.95, raw };
   
   if (matchPhrase(phrases.help)) return { intent: 'support', confidence: 0.95, raw };
   
@@ -258,6 +264,154 @@ export function parseIntent(raw: string, products: string[] = []): IntentResult 
   
   if (matchPhrase(phrases.confirm)) return { intent: 'action', confirm: true, confidence: 0.95, raw };
   if (matchPhrase(phrases.cancel)) return { intent: 'action', cancel: true, confidence: 0.95, raw };
+
+  // CART INQUIRIES - Enhanced with more variations
+  if (/\b(how many|how much|what.*in|items? in|products? in|count|total).*\b(cart|basket)\b/.test(t)) {
+    return { 
+      intent: 'cart_inquiry', 
+      infoType: 'count',
+      confidence: 0.9, 
+      raw 
+    };
+  }
+
+  if (/\b(how much.*total|total.*cost|what.*total|cart total|basket total|order total)\b/.test(t)) {
+    return { 
+      intent: 'cart_inquiry', 
+      infoType: 'total',
+      confidence: 0.9, 
+      raw 
+    };
+  }
+
+  if (/\b(whats in|what is in|show me what.*in|list.*in).*\b(cart|basket)\b/.test(t)) {
+    return { 
+      intent: 'cart_inquiry', 
+      infoType: 'contents',
+      confidence: 0.85, 
+      raw 
+    };
+  }
+
+  // PRODUCT INFORMATION INQUIRIES - Comprehensive product questions
+  if (/\b(how much|what.*price|cost|price of|how much does.*cost)\b/.test(t)) {
+    const priceMatch = t.match(/(?:how much|what.*price|cost|price of|how much does.*cost)\s+(?:the\s+)?(.+?)(?:\s+cost)?$/);
+    const product = priceMatch ? priceMatch[1] : null;
+    const matchedProduct = product ? matchProductName(product, products) : null;
+    
+    return { 
+      intent: 'product_inquiry', 
+      product: matchedProduct || product,
+      infoType: 'price',
+      confidence: matchedProduct ? 0.9 : 0.7, 
+      raw 
+    };
+  }
+
+  // Category inquiries
+  if (/\b(what.*category|which category|category of|type of|kind of)\b/.test(t)) {
+    const categoryMatch = t.match(/(?:what.*category|which category|category of|type of|kind of)\s+(?:the\s+)?(.+?)(?:\s+belong to)?$/);
+    const product = categoryMatch ? categoryMatch[1] : null;
+    const matchedProduct = product ? matchProductName(product, products) : null;
+    
+    return { 
+      intent: 'product_inquiry', 
+      product: matchedProduct || product,
+      infoType: 'category',
+      confidence: matchedProduct ? 0.85 : 0.7, 
+      raw 
+    };
+  }
+
+  // Weight inquiries
+  if (/\b(how heavy is|what.*weight|weight of|how much is.*weigh)\b/.test(t)) {
+    const weightMatch = t.match(/(?:how heavy is|what.*weight|weight of|how much is.*weigh)\s+(?:the\s+)?(.+?)(?:\s+weigh)?$/);
+    const product = weightMatch ? weightMatch[1] : null;
+    const matchedProduct = product ? matchProductName(product, products) : null;
+    
+    return { 
+      intent: 'product_inquiry', 
+      product: matchedProduct || product,
+      infoType: 'weight',
+      confidence: matchedProduct ? 0.85 : 0.7, 
+      raw 
+    };
+  }
+
+  // Dimensions inquiries
+  if (/\b(how big|what.*size|dimensions of|size of|measurements|how large)\b/.test(t)) {
+    const sizeMatch = t.match(/(?:how big|what.*size|dimensions of|size of|measurements|how large)\s+(?:the\s+)?(.+?)(?:\s+is)?$/);
+    const product = sizeMatch ? sizeMatch[1] : null;
+    const matchedProduct = product ? matchProductName(product, products) : null;
+    
+    return { 
+      intent: 'product_inquiry', 
+      product: matchedProduct || product,
+      infoType: 'dimensions',
+      confidence: matchedProduct ? 0.85 : 0.7, 
+      raw 
+    };
+  }
+
+  // Description inquiries
+  if (/\b(what.*about|tell me about|describe|what.*features|features of)\b/.test(t)) {
+    const descMatch = t.match(/(?:what.*about|tell me about|describe|what.*features|features of)\s+(?:the\s+)?(.+?)(?:\s+have)?$/);
+    const product = descMatch ? descMatch[1] : null;
+    const matchedProduct = product ? matchProductName(product, products) : null;
+    
+    return { 
+      intent: 'product_inquiry', 
+      product: matchedProduct || product,
+      infoType: 'description',
+      confidence: matchedProduct ? 0.85 : 0.7, 
+      raw 
+    };
+  }
+
+  // Availability inquiries
+  if (/\b(is.*available|available.*stock|in stock|out of stock|do you have)\b/.test(t)) {
+    const availMatch = t.match(/(?:is|available|stock|have)\s+(?:the\s+)?(.+?)(?:\s+available)?$/);
+    const product = availMatch ? availMatch[1] : null;
+    const matchedProduct = product ? matchProductName(product, products) : null;
+    
+    return { 
+      intent: 'product_inquiry', 
+      product: matchedProduct || product,
+      infoType: 'availability',
+      confidence: matchedProduct ? 0.85 : 0.7, 
+      raw 
+    };
+  }
+
+  // Shipping inquiries
+  if (/\b(shipping|delivery|when.*arrive|how long.*ship|free shipping)\b/.test(t)) {
+    const shipMatch = t.match(/(?:shipping|delivery|arrive|ship)\s+(?:for\s+)?(?:the\s+)?(.+?)(?:\s+take)?$/);
+    const product = shipMatch ? shipMatch[1] : null;
+    const matchedProduct = product ? matchProductName(product, products) : null;
+    
+    return { 
+      intent: 'product_inquiry', 
+      product: matchedProduct || product,
+      infoType: 'shipping',
+      confidence: matchedProduct ? 0.8 : 0.6, 
+      raw 
+    };
+  }
+
+  // Brand inquiries
+  if (/\b(what.*brand|who makes|manufacturer of|brand of|made by)\b/.test(t)) {
+    const brandMatch = t.match(/(?:what.*brand|who makes|manufacturer of|brand of|made by)\s+(?:the\s+)?(.+?)(?:\s+made)?$/);
+    const product = brandMatch ? brandMatch[1] : null;
+    const matchedProduct = product ? matchProductName(product, products) : null;
+    
+    return { 
+      intent: 'product_inquiry', 
+      product: matchedProduct || product,
+      infoType: 'brand',
+      confidence: matchedProduct ? 0.85 : 0.7, 
+      raw 
+    };
+  }
 
   // Enhanced product search intent with better voice patterns
   if (/\b(search|find|look for|show me|i want|i need|get me|looking for)\b/.test(t)) {
@@ -282,6 +436,18 @@ export function parseIntent(raw: string, products: string[] = []): IntentResult 
       raw 
     };
   }
+
+    // Search orders by reference/number (e.g. "find order 12345", "track order #123")
+    if (/\b(order|orders|order number|track order|find order|search order)\b/.test(t)) {
+      const numMatch = t.match(/(?:order number|order|#|order\s+)(\d{3,12})/);
+      const orderNum = numMatch ? numMatch[1] : null;
+      return {
+        intent: 'search_orders',
+        query: orderNum || t,
+        confidence: orderNum ? 0.9 : 0.6,
+        raw
+      };
+    }
 
   // Enhanced add to cart intent with better voice recognition
   if (/\b(add|put|buy|get|i want|order|purchase|grab)\b/.test(t) && (/\b(cart|basket)\b/.test(t) || /to (my )?cart/.test(t))) {
@@ -383,20 +549,6 @@ export function parseIntent(raw: string, products: string[] = []): IntentResult 
         raw 
       };
     }
-  }
-
-  // Price inquiry
-  if (/\b(how much|what.*price|cost|price of|how much does.*cost)\b/.test(t)) {
-    const priceMatch = t.match(/(?:how much|what.*price|cost|price of|how much does.*cost)\s+(?:the\s+)?(.+?)(?:\s+cost)?$/);
-    const product = priceMatch ? priceMatch[1] : null;
-    const matchedProduct = product ? matchProductName(product, products) : null;
-    
-    return { 
-      intent: 'price_inquiry', 
-      product: matchedProduct || product,
-      confidence: matchedProduct ? 0.8 : 0.6, 
-      raw 
-    };
   }
 
   // Fallback for common shopping terms with voice-friendly patterns

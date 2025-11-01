@@ -63,7 +63,7 @@ export default function ProductCard({ id, image, name, price, originalPrice, rat
           <Link href="/products" className="py-2 text-center bg-[#634bc1] text-white rounded-lg hover:bg-[#756a9f] transition-colors">
             View
           </Link>
-          <button className="py-2 text-center border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" onClick={handleAdd}>
+          <button data-add-to-cart="true" className="py-2 text-center border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors" onClick={handleAdd}>
             Add to cart
           </button>
         </div>

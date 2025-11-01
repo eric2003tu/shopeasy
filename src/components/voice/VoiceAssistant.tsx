@@ -3,14 +3,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { parseIntent, IntentResult } from '@/lib/voiceIntentClean';
 import speak from '@/lib/tts';
-import { addToCart } from '@/lib/cart';
-import { searchProducts, fetchProductById } from '@/lib/appClient';
+import { addToCart, getCart, updateQuantity, clearCart } from '@/lib/cart';
+import { searchProducts, fetchProductById, logout as apiLogout } from '@/lib/appClient';
 
 /**
  * Enhanced VoiceAssistant component with professional voice recognition
  * - Improved Web Speech API handling
  * - Enhanced voice feedback
  * - Better error handling and user experience
+ * - Comprehensive product and cart inquiries
  */
 export default function VoiceAssistant({ enableTts = true, products = [] }: { enableTts?: boolean; products?: any[] }) {
   const router = useRouter();
@@ -440,6 +441,9 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
       case 'auth':
         await handleAuthIntent(intent);
         break;
+        case 'search_orders':
+          await handleSearchOrdersIntent(intent);
+          break;
       case 'support':
         if (enableTts) speak('Opening help and support');
         if (!clickNavTarget('help')) router.push('/help');
@@ -453,8 +457,11 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
       case 'filter_products':
         await handleFilterIntent(intent);
         break;
-      case 'price_inquiry':
-        await handlePriceInquiry(intent);
+      case 'product_inquiry':
+        await handleProductInquiry(intent);
+        break;
+      case 'cart_inquiry':
+        await handleCartInquiry(intent);
         break;
       case 'browse':
         if (enableTts) speak('Opening product browser');
@@ -552,10 +559,11 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
           if (enableTts) speak(`Added ${productToAdd.title} to your cart`);
         } else {
           const item = {
-            id: productToAdd.id,
+            id: String(productToAdd.id),
             name: productToAdd.title || productToAdd.name,
             price: productToAdd.price || 0,
-            quantity: intent.quantity || 1
+            quantity: intent.quantity || 1,
+            image: productToAdd.thumbnail || productToAdd.image
           };
           addToCart(item);
           if (enableTts) speak(`Added ${item.quantity} ${item.name} to your cart`);
@@ -595,9 +603,40 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
       profile: '/shop/profile'
     };
 
+    if (target === 'logout') {
+      // perform logout: try clicking a logout element first, else clear client session
+      if (enableTts) speak('Logging you out');
+      const clicked = clickNavTarget('logout') || clickNavTarget('log out') || clickNavTarget('sign out');
+      try {
+        apiLogout();
+      } catch (e) {
+        console.debug('[VoiceAssistant] apiLogout failed', e);
+      }
+      if (!clicked) router.push('/');
+      return;
+    }
+
     if (target && routes[target]) {
       if (enableTts) speak(`Opening ${target}`);
       if (!clickNavTarget(target)) router.push(routes[target]);
+    }
+  }
+
+  async function handleSearchOrdersIntent(intent: IntentResult) {
+    const q = intent.query;
+    if (!q) {
+      if (enableTts) speak('Please provide an order number or order reference to search.');
+      return;
+    }
+
+    if (enableTts) speak(`Searching orders for ${q}`);
+    // Try to navigate to orders page and pass query param
+    const encoded = encodeURIComponent(String(q));
+    if (!clickNavTarget('orders')) {
+      router.push(`/shop/orders?search=${encoded}`);
+    } else {
+      // if clicked, also update URL to reflect search param
+      router.push(`/shop/orders?search=${encoded}`);
     }
   }
 
@@ -623,26 +662,108 @@ export default function VoiceAssistant({ enableTts = true, products = [] }: { en
 
   async function handleFilterIntent(intent: IntentResult) {
     if (enableTts) speak('Applying your filters');
-    const params = new URLSearchParams();
-    if (intent.filterType) params.append('filter', intent.filterType);
-    if (intent.filterValue) params.append('value', intent.filterValue);
-    router.push(`/shop/products?${params.toString()}`);
+
+    // Prefer explicit category filtering when user mentions a category
+    // Cases handled:
+    // - intent.filterType === 'category' and intent.filterValue present
+    // - intent.filterType === 'category' and intent.product or intent.query present
+    // - intent.filterType missing but intent.query or intent.product present -> treat as category
+    try {
+      const cat = (intent.filterType === 'category' && intent.filterValue)
+        ? intent.filterValue
+        : (intent.filterType === 'category' && (intent.product || intent.query))
+          ? (intent.product || intent.query)
+          : null;
+
+      if (cat) {
+        const category = String(cat).trim();
+        // navigate to products page with category param
+        router.push(`/shop/products?category=${encodeURIComponent(category)}`);
+        return;
+      }
+
+      // fallback: use generic filter/value params
+      const params = new URLSearchParams();
+      if (intent.filterType) params.append('filter', String(intent.filterType));
+      if (intent.filterValue) params.append('value', String(intent.filterValue));
+      // if nothing specific, but we have a query, treat as search
+      if (!params.toString() && intent.query) {
+        router.push(`/shop/products?search=${encodeURIComponent(String(intent.query))}`);
+        return;
+      }
+
+      router.push(`/shop/products?${params.toString()}`);
+    } catch (e) {
+      console.debug('[VoiceAssistant] handleFilterIntent failed', e);
+      router.push('/shop/products');
+    }
   }
 
-  async function handlePriceInquiry(intent: IntentResult) {
-    if (intent.product) {
+  // NEW: Handle product information inquiries
+  async function handleProductInquiry(intent: IntentResult) {
+    let product = currentProduct;
+    
+    // Resolve product from intent if provided
+    if (intent.product && !product) {
       try {
         const res = await searchProducts(intent.product, 3);
         if (res?.products?.length) {
-          const product = res.products[0];
-          if (enableTts) speak(`The price for ${product.title} is $${product.price}`);
-        } else {
-          if (enableTts) speak(`I couldn't find pricing information for ${intent.product}`);
+          product = selectBestMatch(intent.product, res.products);
         }
       } catch (e) {
-        console.debug('[VoiceAssistant] Price inquiry failed', e);
-        if (enableTts) speak("I'm having trouble checking prices right now. Please try again later.");
+        console.debug('[VoiceAssistant] Product search for inquiry failed', e);
       }
+    }
+
+    if (!product) {
+      if (enableTts) speak("I'm not sure which product you're asking about. Please specify the product name.");
+      return;
+    }
+
+    const infoType = intent.infoType;
+    const responses: Record<string, string> = {
+      price: `The price for ${product.title} is $${product.price}`,
+      category: `${product.title} is in the ${product.category || 'general'} category`,
+      weight: `${product.title} weighs ${product.weight || 'unknown'}`,
+      dimensions: `${product.title} dimensions are ${product.dimensions || 'not specified'}`,
+      description: `${product.title}: ${product.description || 'No description available'}`,
+      availability: `${product.title} is ${product.inStock ? 'in stock' : 'currently out of stock'}`,
+      shipping: `${product.title} ${product.freeShipping ? 'qualifies for free shipping' : 'has standard shipping costs'}`,
+      brand: `${product.title} is made by ${product.brand || 'unknown manufacturer'}`
+    };
+
+    if (infoType && responses[infoType]) {
+      if (enableTts) speak(responses[infoType]);
+    } else {
+      if (enableTts) speak(`I don't have that information for ${product.title} available.`);
+    }
+  }
+
+  // NEW: Handle cart inquiries - UPDATED to use your cart functions
+  async function handleCartInquiry(intent: IntentResult) {
+    const infoType = intent.infoType;
+    
+    try {
+      const cartItems = getCart();
+      const itemCount = cartItems.reduce((total, item) => total + (item.quantity || 0), 0);
+      const total = cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 0)), 0);
+
+      const responses: Record<string, string> = {
+        count: `You have ${itemCount} ${itemCount === 1 ? 'item' : 'items'} in your cart`,
+        total: `Your cart total is $${total.toFixed(2)}`,
+        contents: itemCount > 0 
+          ? `Your cart contains: ${cartItems.slice(0, 3).map(item => `${item.quantity} ${item.name}`).join(', ')}${itemCount > 3 ? ` and ${itemCount - 3} more items` : ''}`
+          : 'Your cart is empty'
+      };
+
+      if (infoType && responses[infoType]) {
+        if (enableTts) speak(responses[infoType]);
+      } else {
+        if (enableTts) speak(`You have ${itemCount} items in your cart with a total of $${total.toFixed(2)}`);
+      }
+    } catch (e) {
+      console.debug('[VoiceAssistant] Cart inquiry failed', e);
+      if (enableTts) speak("I'm having trouble accessing your cart information right now.");
     }
   }
 

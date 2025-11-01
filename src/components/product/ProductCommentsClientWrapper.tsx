@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import CommentPopup from '@/components/small/CommentPopup';
+import { CommentPopup } from '../small/CommentPopup';
 import CommentsList from './CommentsList';
 
 interface CommentResp {

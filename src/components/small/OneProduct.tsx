@@ -155,6 +155,7 @@ export const OneProduct: React.FC<OneProductProps> = ({ productId, onClose }) =>
 
             <div className="flex space-x-4 items-center">
                 <button
+                  data-add-to-cart="true"
                   className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                   onClick={() => {
                     try {
